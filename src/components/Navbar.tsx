@@ -41,7 +41,7 @@ const Navbar = () => {
         }
       } else {
         setIsScrolled(false);
-        setNavVisible(false); // Hide when at top
+        setNavVisible(false); // Keep hidden when at top
       }
       
       setLastScrollY(currentScrollY);
@@ -63,7 +63,7 @@ const Navbar = () => {
         isScrolled 
           ? "py-3 bg-black/80 backdrop-blur-md shadow-sm border-b border-white/10" 
           : "py-5 bg-transparent",
-        navVisible ? "translate-y-0" : (isScrolled ? "-translate-y-full" : "translate-y-0")
+        navVisible ? "translate-y-0 opacity-100" : (isScrolled ? "-translate-y-full opacity-0" : "translate-y-0 opacity-0")
       )}
     >
       <div className="container mx-auto px-4 md:px-6">
