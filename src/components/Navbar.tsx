@@ -1,22 +1,55 @@
 
 import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { NavLink, useLocation, Link } from 'react-router-dom';
+import { Menu, X, User, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAuth, UserAvatar } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
-export const Navbar = () => {
+const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [navVisible, setNavVisible] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar when scrolling down past threshold
+      if (currentScrollY > 100) {
+        setIsScrolled(true);
+        
+        // If scrolling down, hide the navbar
+        if (currentScrollY > lastScrollY && navVisible) {
+          setNavVisible(false);
+        }
+        
+        // If scrolling up, show the navbar
+        if (currentScrollY < lastScrollY && !navVisible) {
+          setNavVisible(true);
+        }
+      } else {
+        setIsScrolled(false);
+        setNavVisible(false); // Hide when at top
+      }
+      
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY, navVisible]);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -28,15 +61,16 @@ export const Navbar = () => {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         isScrolled 
-          ? "py-3 bg-background/80 backdrop-blur-md shadow-sm border-b" 
-          : "py-5 bg-transparent"
+          ? "py-3 bg-black/80 backdrop-blur-md shadow-sm border-b border-white/10" 
+          : "py-5 bg-transparent",
+        navVisible ? "translate-y-0" : (isScrolled ? "-translate-y-full" : "translate-y-0")
       )}
     >
       <div className="container mx-auto px-4 md:px-6">
         <nav className="flex items-center justify-between">
           <NavLink to="/" className="text-xl md:text-2xl font-bold">
-            <span className="text-primary">TRICK</span>
-            <span className="text-accent">TOPIA</span>
+            <span className="text-white">NCKU</span>
+            <span className="text-red-500">TRICKING</span>
           </NavLink>
 
           {/* Desktop Navigation */}
@@ -53,40 +87,108 @@ export const Navbar = () => {
             <NavLink to="/booking" className={({isActive}) => cn("nav-link", isActive && "active")}>
               Book Classes
             </NavLink>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="ml-2 rounded-full">
+                    <UserAvatar />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span>{user.name}</span>
+                      <span className="text-xs text-muted-foreground">{user.email}</span>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer flex items-center">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => logout()} className="cursor-pointer text-red-500">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild variant="ghost" className="ml-2">
+                <Link to="/login">Log In</Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden flex items-center"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? (
-              <X className="h-6 w-6 text-primary" />
+          <div className="md:hidden flex items-center">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="mr-2 rounded-full">
+                    <UserAvatar />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span>{user.name}</span>
+                      <span className="text-xs text-muted-foreground">{user.email}</span>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer flex items-center">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => logout()} className="cursor-pointer text-red-500">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <Menu className="h-6 w-6 text-primary" />
+              <Button asChild variant="ghost" size="sm" className="mr-2">
+                <Link to="/login">Log In</Link>
+              </Button>
             )}
-          </button>
+            
+            <button 
+              className="flex items-center"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? (
+                <X className="h-6 w-6 text-white" />
+              ) : (
+                <Menu className="h-6 w-6 text-white" />
+              )}
+            </button>
+          </div>
         </nav>
 
         {/* Mobile Navigation */}
         <div 
           className={cn(
-            "md:hidden fixed inset-0 bg-background z-40 transition-transform transform duration-300 ease-in-out pt-20",
+            "md:hidden fixed inset-0 bg-black z-40 transition-transform transform duration-300 ease-in-out pt-20",
             isOpen ? "translate-x-0" : "translate-x-full"
           )}
         >
           <div className="flex flex-col items-center space-y-6 p-8">
-            <NavLink to="/" className="text-lg font-medium">
+            <NavLink to="/" className="text-lg font-medium text-white">
               Home
             </NavLink>
-            <NavLink to="/tricktionary" className="text-lg font-medium">
+            <NavLink to="/tricktionary" className="text-lg font-medium text-white">
               Tricktionary
             </NavLink>
-            <NavLink to="/points" className="text-lg font-medium">
+            <NavLink to="/points" className="text-lg font-medium text-white">
               Buy Points
             </NavLink>
-            <NavLink to="/booking" className="text-lg font-medium">
+            <NavLink to="/booking" className="text-lg font-medium text-white">
               Book Classes
             </NavLink>
           </div>

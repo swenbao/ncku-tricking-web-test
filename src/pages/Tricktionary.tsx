@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { tricks, TrickLevel } from '@/lib/data';
 import Navbar from '@/components/Navbar';
@@ -9,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Filter, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Sheet,
   SheetContent,
@@ -24,9 +25,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { useAuth } from '@/contexts/AuthContext';
 
 const levelOrder: TrickLevel[] = [
   'Absolute Novice',
@@ -41,6 +44,7 @@ const TricktionaryPage = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTrick, setSelectedTrick] = useState<typeof tricks[0] | null>(null);
   const [activeTab, setActiveTab] = useState<string>(levelOrder[0]);
+  const { user, isAuthenticated, updateTrickStatus } = useAuth();
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories(prev => 
@@ -66,6 +70,17 @@ const TricktionaryPage = () => {
     
     return matchesSearch && matchesCategory && matchesLevel;
   });
+
+  const getTrickProgress = (trickId: string) => {
+    if (!user) return null;
+    return user.completedTricks.find(t => t.trickId === trickId)?.status || null;
+  };
+
+  const handleProgressUpdate = (status: 'Started' | 'Completed' | 'Proficient') => {
+    if (selectedTrick && isAuthenticated) {
+      updateTrickStatus(selectedTrick.id, status);
+    }
+  };
 
   return (
     <div className="page-transition min-h-screen flex flex-col">
@@ -240,6 +255,30 @@ const TricktionaryPage = () => {
                   </div>
                 )}
                 
+                {user && (
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="text-sm font-medium mb-2">Update Your Progress</h4>
+                    <RadioGroup 
+                      defaultValue={getTrickProgress(selectedTrick.id) || ""} 
+                      onValueChange={(value) => handleProgressUpdate(value as 'Started' | 'Completed' | 'Proficient')}
+                      className="flex flex-col space-y-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Started" id="started" />
+                        <Label htmlFor="started">Started learning/practicing</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Completed" id="completed" />
+                        <Label htmlFor="completed">Successfully completed once</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="Proficient" id="proficient" />
+                        <Label htmlFor="proficient">Proficient</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                )}
+                
                 {selectedTrick.videoUrl && (
                   <div>
                     <h4 className="text-sm font-medium mb-1">Reference Video</h4>
@@ -249,6 +288,15 @@ const TricktionaryPage = () => {
                   </div>
                 )}
               </div>
+              
+              {!user && (
+                <DialogFooter>
+                  <p className="text-muted-foreground text-sm mr-auto">Log in to track your progress</p>
+                  <Button asChild>
+                    <Link to="/login">Log In</Link>
+                  </Button>
+                </DialogFooter>
+              )}
             </>
           )}
         </DialogContent>
