@@ -9,7 +9,7 @@ const Hero = () => {
 
   return (
     <section className="relative min-h-[90vh] flex items-center pt-20">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/40 to-black/60 -z-10" />
       
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden -z-10">
@@ -20,7 +20,7 @@ const Hero = () => {
       <div className="container mx-auto px-4 md:px-6 py-12">
         <div className="max-w-4xl mx-auto text-center space-y-8 animate-slide-up">
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4">
-            <span className="text-black block">NCKU</span>
+            <span className="text-white block">NCKU</span>
             <span className="text-secondary block">TRICKING</span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground">
