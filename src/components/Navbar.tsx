@@ -29,19 +29,10 @@ const Navbar = () => {
       // Show navbar when scrolling down past threshold
       if (currentScrollY > 100) {
         setIsScrolled(true);
-        
-        // If scrolling down, hide the navbar
-        if (currentScrollY > lastScrollY && navVisible) {
-          setNavVisible(false);
-        }
-        
-        // If scrolling up, show the navbar
-        if (currentScrollY < lastScrollY && !navVisible) {
-          setNavVisible(true);
-        }
+        setNavVisible(true); // Always show navbar when scrolled down
       } else {
         setIsScrolled(false);
-        setNavVisible(false); // Keep hidden when at top
+        setNavVisible(false); // Hide when at top
       }
       
       setLastScrollY(currentScrollY);
@@ -49,7 +40,7 @@ const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY, navVisible]);
+  }, [lastScrollY]);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -63,7 +54,7 @@ const Navbar = () => {
         isScrolled 
           ? "py-3 bg-black/80 backdrop-blur-md shadow-sm border-b border-white/10" 
           : "py-5 bg-transparent",
-        navVisible ? "translate-y-0 opacity-100" : (isScrolled ? "-translate-y-full opacity-0" : "translate-y-0 opacity-0")
+        navVisible ? "translate-y-0 opacity-100" : "translate-y-0 opacity-0"
       )}
     >
       <div className="container mx-auto px-4 md:px-6">
