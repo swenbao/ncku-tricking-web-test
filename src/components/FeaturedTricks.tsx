@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,8 +26,10 @@ const FeaturedTricks = () => {
           opts={{
             align: "start",
             loop: true,
+            dragFree: true,
+            containScroll: "trimSnaps",
           }}
-          className="w-full"
+          className="w-full touch-pan-y"
         >
           <CarouselContent>
             <CarouselItem className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">

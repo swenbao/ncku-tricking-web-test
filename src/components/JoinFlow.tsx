@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { User, ClipboardCheck, Star, CircleChevronRight } from 'lucide-react';
@@ -26,8 +25,10 @@ const JoinFlow = () => {
             opts={{
               align: "start",
               loop: true,
+              dragFree: true,
+              containScroll: "trimSnaps",
             }}
-            className="w-full"
+            className="w-full touch-pan-y"
           >
             <CarouselContent>
               <CarouselItem className="md:basis-1/2 lg:basis-1/3">

@@ -9,6 +9,7 @@ import {
   CarouselNext, 
   CarouselPrevious 
 } from '@/components/ui/carousel';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const WhatIsTricking = () => {
   return (
@@ -31,7 +32,14 @@ const WhatIsTricking = () => {
           </div>
           
           <div className="relative">
-            <Carousel className="w-full">
+            <Carousel
+              opts={{
+                align: "start",
+                dragFree: true,
+                containScroll: "trimSnaps",
+              }}
+              className="w-full touch-pan-y"
+            >
               <CarouselContent>
                 <CarouselItem>
                   <Card className="overflow-hidden border-2 border-accent/20 shadow-lg hover:shadow-xl transition-all duration-300">
