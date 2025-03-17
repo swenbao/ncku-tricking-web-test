@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -59,7 +58,12 @@ const Signup = () => {
   
   const onSubmit = async (data: SignupFormValues) => {
     try {
-      await signup(data);
+      const userData = {
+        ...data,
+        password: data.password,
+      };
+      
+      await signup(userData);
       toast({
         title: 'Account created',
         description: 'Your account has been created successfully',
