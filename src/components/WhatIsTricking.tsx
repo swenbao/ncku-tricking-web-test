@@ -9,90 +9,109 @@ import {
   CarouselNext, 
   CarouselPrevious 
 } from '@/components/ui/carousel';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const WhatIsTricking = () => {
   return (
-    <section className="py-20 bg-gradient-to-b from-background/90 to-background">
+    <section className="py-12 bg-gradient-to-b from-background/90 to-background">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">What is Tricking?</h2>
-            <div className="prose prose-lg text-foreground/80 max-w-none">
-              <p>
-                Tricking是一種結合了武術、體操和街舞元素的運動藝術形式。
-              </p>
-              <p>
-                它包含優美的踢腿、翻轉和旋轉動作，讓參與者可以自由表達自我，並挑戰身體的極限。
-              </p>
-              <p>
-                在NCKU Tricking，我們致力於提供一個安全、支持性的環境，讓所有技能水平的人都能學習和成長。
-              </p>
-            </div>
-          </div>
-          
-          <div className="relative">
-            <Carousel
-              opts={{
-                align: "start",
-                dragFree: true,
-                containScroll: "trimSnaps",
-              }}
-              className="w-full touch-pan-y"
-            >
-              <CarouselContent>
-                <CarouselItem>
-                  <Card className="overflow-hidden border-2 border-accent/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="aspect-square rounded-md bg-muted mb-4 flex items-center justify-center text-muted-foreground">
-                        <Flame className="h-12 w-12 text-secondary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2">武術技巧</h3>
-                      <p className="text-muted-foreground">結合武術中的踢腿技巧和身體控制，創造出流暢而動態的動作。</p>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-                <CarouselItem>
-                  <Card className="overflow-hidden border-2 border-accent/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="aspect-square rounded-md bg-muted mb-4 flex items-center justify-center text-muted-foreground">
-                        <Trophy className="h-12 w-12 text-secondary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2">翻滾與空翻</h3>
-                      <p className="text-muted-foreground">融合體操和特技元素，實現令人驚嘆的翻滾和空中動作。</p>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-                <CarouselItem>
-                  <Card className="overflow-hidden border-2 border-accent/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="aspect-square rounded-md bg-muted mb-4 flex items-center justify-center text-muted-foreground">
-                        <Dumbbell className="h-12 w-12 text-secondary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2">翻演與空翻</h3>
-                      <p className="text-muted-foreground">融合體操和特技元素，實現令人驚嘆的翻滾和空中動作。</p>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-                <CarouselItem>
-                  <Card className="overflow-hidden border-2 border-accent/20 shadow-lg hover:shadow-xl transition-all duration-300">
-                    <CardContent className="p-6">
-                      <div className="aspect-square rounded-md bg-muted mb-4 flex items-center justify-center text-muted-foreground">
-                        <Sparkles className="h-12 w-12 text-secondary" />
-                      </div>
-                      <h3 className="text-xl font-semibold mb-2">身體控制</h3>
-                      <p className="text-muted-foreground">學習掌握精確的身體控制技巧，為高級動作打下堅實基礎。</p>
-                    </CardContent>
-                  </Card>
-                </CarouselItem>
-              </CarouselContent>
-              <div className="hidden md:block">
-                <CarouselPrevious className="left-0" />
-                <CarouselNext className="right-0" />
-              </div>
-            </Carousel>
-          </div>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">What is Tricking?</h2>
+          <Button variant="outline" size="sm" asChild className="rounded-full px-4">
+            <Link to="/tricktionary">
+              查看全部 <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
+        
+        <Carousel
+          opts={{
+            align: "start",
+            dragFree: true,
+            containScroll: "trimSnaps",
+          }}
+          className="w-full touch-pan-y"
+        >
+          <CarouselContent className="-ml-2 md:-ml-4">
+            <CarouselItem className="pl-2 md:pl-4 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+              <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+                <CardContent className="p-0">
+                  <div className="flex flex-col items-center justify-center p-6 text-center">
+                    <h3 className="text-2xl font-bold mb-2 text-black">武術技巧</h3>
+                    <p className="text-black/70 mb-6">能量飲料</p>
+                    <div className="w-40 h-48 bg-blue-900 rounded-lg flex items-center justify-center mb-4">
+                      <Flame className="h-16 w-16 text-white/80" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+
+            <CarouselItem className="pl-2 md:pl-4 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+              <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+                <CardContent className="p-0">
+                  <div className="flex flex-col items-center justify-center p-6 text-center">
+                    <h3 className="text-2xl font-bold mb-2 text-black">翻滾技巧</h3>
+                    <p className="text-black/70 mb-6">無糖能量飲料</p>
+                    <div className="w-40 h-48 bg-sky-500 rounded-lg flex items-center justify-center mb-4">
+                      <Trophy className="h-16 w-16 text-white/80" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+
+            <CarouselItem className="pl-2 md:pl-4 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+              <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+                <CardContent className="p-0">
+                  <div className="flex flex-col items-center justify-center p-6 text-center">
+                    <h3 className="text-2xl font-bold mb-2 text-black">空翻技巧</h3>
+                    <p className="text-black/70 mb-6 flex flex-col">
+                      <span>Summer Edition</span>
+                    </p>
+                    <div className="w-40 h-48 bg-blue-500 rounded-lg flex items-center justify-center mb-4">
+                      <Dumbbell className="h-16 w-16 text-white/80" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+
+            <CarouselItem className="pl-2 md:pl-4 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+              <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+                <CardContent className="p-0">
+                  <div className="flex flex-col items-center justify-center p-6 text-center">
+                    <h3 className="text-2xl font-bold mb-2 text-black">身體控制</h3>
+                    <p className="text-black/70 mb-6 flex flex-col">
+                      <span>Green Edition</span>
+                    </p>
+                    <div className="w-40 h-48 bg-green-500 rounded-lg flex items-center justify-center mb-4">
+                      <Sparkles className="h-16 w-16 text-white/80" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+
+            <CarouselItem className="pl-2 md:pl-4 basis-4/5 sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+              <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white">
+                <CardContent className="p-0">
+                  <div className="flex flex-col items-center justify-center p-6 text-center">
+                    <h3 className="text-2xl font-bold mb-2 text-black">流暢連接</h3>
+                    <p className="text-black/70 mb-6 flex flex-col">
+                      <span>Purple Edition</span>
+                    </p>
+                    <div className="w-40 h-48 bg-purple-700 rounded-lg flex items-center justify-center mb-4">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-white/80"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </CarouselItem>
+          </CarouselContent>
+        </Carousel>
       </div>
     </section>
   );
