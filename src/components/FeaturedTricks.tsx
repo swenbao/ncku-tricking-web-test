@@ -34,7 +34,7 @@ const FeaturedTricks = () => {
         >
           <CarouselContent>
             <CarouselItem className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <Card className="overflow-hidden bg-card/30 border-0 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm">
+              <Card className="overflow-hidden bg-card/30 border-0 shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)] transition-all duration-300 backdrop-blur-sm">
                 <CardContent className="p-0">
                   <div className="aspect-square bg-secondary/10 flex items-center justify-center">
                     <div className="bg-yellow-300 w-3/4 h-3/4 flex items-center justify-center font-bold text-lg">
@@ -50,7 +50,7 @@ const FeaturedTricks = () => {
             </CarouselItem>
             
             <CarouselItem className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <Card className="overflow-hidden bg-card/30 border-0 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm">
+              <Card className="overflow-hidden bg-card/30 border-0 shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)] transition-all duration-300 backdrop-blur-sm">
                 <CardContent className="p-0">
                   <div className="aspect-square bg-secondary/10 flex items-center justify-center">
                     <div className="bg-yellow-300 w-3/4 h-3/4 flex items-center justify-center font-bold text-lg">
@@ -66,7 +66,7 @@ const FeaturedTricks = () => {
             </CarouselItem>
             
             <CarouselItem className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <Card className="overflow-hidden bg-card/30 border-0 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm">
+              <Card className="overflow-hidden bg-card/30 border-0 shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)] transition-all duration-300 backdrop-blur-sm">
                 <CardContent className="p-0">
                   <div className="aspect-square bg-secondary/10 flex items-center justify-center">
                     <div className="bg-yellow-300 w-3/4 h-3/4 flex items-center justify-center font-bold text-lg">
@@ -82,7 +82,7 @@ const FeaturedTricks = () => {
             </CarouselItem>
             
             <CarouselItem className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <Card className="overflow-hidden bg-card/30 border-0 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm">
+              <Card className="overflow-hidden bg-card/30 border-0 shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)] transition-all duration-300 backdrop-blur-sm">
                 <CardContent className="p-0">
                   <div className="aspect-square bg-secondary/10 flex items-center justify-center">
                     <div className="bg-yellow-300 w-3/4 h-3/4 flex items-center justify-center font-bold text-lg">
@@ -98,7 +98,7 @@ const FeaturedTricks = () => {
             </CarouselItem>
             
             <CarouselItem className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <Card className="overflow-hidden bg-card/30 border-0 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm">
+              <Card className="overflow-hidden bg-card/30 border-0 shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)] transition-all duration-300 backdrop-blur-sm">
                 <CardContent className="p-0">
                   <div className="aspect-square bg-secondary/10 flex items-center justify-center">
                     <div className="bg-yellow-300 w-3/4 h-3/4 flex items-center justify-center font-bold text-lg">
@@ -114,7 +114,7 @@ const FeaturedTricks = () => {
             </CarouselItem>
             
             <CarouselItem className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-              <Card className="overflow-hidden bg-card/30 border-0 shadow-md hover:shadow-lg transition-all duration-300 backdrop-blur-sm flex flex-col justify-center items-center">
+              <Card className="overflow-hidden bg-card/30 border-0 shadow-[0_4px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.15)] transition-all duration-300 backdrop-blur-sm flex flex-col justify-center items-center">
                 <CardContent className="p-6 text-center flex flex-col items-center">
                   <div className="mb-4">
                     <PlusCircle className="h-12 w-12 text-muted-foreground" />
