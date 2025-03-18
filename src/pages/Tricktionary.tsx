@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { tricks, TrickLevel } from '@/lib/data';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -10,7 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Filter, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Sheet,
   SheetContent,
@@ -82,6 +81,16 @@ const TricktionaryPage = () => {
   const handleProgressUpdate = (status: 'Started' | 'Completed' | 'Proficient') => {
     if (selectedTrick && isAuthenticated) {
       updateTrickStatus(selectedTrick.id, status);
+    }
+  };
+
+  // Get progress status as string label for UI
+  const getProgressStatusLabel = (status: string | null) => {
+    switch(status) {
+      case 'Started': return 'Learning';
+      case 'Completed': return 'Completed';
+      case 'Proficient': return 'Mastered';
+      default: return 'Not Started';
     }
   };
 
@@ -221,31 +230,35 @@ const TricktionaryPage = () => {
           {selectedTrick && (
             <>
               <DialogHeader>
-                <DialogTitle className="flex justify-between items-center">
-                  <span>{selectedTrick.name}</span>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
                   <Badge 
                     variant="outline" 
-                    className="ml-2"
+                    className="trick-level-indicator"
                   >
                     {selectedTrick.level}
                   </Badge>
+                  
+                  {selectedTrick.categories.map((category, index) => (
+                    <Badge key={index} variant="secondary">
+                      {category}
+                    </Badge>
+                  ))}
+                </div>
+                
+                <DialogTitle className="text-xl mt-2">
+                  {selectedTrick.name}
                 </DialogTitle>
-                <DialogDescription>
-                  {selectedTrick.description}
-                </DialogDescription>
               </DialogHeader>
               
               <div className="space-y-4">
-                <div>
-                  <h4 className="text-sm font-medium mb-1">Categories</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedTrick.categories.map((category, index) => (
-                      <Badge key={index} variant="secondary">
-                        {category}
-                      </Badge>
-                    ))}
-                  </div>
+                {/* GIF or Video would go here */}
+                <div className="aspect-video bg-muted/20 rounded-md flex items-center justify-center mb-4 border border-white/10">
+                  <p className="text-muted-foreground">Demo animation</p>
                 </div>
+                
+                <DialogDescription className="text-base">
+                  {selectedTrick.description}
+                </DialogDescription>
                 
                 {selectedTrick.prerequisites && selectedTrick.prerequisites.length > 0 && (
                   <div>
@@ -259,34 +272,30 @@ const TricktionaryPage = () => {
                 )}
                 
                 {user && (
-                  <div className="border-t pt-4 mt-4">
-                    <h4 className="text-sm font-medium mb-2">Update Your Progress</h4>
-                    <RadioGroup 
-                      defaultValue={getTrickProgress(selectedTrick.id) || ""} 
-                      onValueChange={(value) => handleProgressUpdate(value as 'Started' | 'Completed' | 'Proficient')}
-                      className="flex flex-col space-y-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Started" id="started" />
-                        <Label htmlFor="started">Started learning/practicing</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Completed" id="completed" />
-                        <Label htmlFor="completed">Successfully completed once</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="Proficient" id="proficient" />
-                        <Label htmlFor="proficient">Proficient</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                )}
-                
-                {selectedTrick.videoUrl && (
-                  <div>
-                    <h4 className="text-sm font-medium mb-1">Reference Video</h4>
-                    <div className="aspect-video bg-muted rounded-md flex items-center justify-center">
-                      <p className="text-muted-foreground">Video unavailable</p>
+                  <div className="border-t border-white/10 pt-4 mt-6">
+                    <h4 className="text-sm font-medium mb-3">Your Progress</h4>
+                    
+                    <div className="grid grid-cols-3 gap-2">
+                      {(['Started', 'Completed', 'Proficient'] as const).map((status) => {
+                        const isActive = getTrickProgress(selectedTrick.id) === status;
+                        return (
+                          <Button 
+                            key={status}
+                            variant={isActive ? "default" : "outline"} 
+                            size="sm"
+                            className={cn(
+                              "relative overflow-hidden transition-all duration-300",
+                              isActive && "bg-accent text-accent-foreground font-medium"
+                            )}
+                            onClick={() => handleProgressUpdate(status)}
+                          >
+                            {getProgressStatusLabel(status)}
+                            {isActive && (
+                              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white/30" />
+                            )}
+                          </Button>
+                        );
+                      })}
                     </div>
                   </div>
                 )}

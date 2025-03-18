@@ -34,19 +34,32 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
   const progressStatus = trickProgress?.status || null;
   
   // Determine card styling based on progress
-  let cardClassNames = "trick-card shadow-[0_0_15px_5px_rgba(255,255,255,0.05)] hover:shadow-[0_0_20px_8px_rgba(255,255,255,0.08)] transition-all duration-300 transform hover:-translate-y-1";
+  let cardClassNames = "trick-card transition-all duration-300 transform hover:-translate-y-1";
   
   if (user) {
     if (progressStatus === 'Completed' || progressStatus === 'Proficient') {
-      // Light gray for completed tricks
-      cardClassNames = cn(cardClassNames, "bg-white/20 border-accent/10");
+      // Completed or proficient tricks: lighter background + glow
+      cardClassNames = cn(
+        cardClassNames, 
+        "bg-white/25 border-accent/20",
+        "shadow-[0_0_10px_3px_rgba(255,255,255,0.1)]",
+        "hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.15)]"
+      );
     } else {
-      // Dark gray for default or started tricks
-      cardClassNames = cn(cardClassNames, "bg-white/10 border-border/10");
+      // Default or started tricks: darker background, no glow
+      cardClassNames = cn(
+        cardClassNames, 
+        "bg-white/10 border-border/10",
+        "hover:bg-white/15"
+      );
     }
   } else {
     // Default state for guests
-    cardClassNames = cn(cardClassNames, "bg-white/10 border-border/10");
+    cardClassNames = cn(
+      cardClassNames, 
+      "bg-white/10 border-border/10",
+      "hover:bg-white/15"
+    );
   }
   
   return (
