@@ -28,8 +28,8 @@ const Navbar = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Show navbar when scrolling down past threshold (50px instead of 100px)
-      if (currentScrollY > 50) {
+      // Show navbar when scrolling down past threshold (10px instead of 50px)
+      if (currentScrollY > 10) {
         setIsScrolled(true);
         setNavVisible(true); // Always show navbar when scrolled down
       } else {
