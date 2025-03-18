@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, Link } from 'react-router-dom';
-import { Menu, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth, UserAvatar } from '@/contexts/AuthContext';
 import {
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,13 +22,14 @@ const Navbar = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { language, toggleLanguage } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Show navbar when scrolling down past threshold
-      if (currentScrollY > 100) {
+      // Show navbar when scrolling down past threshold (50px instead of 100px)
+      if (currentScrollY > 50) {
         setIsScrolled(true);
         setNavVisible(true); // Always show navbar when scrolled down
       } else {
@@ -54,8 +56,9 @@ const Navbar = () => {
         isScrolled 
           ? "py-3 bg-black/80 backdrop-blur-md shadow-sm border-b border-white/10" 
           : "py-5 bg-transparent",
-        navVisible ? "translate-y-0 opacity-100" : "translate-y-0 opacity-0"
+        navVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
       )}
+      style={{ pointerEvents: navVisible ? 'auto' : 'none' }}
     >
       <div className="container mx-auto px-4 md:px-6">
         <nav className="flex items-center justify-between">
@@ -64,19 +67,30 @@ const Navbar = () => {
             <span className="text-red-500">TRICKING</span>
           </NavLink>
 
+          {/* Language Toggle Button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleLanguage} 
+            className="hidden md:flex rounded-full absolute right-20"
+          >
+            <Globe className="h-5 w-5" />
+            <span className="ml-1 text-xs">{language === 'en' ? 'EN' : '中'}</span>
+          </Button>
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             <NavLink to="/" className={({isActive}) => cn("nav-link", isActive && "active")}>
-              Home
+              {language === 'en' ? 'Home' : '首頁'}
             </NavLink>
             <NavLink to="/tricktionary" className={({isActive}) => cn("nav-link", isActive && "active")}>
-              Tricktionary
+              {language === 'en' ? 'Tricktionary' : '招式字典'}
             </NavLink>
             <NavLink to="/points" className={({isActive}) => cn("nav-link", isActive && "active")}>
-              Buy Points
+              {language === 'en' ? 'Buy Points' : '購買點數'}
             </NavLink>
             <NavLink to="/booking" className={({isActive}) => cn("nav-link", isActive && "active")}>
-              Book Classes
+              {language === 'en' ? 'Book Classes' : '預約課程'}
             </NavLink>
             
             {user ? (
@@ -97,24 +111,34 @@ const Navbar = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="cursor-pointer flex items-center">
                       <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
+                      <span>{language === 'en' ? 'Profile' : '個人資料'}</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => logout()} className="cursor-pointer text-red-500">
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                    <span>{language === 'en' ? 'Log out' : '登出'}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button asChild variant="ghost" className="ml-2">
-                <Link to="/login">Log In</Link>
+                <Link to="/login">{language === 'en' ? 'Log In' : '登入'}</Link>
               </Button>
             )}
           </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center">
+            {/* Mobile Language Toggle */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleLanguage} 
+              className="mr-2"
+            >
+              <Globe className="h-5 w-5" />
+            </Button>
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -133,18 +157,18 @@ const Navbar = () => {
                   <DropdownMenuItem asChild>
                     <Link to="/profile" className="cursor-pointer flex items-center">
                       <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
+                      <span>{language === 'en' ? 'Profile' : '個人資料'}</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => logout()} className="cursor-pointer text-red-500">
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                    <span>{language === 'en' ? 'Log out' : '登出'}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Button asChild variant="ghost" size="sm" className="mr-2">
-                <Link to="/login">Log In</Link>
+                <Link to="/login">{language === 'en' ? 'Log In' : '登入'}</Link>
               </Button>
             )}
             
@@ -171,16 +195,16 @@ const Navbar = () => {
         >
           <div className="flex flex-col items-center space-y-6 p-8">
             <NavLink to="/" className="text-lg font-medium text-white">
-              Home
+              {language === 'en' ? 'Home' : '首頁'}
             </NavLink>
             <NavLink to="/tricktionary" className="text-lg font-medium text-white">
-              Tricktionary
+              {language === 'en' ? 'Tricktionary' : '招式字典'}
             </NavLink>
             <NavLink to="/points" className="text-lg font-medium text-white">
-              Buy Points
+              {language === 'en' ? 'Buy Points' : '購買點數'}
             </NavLink>
             <NavLink to="/booking" className="text-lg font-medium text-white">
-              Book Classes
+              {language === 'en' ? 'Book Classes' : '預約課程'}
             </NavLink>
           </div>
         </div>

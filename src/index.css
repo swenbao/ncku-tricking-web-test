@@ -125,3 +125,20 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Class background images */
+.bg-flip {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/placeholder.svg');
+}
+
+.bg-tricking {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/placeholder.svg');
+}
+
+.bg-kick {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/placeholder.svg');
+}
+
+.bg-beginner {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/placeholder.svg');
+}
