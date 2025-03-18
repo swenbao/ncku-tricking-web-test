@@ -59,7 +59,7 @@ const JoinFlow = () => {
             <CarouselContent>
               {prerequisites.map((trick, index) => (
                 <CarouselItem key={index} className="md:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-                  <Card className="h-full overflow-hidden border border-border/50 shadow-sm hover:shadow-md transition-all duration-300">
+                  <Card className="h-full overflow-hidden border border-white/20 shadow-sm hover:shadow-md transition-all duration-300">
                     <CardContent className="p-0">
                       <div className="relative aspect-square bg-secondary/10 flex items-center justify-center">
                         <Badge variant="secondary" className="absolute top-2 right-2">#{index + 1}</Badge>

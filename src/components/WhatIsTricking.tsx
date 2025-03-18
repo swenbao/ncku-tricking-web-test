@@ -50,7 +50,7 @@ const WhatIsTricking = () => {
             <CarouselContent>
               {trickCategories.map((category, index) => (
                 <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                  <Card className="h-full shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-border/30">
+                  <Card className="h-full shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-white/20">
                     <CardContent className="p-0">
                       <div className={`aspect-square ${category.color} flex items-center justify-center`}>
                         <div className="bg-white/5 backdrop-blur w-3/4 h-3/4 flex items-center justify-center font-semibold text-foreground/80 text-xl">
