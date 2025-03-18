@@ -67,17 +67,6 @@ const Navbar = () => {
             <span className="text-red-500">TRICKING</span>
           </NavLink>
 
-          {/* Language Toggle Button */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleLanguage} 
-            className="hidden md:flex rounded-full absolute right-20"
-          >
-            <Globe className="h-5 w-5" />
-            <span className="ml-1 text-xs">{language === 'en' ? 'EN' : '中'}</span>
-          </Button>
-
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             <NavLink to="/" className={({isActive}) => cn("nav-link", isActive && "active")}>
@@ -92,6 +81,17 @@ const Navbar = () => {
             <NavLink to="/booking" className={({isActive}) => cn("nav-link", isActive && "active")}>
               {language === 'en' ? 'Book Classes' : '預約課程'}
             </NavLink>
+            
+            {/* Language Toggle Button - Moved to the nav links area with proper spacing */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleLanguage} 
+              className="rounded-full"
+            >
+              <Globe className="h-5 w-5" />
+              <span className="ml-1 text-xs">{language === 'en' ? 'EN' : '中'}</span>
+            </Button>
             
             {user ? (
               <DropdownMenu>

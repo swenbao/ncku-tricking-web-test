@@ -1,7 +1,13 @@
 
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious 
+} from '@/components/ui/carousel';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -69,6 +75,10 @@ const JoinFlow = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <div className="hidden md:block">
+              <CarouselPrevious className="left-0" />
+              <CarouselNext className="right-0" />
+            </div>
           </Carousel>
         </div>
       </div>
