@@ -17,10 +17,10 @@ const WhatIsTricking = () => {
   const { language } = useLanguage();
   
   const trickCategories = [
-    { title: language === 'en' ? 'Flips' : '空翻', color: 'bg-blue-500' },
-    { title: language === 'en' ? 'Kicks' : '踢技', color: 'bg-red-500' },
-    { title: language === 'en' ? 'Twists' : '轉體', color: 'bg-purple-500' },
-    { title: language === 'en' ? 'Ground Moves' : '地板技', color: 'bg-green-500' }
+    { title: language === 'en' ? 'Flips' : '空翻', color: 'bg-muted/80' },
+    { title: language === 'en' ? 'Kicks' : '踢技', color: 'bg-muted/80' },
+    { title: language === 'en' ? 'Twists' : '轉體', color: 'bg-muted/80' },
+    { title: language === 'en' ? 'Ground Moves' : '地板技', color: 'bg-muted/80' }
   ];
 
   return (
@@ -50,10 +50,10 @@ const WhatIsTricking = () => {
             <CarouselContent>
               {trickCategories.map((category, index) => (
                 <CarouselItem key={index} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
-                  <Card className="h-full shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border-0">
+                  <Card className="h-full shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-border/30">
                     <CardContent className="p-0">
                       <div className={`aspect-square ${category.color} flex items-center justify-center`}>
-                        <div className="bg-white/10 backdrop-blur w-3/4 h-3/4 flex items-center justify-center font-semibold text-white text-xl">
+                        <div className="bg-white/5 backdrop-blur w-3/4 h-3/4 flex items-center justify-center font-semibold text-foreground/80 text-xl">
                           GIF
                         </div>
                       </div>
