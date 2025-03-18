@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { tricks, TrickLevel } from '@/lib/data';
 import Navbar from '@/components/Navbar';
@@ -79,13 +78,18 @@ const TricktionaryPage = () => {
     return user.completedTricks.find(t => t.trickId === trickId)?.status || null;
   };
 
-  const handleProgressUpdate = (status: 'Started' | 'Completed' | 'Proficient') => {
+  const handleProgressUpdate = (status: 'Started' | 'Completed' | 'Proficient' | null) => {
     if (selectedTrick && isAuthenticated) {
-      updateTrickStatus(selectedTrick.id, status);
+      const currentStatus = getTrickProgress(selectedTrick.id);
+      
+      if (currentStatus === status) {
+        updateTrickStatus(selectedTrick.id, null);
+      } else {
+        updateTrickStatus(selectedTrick.id, status);
+      }
     }
   };
 
-  // Get progress status as string label for UI
   const getProgressStatusLabel = (status: string | null) => {
     switch(status) {
       case 'Started': return 'Learning';
@@ -252,7 +256,6 @@ const TricktionaryPage = () => {
               </DialogHeader>
               
               <div className="space-y-4">
-                {/* GIF or Video would go here */}
                 <div className="aspect-video bg-muted/20 rounded-md flex items-center justify-center mb-4 border border-white/10">
                   <p className="text-muted-foreground">Demo animation</p>
                 </div>
@@ -274,11 +277,12 @@ const TricktionaryPage = () => {
                 
                 {user && (
                   <div className="border-t border-white/10 pt-4 mt-6">
-                    <h4 className="text-sm font-medium mb-3">Your Progress</h4>
+                    <h4 className="text-sm font-medium mb-3">Update Your Progress</h4>
                     
                     <div className="grid grid-cols-3 gap-2">
                       {(['Started', 'Completed', 'Proficient'] as const).map((status) => {
-                        const isActive = getTrickProgress(selectedTrick.id) === status;
+                        const currentStatus = getTrickProgress(selectedTrick.id);
+                        const isActive = currentStatus === status;
                         return (
                           <Button 
                             key={status}
@@ -288,7 +292,7 @@ const TricktionaryPage = () => {
                               "relative overflow-hidden transition-all duration-300",
                               isActive && "bg-accent text-accent-foreground font-medium"
                             )}
-                            onClick={() => handleProgressUpdate(status)}
+                            onClick={() => handleProgressUpdate(isActive ? null : status)}
                           >
                             {getProgressStatusLabel(status)}
                             {isActive && (
