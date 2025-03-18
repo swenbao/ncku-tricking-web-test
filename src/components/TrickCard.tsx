@@ -34,7 +34,7 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
   const progressStatus = trickProgress?.status || null;
   
   // Determine card styling based on progress
-  let cardClassNames = "trick-card";
+  let cardClassNames = "trick-card shadow-[0_0_15px_5px_rgba(255,255,255,0.05)] hover:shadow-[0_0_20px_8px_rgba(255,255,255,0.08)] transition-all duration-300 transform hover:-translate-y-1";
   if (user) {
     if (progressStatus === 'Completed' || progressStatus === 'Proficient') {
       // Brightened card for completed tricks
