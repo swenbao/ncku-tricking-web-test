@@ -35,23 +35,28 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
   
   // Determine card styling based on progress
   let cardClassNames = "trick-card transition-all duration-300 transform hover:-translate-y-1";
+  let titleClassNames = "font-medium text-lg";
+  let descriptionClassNames = "text-sm text-muted-foreground mb-3";
   
   if (user) {
     if (progressStatus === 'Completed' || progressStatus === 'Proficient') {
-      // Completed or proficient tricks: lighter background + glow
+      // Learned tricks: Medium brightness with higher contrast
       cardClassNames = cn(
         cardClassNames, 
-        "bg-white/25 border-accent/20",
-        "shadow-[0_0_10px_3px_rgba(255,255,255,0.1)]",
-        "hover:shadow-[0_0_15px_5px_rgba(255,255,255,0.15)]"
+        "bg-white/15 border-accent/20",
+        "shadow-[0_0_8px_2px_rgba(255,255,255,0.07)]"
       );
+      titleClassNames = cn(titleClassNames, "text-white");
+      descriptionClassNames = cn(descriptionClassNames, "text-white/70");
     } else {
-      // Default or started tricks: darker background, no glow
+      // Not learned tricks: Darker with lower contrast
       cardClassNames = cn(
         cardClassNames, 
-        "bg-white/10 border-border/10",
-        "hover:bg-white/15"
+        "bg-white/8 border-border/5",
+        "hover:bg-white/10"
       );
+      titleClassNames = cn(titleClassNames, "text-white/60");
+      descriptionClassNames = cn(descriptionClassNames, "text-white/40");
     }
   } else {
     // Default state for guests
@@ -68,7 +73,7 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
       onClick={onClick}
     >
       <div className="flex justify-between items-start mb-2">
-        <h3 className="font-medium text-lg">
+        <h3 className={titleClassNames}>
           {trick.name}
         </h3>
         <Badge 
@@ -80,14 +85,19 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
       </div>
       
       {trick.description && (
-        <p className="text-sm text-muted-foreground mb-3">{trick.description}</p>
+        <p className={descriptionClassNames}>{trick.description}</p>
       )}
       
       <div className="flex flex-wrap gap-2">
         {trick.categories.map((category, index) => (
           <span 
             key={index}
-            className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary/10 text-secondary-foreground"
+            className={cn(
+              "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary/10",
+              progressStatus === 'Completed' || progressStatus === 'Proficient' 
+                ? "text-secondary-foreground" 
+                : "text-secondary-foreground/60"
+            )}
           >
             {category}
           </span>
