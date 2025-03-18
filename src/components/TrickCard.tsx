@@ -35,20 +35,18 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
   
   // Determine card styling based on progress
   let cardClassNames = "trick-card shadow-[0_0_15px_5px_rgba(255,255,255,0.05)] hover:shadow-[0_0_20px_8px_rgba(255,255,255,0.08)] transition-all duration-300 transform hover:-translate-y-1";
+  
   if (user) {
     if (progressStatus === 'Completed' || progressStatus === 'Proficient') {
-      // Brightened card for completed tricks
-      cardClassNames = cn(cardClassNames, "bg-white/95 border-accent/30 shadow-md");
-    } else if (progressStatus === 'Started') {
-      // In-progress styling
-      cardClassNames = cn(cardClassNames, "bg-white/90 border-secondary/30");
+      // Light gray for completed tricks
+      cardClassNames = cn(cardClassNames, "bg-white/20 border-accent/10");
     } else {
-      // Darkened for not started but user is logged in
-      cardClassNames = cn(cardClassNames, "bg-white/80");
+      // Dark gray for default or started tricks
+      cardClassNames = cn(cardClassNames, "bg-white/10 border-border/10");
     }
   } else {
-    // Default partially visible state for guests
-    cardClassNames = cn(cardClassNames, "bg-white/70 hover:bg-white/80");
+    // Default state for guests
+    cardClassNames = cn(cardClassNames, "bg-white/10 border-border/10");
   }
   
   return (
@@ -59,13 +57,6 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
       <div className="flex justify-between items-start mb-2">
         <h3 className="font-medium text-lg">
           {trick.name}
-          {progressStatus && (
-            <span className="ml-2">
-              {progressStatus === 'Started' && '🔸'}
-              {progressStatus === 'Completed' && '✓'}
-              {progressStatus === 'Proficient' && '⭐'}
-            </span>
-          )}
         </h3>
         <Badge 
           variant="outline" 

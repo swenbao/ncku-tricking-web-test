@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { tricks, TrickLevel } from '@/lib/data';
 import Navbar from '@/components/Navbar';
@@ -38,6 +39,8 @@ const levelOrder: TrickLevel[] = [
   'Advanced',
   'Expert',
 ];
+
+const TRICK_CATEGORIES = ['Kick', 'Flip', 'Twist', 'Ground Movement', 'Transition'];
 
 const TricktionaryPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -138,7 +141,7 @@ const TricktionaryPage = () => {
                   <div className="py-6">
                     <h3 className="text-sm font-medium mb-4">Categories</h3>
                     <div className="space-y-3">
-                      {['Kick', 'Flip', 'Twist', 'Transition'].map((category) => (
+                      {TRICK_CATEGORIES.map((category) => (
                         <div key={category} className="flex items-center">
                           <Checkbox
                             id={`category-${category}`}
