@@ -23,19 +23,19 @@ export const getClassTypes = (language: string): ClassType[] => [
   {
     type: 'tricking',
     name: language === 'en' ? 'Tricking' : 'Tricking課程',
-    icon: <Flame className="h-5 w-5" />,
+    icon: React.createElement(Flame, { className: "h-5 w-5" }),
     color: 'bg-orange-800/70 text-orange-200',
   },
   {
     type: 'flip',
     name: language === 'en' ? 'Flip' : '空翻課程',
-    icon: <FlipHorizontal className="h-5 w-5" />,
+    icon: React.createElement(FlipHorizontal, { className: "h-5 w-5" }),
     color: 'bg-purple-800/70 text-purple-200',
   },
   {
     type: 'kicking',
     name: language === 'en' ? 'Kicking' : '踢技課程',
-    icon: <Dumbbell className="h-5 w-5" />,
+    icon: React.createElement(Dumbbell, { className: "h-5 w-5" }),
     color: 'bg-blue-800/70 text-blue-200',
   },
 ];
