@@ -65,6 +65,18 @@ const BookingPage = () => {
     return dates;
   }, []);
   
+  // Calculate class duration in hours
+  const getClassDuration = (timeString: string): number => {
+    try {
+      const [startTime, endTime] = timeString.split('-');
+      const startHour = parseInt(startTime.trim(), 10);
+      const endHour = parseInt(endTime.trim(), 10);
+      return endHour - startHour;
+    } catch (error) {
+      return 1; // Default to 1 hour if parsing fails
+    }
+  };
+  
   // Handle class selection
   const handleSelectClass = (classItem: any) => {
     if (userPoints < classItem.pointsCost) {
@@ -318,7 +330,7 @@ const BookingPage = () => {
                                   <p className="text-xl font-bold">{session.time}</p>
                                   <div className="flex items-center text-white/90 text-sm mt-1">
                                     <Clock className="h-3 w-3 mr-1" />
-                                    <span>{session.time.split('-')[1].substring(0, 2) - session.time.split('-')[0].substring(0, 2)} hours</span>
+                                    <span>{getClassDuration(session.time)} hours</span>
                                   </div>
                                 </div>
                                 
@@ -396,7 +408,7 @@ const BookingPage = () => {
                                   <p className="text-xl font-bold">{session.time}</p>
                                   <div className="flex items-center text-white/90 text-sm mt-1">
                                     <Clock className="h-3 w-3 mr-1" />
-                                    <span>{session.time.split('-')[1].substring(0, 2) - session.time.split('-')[0].substring(0, 2)} hours</span>
+                                    <span>{getClassDuration(session.time)} hours</span>
                                   </div>
                                 </div>
                                 
@@ -474,7 +486,7 @@ const BookingPage = () => {
                                   <p className="text-xl font-bold">{session.time}</p>
                                   <div className="flex items-center text-white/90 text-sm mt-1">
                                     <Clock className="h-3 w-3 mr-1" />
-                                    <span>{session.time.split('-')[1].substring(0, 2) - session.time.split('-')[0].substring(0, 2)} hours</span>
+                                    <span>{getClassDuration(session.time)} hours</span>
                                   </div>
                                 </div>
                                 
@@ -559,7 +571,7 @@ const BookingPage = () => {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">Duration</span>
-                            <span className="font-medium">{selectedClass.time.split('-')[1].substring(0, 2) - selectedClass.time.split('-')[0].substring(0, 2)} hours</span>
+                            <span className="font-medium">{getClassDuration(selectedClass.time)} hours</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">Level</span>
