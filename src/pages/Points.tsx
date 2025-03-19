@@ -176,7 +176,7 @@ const PointsPage = () => {
                   <CardTitle className="text-2xl">Advanced Course Cards</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-40 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 rounded-lg flex items-center justify-center mb-4">
+                  <div className="h-40 bg-gradient-to-br from-red-900 to-red-700 dark:from-red-900 dark:to-red-800/70 rounded-lg flex items-center justify-center mb-4">
                     <span className="text-2xl font-semibold">For Experienced Trickers</span>
                   </div>
                   <p className="text-muted-foreground">Take your skills to the next level</p>
