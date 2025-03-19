@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, Link } from 'react-router-dom';
 import { Menu, X, User, LogOut, Globe } from 'lucide-react';
@@ -28,24 +29,21 @@ const Navbar = () => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
       
-      // Show navbar when scrolling down past threshold (10px instead of 50px)
       if (currentScrollY > 10) {
         setIsScrolled(true);
-        // Only set navbar visible when not in hover mode
-        if (!isHovering) {
-          setNavVisible(false);
-        }
+        setNavVisible(true); // Always show when scrolled past 10px
       } else {
         setIsScrolled(false);
-        setNavVisible(true); // Always show at top
+        setNavVisible(false); // Hidden when at top (unless hovering)
       }
       
       setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY, isHovering]);
+  }, []);
 
   // Function to handle mouse entering the top area
   const handleMouseEnter = () => {
@@ -56,7 +54,7 @@ const Navbar = () => {
   // Function to handle mouse leaving the navbar
   const handleMouseLeave = () => {
     setIsHovering(false);
-    if (window.scrollY > 10) {
+    if (window.scrollY <= 10) {
       setNavVisible(false);
     }
   };
@@ -70,7 +68,7 @@ const Navbar = () => {
     <>
       {/* Hover detection area - invisible bar at the top of the screen */}
       <div 
-        className="fixed top-0 left-0 right-0 h-5 z-40" 
+        className="fixed top-0 left-0 right-0 h-10 z-40" 
         onMouseEnter={handleMouseEnter}
       />
       
@@ -80,9 +78,10 @@ const Navbar = () => {
           isScrolled 
             ? "py-3 bg-black/80 backdrop-blur-md shadow-sm border-b border-white/10" 
             : "py-5 bg-transparent",
-          navVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+          navVisible 
+            ? "translate-y-0 opacity-100 pointer-events-auto" 
+            : "-translate-y-full opacity-0 pointer-events-none"
         )}
-        style={{ pointerEvents: navVisible ? 'auto' : 'none' }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
@@ -108,7 +107,7 @@ const Navbar = () => {
                 {language === 'en' ? 'Book Classes' : '預約課程'}
               </NavLink>
               
-              {/* Language Toggle Button - Moved to the nav links area with proper spacing */}
+              {/* Language Toggle Button */}
               <Button 
                 variant="ghost" 
                 size="icon" 

@@ -131,6 +131,15 @@
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
   
+  /* Navbar transitions */
+  .navbar-slide-in {
+    @apply translate-y-0 opacity-100 transition-all duration-300 ease-in-out;
+  }
+  
+  .navbar-slide-out {
+    @apply -translate-y-full opacity-0 transition-all duration-300 ease-in-out;
+  }
+  
   /* Dark mode classes for booking page */
   .booking-page {
     @apply bg-[hsl(var(--booking-bg))] text-[hsl(var(--booking-text))];
