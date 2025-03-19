@@ -18,7 +18,7 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
         Choose the type of class you're interested in attending.
       </p>
       
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {classTypes.map((type) => (
           <Card 
             key={type.id}
