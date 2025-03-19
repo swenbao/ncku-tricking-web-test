@@ -18,12 +18,12 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
         Choose the type of class you're interested in attending.
       </p>
       
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-col md:flex-row gap-6">
         {classTypes.map((type) => (
           <Card 
             key={type.id}
             className={cn(
-              "cursor-pointer transition-all hover:shadow-md overflow-hidden",
+              "cursor-pointer transition-all hover:shadow-md overflow-hidden flex-1",
               selectedType === type.id ? "ring-2 ring-primary" : "border"
             )}
             onClick={() => setSelectedType(type.id)}
