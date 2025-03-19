@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Clock, Users, BookOpen, Dumbbell, Star, FlipHorizontal, Flame, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -23,16 +22,10 @@ const ClassSchedule = () => {
       color: 'bg-purple-800/70 text-purple-200',
     },
     {
-      type: 'gymnastics',
-      name: language === 'en' ? 'Gymnastics' : '體操課程',
+      type: 'kicking',
+      name: language === 'en' ? 'Kicking' : '踢技課程',
       icon: <Dumbbell className="h-5 w-5" />,
       color: 'bg-blue-800/70 text-blue-200',
-    },
-    {
-      type: 'specialty',
-      name: language === 'en' ? 'Specialization' : '專項課程',
-      icon: <Star className="h-5 w-5" />,
-      color: 'bg-emerald-800/70 text-emerald-200',
     },
   ];
 
@@ -61,7 +54,7 @@ const ClassSchedule = () => {
       pointsCost: 2,
     },
     {
-      type: 'gymnastics',
+      type: 'kicking',
       difficulty: 'advanced',
       day: language === 'en' ? 'Friday' : '星期五',
       time: '18:00-19:30',
@@ -123,7 +116,7 @@ const ClassSchedule = () => {
         </div>
 
         {/* Class Type Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           {classTypes.map((classType, index) => (
             <div 
               key={index}

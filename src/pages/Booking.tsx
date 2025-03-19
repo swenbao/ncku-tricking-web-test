@@ -16,7 +16,6 @@ import {
   Flame,
   FlipHorizontal,
   Dumbbell,
-  Star,
   ArrowDown,
   ArrowRight as ArrowRightIcon,
   ArrowUp
@@ -51,7 +50,7 @@ import { useForm } from "react-hook-form";
 // Steps in the booking process
 type BookingStep = 'type' | 'difficulty' | 'schedule' | 'confirm' | 'complete';
 
-// Enhanced class types definitions
+// Enhanced class types definitions - updated to remove gymnastics and specialization
 const classTypes = [
   {
     id: 'tricking',
@@ -68,19 +67,12 @@ const classTypes = [
     description: 'Master various flipping techniques both on ground and with trampolines.'
   },
   {
-    id: 'gymnastics',
-    name: 'Gymnastics',
+    id: 'kicking',
+    name: 'Kicking',
     icon: <Dumbbell className="h-5 w-5" />,
     color: 'bg-blue-800/70 text-blue-200',
-    description: 'Build strength, flexibility, and body control with gymnastics training.'
-  },
-  {
-    id: 'specialty',
-    name: 'Specialization',
-    icon: <Star className="h-5 w-5" />,
-    color: 'bg-emerald-800/70 text-emerald-200',
-    description: 'Focus on specialized techniques and advanced combinations.'
-  },
+    description: 'Build strength and technique with advanced kicking training.'
+  }
 ];
 
 // Difficulty levels
@@ -151,7 +143,7 @@ const enhancedClassData = [
   },
   {
     id: '4',
-    type: 'gymnastics',
+    type: 'kicking',
     difficulty: 'advanced',
     day: 'Friday',
     time: '18:00-19:30',
@@ -544,13 +536,13 @@ const BookingPage = () => {
                                 "p-5 flex flex-col justify-center items-center md:w-1/4 text-white",
                                 `bg-${classItem.type === 'tricking' ? 'orange' : 
                                         classItem.type === 'flip' ? 'purple' : 
-                                        classItem.type === 'gymnastics' ? 'blue' : 
+                                        classItem.type === 'kicking' ? 'blue' : 
                                         'emerald'}-800`
                               )}>
                                 <div className="mb-2">
                                   {classItem.type === 'tricking' ? <Flame className="h-6 w-6" /> :
                                    classItem.type === 'flip' ? <FlipHorizontal className="h-6 w-6" /> :
-                                   classItem.type === 'gymnastics' ? <Dumbbell className="h-6 w-6" /> :
+                                   classItem.type === 'kicking' ? <Dumbbell className="h-6 w-6" /> :
                                    <Star className="h-6 w-6" />}
                                 </div>
                                 <p className="text-xl font-bold">{classItem.day}</p>
@@ -634,7 +626,7 @@ const BookingPage = () => {
                             <span className="font-medium flex items-center">
                               {selectedClass.type === 'tricking' ? <Flame className="h-4 w-4 mr-1" /> :
                                selectedClass.type === 'flip' ? <FlipHorizontal className="h-4 w-4 mr-1" /> :
-                               selectedClass.type === 'gymnastics' ? <Dumbbell className="h-4 w-4 mr-1" /> :
+                               selectedClass.type === 'kicking' ? <Dumbbell className="h-4 w-4 mr-1" /> :
                                <Star className="h-4 w-4 mr-1" />}
                               {getClassTypeDetails(selectedClass.type).name}
                             </span>
@@ -823,4 +815,3 @@ const BookingPage = () => {
 };
 
 export default BookingPage;
-
