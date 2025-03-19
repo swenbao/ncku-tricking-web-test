@@ -536,14 +536,12 @@ const BookingPage = () => {
                                 "p-5 flex flex-col justify-center items-center md:w-1/4 text-white",
                                 `bg-${classItem.type === 'tricking' ? 'orange' : 
                                         classItem.type === 'flip' ? 'purple' : 
-                                        classItem.type === 'kicking' ? 'blue' : 
-                                        'emerald'}-800`
+                                        'blue'}-800`
                               )}>
                                 <div className="mb-2">
                                   {classItem.type === 'tricking' ? <Flame className="h-6 w-6" /> :
                                    classItem.type === 'flip' ? <FlipHorizontal className="h-6 w-6" /> :
-                                   classItem.type === 'kicking' ? <Dumbbell className="h-6 w-6" /> :
-                                   <Star className="h-6 w-6" />}
+                                   <Dumbbell className="h-6 w-6" />}
                                 </div>
                                 <p className="text-xl font-bold">{classItem.day}</p>
                                 <div className="flex items-center text-white/90 text-sm mt-1">
@@ -626,8 +624,7 @@ const BookingPage = () => {
                             <span className="font-medium flex items-center">
                               {selectedClass.type === 'tricking' ? <Flame className="h-4 w-4 mr-1" /> :
                                selectedClass.type === 'flip' ? <FlipHorizontal className="h-4 w-4 mr-1" /> :
-                               selectedClass.type === 'kicking' ? <Dumbbell className="h-4 w-4 mr-1" /> :
-                               <Star className="h-4 w-4 mr-1" />}
+                               <Dumbbell className="h-4 w-4 mr-1" />}
                               {getClassTypeDetails(selectedClass.type).name}
                             </span>
                           </div>

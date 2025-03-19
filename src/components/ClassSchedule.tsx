@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Clock, Users, BookOpen, Dumbbell, Star, FlipHorizontal, Flame, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
+import { Clock, Users, BookOpen, Dumbbell, FlipHorizontal, Flame, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
