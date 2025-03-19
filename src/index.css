@@ -39,6 +39,14 @@
     --trick-intermediate: 262 83% 58%;
     --trick-advanced: 267 93% 50%;
     --trick-expert: 268 86% 40%;
+    
+    /* Dark mode booking page colors */
+    --booking-bg: 240 10% 10%;
+    --booking-card: 240 10% 15%;
+    --booking-border: 240 10% 20%;
+    --booking-highlight: 240 10% 25%;
+    --booking-text: 0 0% 98%;
+    --booking-text-muted: 240 5% 70%;
   }
 
   .light {
@@ -74,6 +82,14 @@
     --trick-intermediate: 262 83% 58%;
     --trick-advanced: 267 93% 50%;
     --trick-expert: 268 86% 40%;
+    
+    /* Light mode booking page colors */
+    --booking-bg: 0 0% 95%;
+    --booking-card: 0 0% 100%;
+    --booking-border: 240 5.9% 90%;
+    --booking-highlight: 240 4.8% 95.9%;
+    --booking-text: 240 10% 3.9%;
+    --booking-text-muted: 240 3.8% 46.1%;
   }
 }
 
@@ -113,6 +129,23 @@
   
   .trick-level-indicator {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  
+  /* Dark mode classes for booking page */
+  .booking-page {
+    @apply bg-[hsl(var(--booking-bg))] text-[hsl(var(--booking-text))];
+  }
+  
+  .booking-card {
+    @apply bg-[hsl(var(--booking-card))] border-[hsl(var(--booking-border))];
+  }
+  
+  .booking-highlight {
+    @apply bg-[hsl(var(--booking-highlight))] border-[hsl(var(--booking-border))];
+  }
+  
+  .booking-text-muted {
+    @apply text-[hsl(var(--booking-text-muted))];
   }
 }
 

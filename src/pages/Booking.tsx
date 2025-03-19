@@ -143,7 +143,7 @@ const BookingPage = () => {
   };
   
   return (
-    <div className="page-transition min-h-screen flex flex-col bg-gray-50">
+    <div className="page-transition min-h-screen flex flex-col booking-page">
       <Navbar />
       
       <main className="flex-grow pt-20 pb-20">
@@ -160,7 +160,7 @@ const BookingPage = () => {
                         ? "bg-primary text-primary-foreground" 
                         : currentStep === 'complete' || (index < ['date', 'class', 'confirm', 'complete'].indexOf(currentStep))
                           ? "bg-green-500 text-white"
-                          : "bg-gray-200 text-gray-500"
+                          : "bg-gray-600 text-gray-300"
                     )}>
                       {currentStep === 'complete' || (index < ['date', 'class', 'confirm', 'complete'].indexOf(currentStep)) 
                         ? <CheckCircle2 className="h-5 w-5" /> 
@@ -168,7 +168,7 @@ const BookingPage = () => {
                     </div>
                     <span className={cn(
                       "text-xs font-medium text-center",
-                      currentStep === step ? "text-primary" : "text-gray-500"
+                      currentStep === step ? "text-primary" : "booking-text-muted"
                     )}>
                       {step === 'date' && "Select Date"}
                       {step === 'class' && "Choose Class"}
@@ -180,13 +180,13 @@ const BookingPage = () => {
               </div>
               <div className="mt-2 grid grid-cols-3 gap-2">
                 <div className="h-1 bg-green-500 rounded"></div>
-                <div className={cn("h-1 rounded", currentStep === 'date' ? "bg-gray-200" : "bg-green-500")}></div>
-                <div className={cn("h-1 rounded", currentStep === 'date' || currentStep === 'class' ? "bg-gray-200" : "bg-green-500")}></div>
+                <div className={cn("h-1 rounded", currentStep === 'date' ? "bg-gray-600" : "bg-green-500")}></div>
+                <div className={cn("h-1 rounded", currentStep === 'date' || currentStep === 'class' ? "bg-gray-600" : "bg-green-500")}></div>
               </div>
             </div>
             
             {/* Main Content Area */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="booking-card rounded-xl shadow-sm border overflow-hidden">
               {/* Step 1: Date Selection */}
               {currentStep === 'date' && (
                 <div className="p-6">
@@ -239,16 +239,16 @@ const BookingPage = () => {
                         </Popover>
                       </div>
                       
-                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                      <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-800/50">
                         <div className="flex items-start gap-3">
-                          <AlertCircle className="h-5 w-5 text-blue-600 shrink-0 mt-0.5" />
+                          <AlertCircle className="h-5 w-5 text-blue-400 shrink-0 mt-0.5" />
                           <div>
-                            <p className="text-sm font-medium text-blue-800 mb-1">
+                            <p className="text-sm font-medium text-blue-300 mb-1">
                               Available Class Days
                             </p>
-                            <div className="text-sm text-blue-700 flex flex-wrap gap-2">
+                            <div className="text-sm text-blue-300 flex flex-wrap gap-2">
                               {[...new Set(classSchedule.map(day => day.day))].map((day, index) => (
-                                <Badge key={index} variant="outline" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+                                <Badge key={index} variant="outline" className="bg-blue-900/50 text-blue-200 hover:bg-blue-800/50 border-blue-700">
                                   {day}
                                 </Badge>
                               ))}
@@ -260,23 +260,23 @@ const BookingPage = () => {
                     
                     <div>
                       <h3 className="text-lg font-medium mb-4">Your Selected Date</h3>
-                      <div className="bg-gray-50 rounded-lg p-6 border border-gray-100 text-center">
+                      <div className="booking-highlight rounded-lg p-6 border text-center">
                         <div className="flex flex-col items-center">
                           <div className="bg-primary/10 rounded-full p-3 mb-4">
                             <CalendarIcon className="h-8 w-8 text-primary" />
                           </div>
                           <h4 className="text-2xl font-bold mb-1">{format(date, 'EEEE')}</h4>
-                          <p className="text-lg text-gray-600">{format(date, 'MMMM d, yyyy')}</p>
+                          <p className="text-lg booking-text-muted">{format(date, 'MMMM d, yyyy')}</p>
                           
                           <div className="mt-6 w-full">
-                            <Badge className="w-full py-2 text-center justify-center text-sm bg-green-500 hover:bg-green-600">
+                            <Badge className="w-full py-2 text-center justify-center text-sm bg-green-600 hover:bg-green-700">
                               {availableClasses.length} Classes Available
                             </Badge>
                           </div>
                         </div>
                       </div>
                       
-                      <div className="mt-4 bg-gray-50 rounded-lg p-4 border border-gray-100">
+                      <div className="mt-4 booking-highlight rounded-lg p-4 border">
                         <div className="flex items-center justify-between">
                           <div>
                             <h4 className="text-sm font-medium">Your Points</h4>
@@ -296,7 +296,7 @@ const BookingPage = () => {
               {currentStep === 'class' && (
                 <div className="p-6">
                   <h2 className="text-2xl font-bold mb-2">Select a Class</h2>
-                  <p className="text-gray-500 mb-6">
+                  <p className="booking-text-muted mb-6">
                     Classes available on {format(date, 'EEEE, MMMM d, yyyy')}
                   </p>
                   
@@ -313,7 +313,7 @@ const BookingPage = () => {
                           <Card 
                             key={index}
                             className={cn(
-                              "border-2 transition-all cursor-pointer hover:bg-gray-50",
+                              "border-2 transition-all cursor-pointer hover:bg-gray-800/20",
                               selectedClass === session ? "border-primary" : "border-transparent"
                             )}
                             onClick={() => handleSelectClass(session)}
@@ -322,7 +322,7 @@ const BookingPage = () => {
                               <div className="flex flex-col md:flex-row">
                                 <div className={cn(
                                   "p-5 flex flex-col justify-center items-center md:w-1/4 text-white",
-                                  session.level === 'Beginner' ? "bg-blue-500" : "bg-purple-600"
+                                  session.level === 'Beginner' ? "bg-blue-800" : "bg-purple-800"
                                 )}>
                                   <Badge className="mb-2 bg-white/20 hover:bg-white/30 border-none">
                                     {session.level}
@@ -338,10 +338,10 @@ const BookingPage = () => {
                                   <div className="flex flex-col md:flex-row justify-between mb-3">
                                     <div>
                                       <h3 className="text-xl font-bold">{session.name}</h3>
-                                      <p className="text-gray-500">{session.description}</p>
+                                      <p className="booking-text-muted">{session.description}</p>
                                     </div>
                                     <div className="mt-2 md:mt-0 flex items-start">
-                                      <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                                      <div className="flex items-center bg-yellow-900/60 text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
                                         <CreditCard className="h-3 w-3 mr-1" />
                                         {session.pointsCost} points
                                       </div>
@@ -349,13 +349,13 @@ const BookingPage = () => {
                                   </div>
                                   
                                   <div className="flex flex-wrap gap-3 items-center">
-                                    <div className="flex items-center text-gray-600 text-sm">
+                                    <div className="flex items-center booking-text-muted text-sm">
                                       <Users className="h-4 w-4 mr-1" />
                                       <span>10 spots available</span>
                                     </div>
                                     
                                     {userPoints < session.pointsCost ? (
-                                      <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50">
+                                      <Badge variant="outline" className="text-red-400 border-red-800 bg-red-900/30">
                                         Insufficient Points
                                       </Badge>
                                     ) : (
@@ -364,8 +364,8 @@ const BookingPage = () => {
                                         className={cn(
                                           "transition-colors",
                                           selectedClass === session 
-                                            ? "bg-green-100 text-green-800 border-green-200" 
-                                            : "bg-gray-100 text-gray-800"
+                                            ? "bg-green-900/30 text-green-300 border-green-700" 
+                                            : "bg-gray-800/30 text-gray-300 border-gray-700"
                                         )}
                                       >
                                         {selectedClass === session ? "Selected" : "Available"}
@@ -378,9 +378,9 @@ const BookingPage = () => {
                           </Card>
                         ))
                       ) : (
-                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-8 text-center">
+                        <div className="booking-highlight border rounded-lg p-8 text-center">
                           <h3 className="text-lg font-medium mb-2">No Classes Available</h3>
-                          <p className="text-gray-500 mb-4">
+                          <p className="booking-text-muted mb-4">
                             There are no classes scheduled for this date. Please select another date.
                           </p>
                         </div>
@@ -393,7 +393,7 @@ const BookingPage = () => {
                           <Card 
                             key={index}
                             className={cn(
-                              "border-2 transition-all cursor-pointer hover:bg-gray-50",
+                              "border-2 transition-all cursor-pointer hover:bg-gray-800/20",
                               selectedClass === session ? "border-primary" : "border-transparent"
                             )}
                             onClick={() => handleSelectClass(session)}
@@ -401,7 +401,7 @@ const BookingPage = () => {
                             {/* Same card content as above, but for beginner classes */}
                             <CardContent className="p-0">
                               <div className="flex flex-col md:flex-row">
-                                <div className="p-5 flex flex-col justify-center items-center md:w-1/4 text-white bg-blue-500">
+                                <div className="p-5 flex flex-col justify-center items-center md:w-1/4 text-white bg-blue-800">
                                   <Badge className="mb-2 bg-white/20 hover:bg-white/30 border-none">
                                     {session.level}
                                   </Badge>
@@ -416,10 +416,10 @@ const BookingPage = () => {
                                   <div className="flex flex-col md:flex-row justify-between mb-3">
                                     <div>
                                       <h3 className="text-xl font-bold">{session.name}</h3>
-                                      <p className="text-gray-500">{session.description}</p>
+                                      <p className="booking-text-muted">{session.description}</p>
                                     </div>
                                     <div className="mt-2 md:mt-0 flex items-start">
-                                      <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                                      <div className="flex items-center bg-yellow-900/60 text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
                                         <CreditCard className="h-3 w-3 mr-1" />
                                         {session.pointsCost} points
                                       </div>
@@ -427,13 +427,13 @@ const BookingPage = () => {
                                   </div>
                                   
                                   <div className="flex flex-wrap gap-3 items-center">
-                                    <div className="flex items-center text-gray-600 text-sm">
+                                    <div className="flex items-center booking-text-muted text-sm">
                                       <Users className="h-4 w-4 mr-1" />
                                       <span>10 spots available</span>
                                     </div>
                                     
                                     {userPoints < session.pointsCost ? (
-                                      <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50">
+                                      <Badge variant="outline" className="text-red-400 border-red-800 bg-red-900/30">
                                         Insufficient Points
                                       </Badge>
                                     ) : (
@@ -442,8 +442,8 @@ const BookingPage = () => {
                                         className={cn(
                                           "transition-colors",
                                           selectedClass === session 
-                                            ? "bg-green-100 text-green-800 border-green-200" 
-                                            : "bg-gray-100 text-gray-800"
+                                            ? "bg-green-900/30 text-green-300 border-green-700" 
+                                            : "bg-gray-800/30 text-gray-300 border-gray-700"
                                         )}
                                       >
                                         {selectedClass === session ? "Selected" : "Available"}
@@ -456,9 +456,9 @@ const BookingPage = () => {
                           </Card>
                         ))
                       ) : (
-                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-8 text-center">
+                        <div className="booking-highlight border rounded-lg p-8 text-center">
                           <h3 className="text-lg font-medium mb-2">No Beginner Classes</h3>
-                          <p className="text-gray-500">
+                          <p className="booking-text-muted">
                             There are no beginner classes scheduled for this date.
                           </p>
                         </div>
@@ -471,7 +471,7 @@ const BookingPage = () => {
                           <Card 
                             key={index}
                             className={cn(
-                              "border-2 transition-all cursor-pointer hover:bg-gray-50",
+                              "border-2 transition-all cursor-pointer hover:bg-gray-800/20",
                               selectedClass === session ? "border-primary" : "border-transparent"
                             )}
                             onClick={() => handleSelectClass(session)}
@@ -479,7 +479,7 @@ const BookingPage = () => {
                             {/* Same card content as above, but for advanced classes */}
                             <CardContent className="p-0">
                               <div className="flex flex-col md:flex-row">
-                                <div className="p-5 flex flex-col justify-center items-center md:w-1/4 text-white bg-purple-600">
+                                <div className="p-5 flex flex-col justify-center items-center md:w-1/4 text-white bg-purple-800">
                                   <Badge className="mb-2 bg-white/20 hover:bg-white/30 border-none">
                                     {session.level}
                                   </Badge>
@@ -494,10 +494,10 @@ const BookingPage = () => {
                                   <div className="flex flex-col md:flex-row justify-between mb-3">
                                     <div>
                                       <h3 className="text-xl font-bold">{session.name}</h3>
-                                      <p className="text-gray-500">{session.description}</p>
+                                      <p className="booking-text-muted">{session.description}</p>
                                     </div>
                                     <div className="mt-2 md:mt-0 flex items-start">
-                                      <div className="flex items-center bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                                      <div className="flex items-center bg-yellow-900/60 text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
                                         <CreditCard className="h-3 w-3 mr-1" />
                                         {session.pointsCost} points
                                       </div>
@@ -505,13 +505,13 @@ const BookingPage = () => {
                                   </div>
                                   
                                   <div className="flex flex-wrap gap-3 items-center">
-                                    <div className="flex items-center text-gray-600 text-sm">
+                                    <div className="flex items-center booking-text-muted text-sm">
                                       <Users className="h-4 w-4 mr-1" />
                                       <span>10 spots available</span>
                                     </div>
                                     
                                     {userPoints < session.pointsCost ? (
-                                      <Badge variant="outline" className="text-red-600 border-red-200 bg-red-50">
+                                      <Badge variant="outline" className="text-red-400 border-red-800 bg-red-900/30">
                                         Insufficient Points
                                       </Badge>
                                     ) : (
@@ -520,8 +520,8 @@ const BookingPage = () => {
                                         className={cn(
                                           "transition-colors",
                                           selectedClass === session 
-                                            ? "bg-green-100 text-green-800 border-green-200" 
-                                            : "bg-gray-100 text-gray-800"
+                                            ? "bg-green-900/30 text-green-300 border-green-700" 
+                                            : "bg-gray-800/30 text-gray-300 border-gray-700"
                                         )}
                                       >
                                         {selectedClass === session ? "Selected" : "Available"}
@@ -534,9 +534,9 @@ const BookingPage = () => {
                           </Card>
                         ))
                       ) : (
-                        <div className="bg-gray-50 border border-gray-100 rounded-lg p-8 text-center">
+                        <div className="booking-highlight border rounded-lg p-8 text-center">
                           <h3 className="text-lg font-medium mb-2">No Advanced Classes</h3>
-                          <p className="text-gray-500">
+                          <p className="booking-text-muted">
                             There are no advanced classes scheduled for this date.
                           </p>
                         </div>
@@ -553,31 +553,31 @@ const BookingPage = () => {
                   
                   <div className="grid md:grid-cols-2 gap-8">
                     <div>
-                      <div className="bg-gray-50 rounded-lg p-6 border border-gray-100">
+                      <div className="booking-highlight rounded-lg p-6 border">
                         <h3 className="text-lg font-bold mb-4">Class Details</h3>
                         
                         <div className="space-y-4">
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Class</span>
+                            <span className="booking-text-muted">Class</span>
                             <span className="font-medium">{selectedClass.name}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Date</span>
+                            <span className="booking-text-muted">Date</span>
                             <span className="font-medium">{format(date, 'EEEE, MMMM d, yyyy')}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Time</span>
+                            <span className="booking-text-muted">Time</span>
                             <span className="font-medium">{selectedClass.time}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Duration</span>
+                            <span className="booking-text-muted">Duration</span>
                             <span className="font-medium">{getClassDuration(selectedClass.time)} hours</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Level</span>
+                            <span className="booking-text-muted">Level</span>
                             <span className="font-medium">{selectedClass.level}</span>
                           </div>
-                          <div className="border-t pt-3 mt-3">
+                          <div className="border-t border-[hsl(var(--booking-border))] pt-3 mt-3">
                             <div className="flex justify-between font-medium">
                               <span>Point Cost</span>
                               <span>{selectedClass.pointsCost} points</span>
@@ -588,19 +588,19 @@ const BookingPage = () => {
                     </div>
                     
                     <div>
-                      <div className="bg-gray-50 rounded-lg p-6 border border-gray-100 mb-4">
+                      <div className="booking-highlight rounded-lg p-6 border mb-4">
                         <h3 className="text-lg font-bold mb-4">Your Points</h3>
                         
                         <div className="space-y-4">
                           <div className="flex justify-between text-lg">
-                            <span className="text-gray-600">Current Balance</span>
+                            <span className="booking-text-muted">Current Balance</span>
                             <span className="font-medium">{userPoints} points</span>
                           </div>
-                          <div className="flex justify-between text-lg text-red-600">
+                          <div className="flex justify-between text-lg text-red-400">
                             <span>Cost</span>
                             <span>-{selectedClass.pointsCost} points</span>
                           </div>
-                          <div className="border-t pt-3 mt-3">
+                          <div className="border-t border-[hsl(var(--booking-border))] pt-3 mt-3">
                             <div className="flex justify-between font-bold text-lg">
                               <span>Remaining Balance</span>
                               <span>{userPoints - selectedClass.pointsCost} points</span>
@@ -609,14 +609,14 @@ const BookingPage = () => {
                         </div>
                       </div>
                       
-                      <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-100 mb-6">
+                      <div className="bg-yellow-900/30 rounded-lg p-4 border border-yellow-800/50 mb-6">
                         <div className="flex items-start gap-3">
-                          <AlertCircle className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
+                          <AlertCircle className="h-5 w-5 text-yellow-400 shrink-0 mt-0.5" />
                           <div>
-                            <p className="text-sm font-medium text-yellow-800 mb-1">
+                            <p className="text-sm font-medium text-yellow-300 mb-1">
                               Important Information
                             </p>
-                            <p className="text-sm text-yellow-700">
+                            <p className="text-sm text-yellow-300">
                               Please arrive 10 minutes before class starts. Wear comfortable clothing and bring water.
                             </p>
                           </div>
@@ -639,34 +639,34 @@ const BookingPage = () => {
               {currentStep === 'complete' && selectedClass && (
                 <div className="p-6 text-center">
                   <div className="mb-6 flex justify-center">
-                    <div className="rounded-full bg-green-100 p-3">
-                      <CheckCircle2 className="h-16 w-16 text-green-600" />
+                    <div className="rounded-full bg-green-900/30 p-3">
+                      <CheckCircle2 className="h-16 w-16 text-green-400" />
                     </div>
                   </div>
                   
                   <h2 className="text-2xl font-bold mb-2">Booking Successful!</h2>
-                  <p className="text-gray-500 mb-8">
+                  <p className="booking-text-muted mb-8">
                     Your class has been booked successfully. We look forward to seeing you!
                   </p>
                   
-                  <div className="max-w-md mx-auto bg-gray-50 rounded-lg p-6 border border-gray-100 mb-8">
+                  <div className="max-w-md mx-auto booking-highlight rounded-lg p-6 border mb-8">
                     <h3 className="text-lg font-bold mb-4 text-left">Booking Details</h3>
                     
                     <div className="space-y-4 text-left">
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Class</span>
+                        <span className="booking-text-muted">Class</span>
                         <span className="font-medium">{selectedClass.name}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Date</span>
+                        <span className="booking-text-muted">Date</span>
                         <span className="font-medium">{format(date, 'EEEE, MMMM d, yyyy')}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Time</span>
+                        <span className="booking-text-muted">Time</span>
                         <span className="font-medium">{selectedClass.time}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Location</span>
+                        <span className="booking-text-muted">Location</span>
                         <span className="font-medium">Tricking Club, Studio 3</span>
                       </div>
                     </div>
@@ -692,7 +692,7 @@ const BookingPage = () => {
               
               {/* Navigation Footer */}
               {currentStep !== 'complete' && (
-                <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between">
+                <div className="px-6 py-4 booking-highlight border-t border-[hsl(var(--booking-border))] flex justify-between">
                   {currentStep !== 'date' ? (
                     <Button
                       variant="outline"
