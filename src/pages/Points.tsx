@@ -2,40 +2,130 @@
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { pointPackages } from '@/lib/data';
-import { Check, Info } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 
+type CourseType = 'introductory' | 'advanced' | null;
+type CourseCard = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  validity: string;
+  popular?: boolean;
+};
+
 const PointsPage = () => {
-  const [selectedPackage, setSelectedPackage] = useState(pointPackages[1].id);
-  const [paymentMethod, setPaymentMethod] = useState('credit');
+  const [courseType, setCourseType] = useState<CourseType>(null);
+  const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const { toast } = useToast();
 
-  const handlePurchase = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Course card data
+  const introductoryCourseCards: CourseCard[] = [
+    {
+      id: 'intro-single',
+      name: 'Single Session',
+      price: 30,
+      description: 'Access to a single introductory class',
+      validity: 'No expiration',
+    },
+    {
+      id: 'intro-semester',
+      name: 'Full Semester',
+      price: 250,
+      description: 'Access to all introductory classes for a semester',
+      validity: 'Valid for 6 months',
+      popular: true,
+    },
+  ];
+
+  const advancedCourseCards: CourseCard[] = [
+    {
+      id: 'adv-single',
+      name: 'Single Session',
+      price: 50,
+      description: 'Access to a single advanced class',
+      validity: 'No expiration',
+    },
+    {
+      id: 'adv-semester-1',
+      name: 'Semester (1 Class/Week)',
+      price: 600,
+      description: 'Access to 1 advanced class per week',
+      validity: 'Valid for 6 months',
+    },
+    {
+      id: 'adv-semester-2',
+      name: 'Semester (2 Classes/Week)',
+      price: 650,
+      description: 'Access to 2 advanced classes per week',
+      validity: 'Valid for 6 months',
+      popular: true,
+    },
+    {
+      id: 'adv-semester-3',
+      name: 'Semester (3 Classes/Week)',
+      price: 700,
+      description: 'Access to 3 advanced classes per week',
+      validity: 'Valid for 6 months',
+    },
+  ];
+
+  // Function to handle course type selection
+  const handleCourseTypeSelect = (type: CourseType) => {
+    setCourseType(type);
+    setSelectedCard(null);
+  };
+
+  // Function to handle card selection
+  const handleCardSelect = (cardId: string) => {
+    setSelectedCard(cardId);
+  };
+
+  // Go back to course type selection
+  const handleBackToTypes = () => {
+    setCourseType(null);
+    setSelectedCard(null);
+  };
+
+  // Simulate purchase process
+  const handlePurchase = () => {
+    if (!selectedCard) return;
     
-    // Simulating purchase process
+    // Get selected card details
+    const cardList = courseType === 'introductory' ? introductoryCourseCards : advancedCourseCards;
+    const card = cardList.find(c => c.id === selectedCard);
+    
+    if (!card) return;
+    
     toast({
       title: "Processing your payment...",
       description: "This will only take a moment.",
     });
     
-    // Simulating a successful payment after 1.5 seconds
+    // Simulate a successful payment after 1.5 seconds
     setTimeout(() => {
       setPurchaseSuccess(true);
     }, 1500);
   };
 
+  // Close success dialog
   const handleDialogClose = () => {
     setPurchaseSuccess(false);
+    setCourseType(null);
+    setSelectedCard(null);
+  };
+
+  // Get the current selected card
+  const getCurrentCard = (): CourseCard | undefined => {
+    if (!selectedCard) return undefined;
+    
+    const cardList = courseType === 'introductory' ? introductoryCourseCards : advancedCourseCards;
+    return cardList.find(c => c.id === selectedCard);
   };
 
   return (
@@ -45,181 +135,133 @@ const PointsPage = () => {
       <main className="flex-grow pt-24">
         <div className="container mx-auto px-4 md:px-6 py-8">
           <header className="mb-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Buy Points</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              {courseType === null ? 
+                "Course Cards" : 
+                courseType === 'introductory' ? "Introductory Course Cards" : "Advanced Course Cards"}
+            </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Purchase points to book classes at our tricking club.
+              {courseType === null ? 
+                "Choose the type of tricking course you're interested in" : 
+                "Select a course card option that fits your needs"}
             </p>
           </header>
           
-          <div className="max-w-5xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              {pointPackages.map((pkg) => (
-                <Card 
-                  key={pkg.id}
-                  className={`relative overflow-hidden transition-all hover:shadow-md ${
-                    selectedPackage === pkg.id ? 'ring-2 ring-accent shadow-md' : ''
-                  } ${pkg.popular ? 'md:scale-105' : ''}`}
-                >
-                  {pkg.popular && (
-                    <div className="absolute top-0 right-0">
-                      <div className="bg-accent text-accent-foreground text-xs font-bold uppercase py-1 px-3 transform rotate-0 origin-bottom-right">
-                        Popular
-                      </div>
-                    </div>
-                  )}
-                  
-                  <CardHeader>
-                    <CardTitle>{pkg.name}</CardTitle>
-                    <CardDescription>{pkg.description}</CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <div className="text-center">
-                      <span className="text-4xl font-bold">NT${pkg.price.toLocaleString()}</span>
-                      <div className="text-xl font-medium text-accent mt-2">
-                        {pkg.points} Points
-                      </div>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        NT${(pkg.price / pkg.points).toFixed(0)} per point
-                      </div>
-                    </div>
-                  </CardContent>
-                  
-                  <CardFooter>
-                    <Button 
-                      className="w-full"
-                      variant={selectedPackage === pkg.id ? "default" : "outline"}
-                      onClick={() => setSelectedPackage(pkg.id)}
-                    >
-                      {selectedPackage === pkg.id ? (
-                        <>
-                          <Check className="mr-2 h-4 w-4" /> Selected
-                        </>
-                      ) : (
-                        'Select Package'
-                      )}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
+          {courseType === null ? (
+            // Initial course type selection
+            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card 
+                className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary/50"
+                onClick={() => handleCourseTypeSelect('introductory')}
+              >
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-2xl">Introductory Course Cards</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-40 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 rounded-lg flex items-center justify-center mb-4">
+                    <span className="text-2xl font-semibold">For Beginners</span>
+                  </div>
+                  <p className="text-muted-foreground">Perfect for those starting their tricking journey</p>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full">Explore Introductory Options</Button>
+                </CardFooter>
+              </Card>
+              
+              <Card 
+                className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary/50"
+                onClick={() => handleCourseTypeSelect('advanced')}
+              >
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-2xl">Advanced Course Cards</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-40 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 rounded-lg flex items-center justify-center mb-4">
+                    <span className="text-2xl font-semibold">For Experienced Trickers</span>
+                  </div>
+                  <p className="text-muted-foreground">Take your skills to the next level</p>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full">Explore Advanced Options</Button>
+                </CardFooter>
+              </Card>
             </div>
-            
-            <div className="bg-muted/50 rounded-xl p-6 mb-8">
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-2 rounded-full">
-                  <Info className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium mb-1">How Points Work</h3>
-                  <p className="text-muted-foreground">
-                    Points are used to book classes at our tricking club. Different classes require different numbers of points. Once purchased, points do not expire and can be used for any bookable class.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white shadow-sm border border-border rounded-xl overflow-hidden">
-              <div className="p-6 border-b">
-                <h2 className="text-2xl font-bold">Checkout</h2>
+          ) : (
+            // Course cards display
+            <div className="max-w-5xl mx-auto">
+              <Button 
+                variant="ghost" 
+                onClick={handleBackToTypes} 
+                className="mb-6"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Selection
+              </Button>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {(courseType === 'introductory' ? introductoryCourseCards : advancedCourseCards).map((card) => (
+                  <Card 
+                    key={card.id}
+                    className={`relative overflow-hidden transition-all hover:shadow-md ${
+                      selectedCard === card.id ? 'ring-2 ring-accent shadow-md' : ''
+                    } ${card.popular ? 'md:scale-105' : ''}`}
+                    onClick={() => handleCardSelect(card.id)}
+                  >
+                    {card.popular && (
+                      <div className="absolute top-0 right-0">
+                        <div className="bg-accent text-accent-foreground text-xs font-bold uppercase py-1 px-3 transform rotate-0 origin-bottom-right">
+                          Popular
+                        </div>
+                      </div>
+                    )}
+                    
+                    <CardHeader>
+                      <CardTitle>{card.name}</CardTitle>
+                    </CardHeader>
+                    
+                    <CardContent>
+                      <div className="text-center">
+                        <span className="text-4xl font-bold">NT${card.price}</span>
+                        <div className="text-sm text-muted-foreground mt-2">
+                          {card.description}
+                        </div>
+                        <div className="text-sm font-medium mt-2">
+                          {card.validity}
+                        </div>
+                      </div>
+                    </CardContent>
+                    
+                    <CardFooter>
+                      <Button 
+                        className="w-full"
+                        variant={selectedCard === card.id ? "default" : "outline"}
+                      >
+                        {selectedCard === card.id ? (
+                          <>
+                            <Check className="mr-2 h-4 w-4" /> Selected
+                          </>
+                        ) : (
+                          'Select'
+                        )}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
               </div>
               
-              <form onSubmit={handlePurchase}>
-                <div className="p-6">
-                  <h3 className="text-lg font-medium mb-4">Payment Method</h3>
-                  
-                  <Tabs defaultValue="credit" value={paymentMethod} onValueChange={setPaymentMethod}>
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="credit">Credit Card</TabsTrigger>
-                      <TabsTrigger value="transfer">Bank Transfer</TabsTrigger>
-                      <TabsTrigger value="line">Line Pay</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="credit" className="space-y-4 mt-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="col-span-2">
-                          <Label htmlFor="card-number">Card Number</Label>
-                          <Input id="card-number" placeholder="xxxx xxxx xxxx xxxx" />
-                        </div>
-                        <div>
-                          <Label htmlFor="expiry">Expiry Date</Label>
-                          <Input id="expiry" placeholder="MM/YY" />
-                        </div>
-                        <div>
-                          <Label htmlFor="cvc">CVC</Label>
-                          <Input id="cvc" placeholder="xxx" />
-                        </div>
-                        <div className="col-span-2">
-                          <Label htmlFor="name">Cardholder Name</Label>
-                          <Input id="name" placeholder="Name as it appears on card" />
-                        </div>
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="transfer" className="space-y-4 mt-4">
-                      <div className="border rounded-md p-4 bg-muted/30">
-                        <h4 className="font-medium mb-2">Bank Transfer Instructions</h4>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          Please transfer the exact amount to the following account:
-                        </p>
-                        <div className="text-sm">
-                          <p>Bank: Taiwan Tricking Bank</p>
-                          <p>Account: 12345678901234</p>
-                          <p>Name: Tricktopia Club</p>
-                          <p className="mt-2">
-                            After making the transfer, please enter the transaction reference below.
-                          </p>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="reference">Transaction Reference</Label>
-                        <Input id="reference" placeholder="Enter bank transaction reference" />
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="line" className="space-y-4 mt-4">
-                      <div className="text-center p-6 border rounded-md bg-muted/30">
-                        <div className="w-32 h-32 mx-auto bg-muted flex items-center justify-center mb-4 rounded-md">
-                          <span className="text-muted-foreground">QR Code</span>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          Scan this QR code with your Line Pay app to complete the payment.
-                        </p>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </div>
-                
-                <div className="bg-muted/20 border-t p-6">
-                  <div className="flex justify-between mb-2">
-                    <span>Package</span>
-                    <span className="font-medium">
-                      {pointPackages.find(pkg => pkg.id === selectedPackage)?.name}
-                    </span>
-                  </div>
-                  <div className="flex justify-between mb-4">
-                    <span>Points</span>
-                    <span className="font-medium">
-                      {pointPackages.find(pkg => pkg.id === selectedPackage)?.points} Points
-                    </span>
-                  </div>
-                  
-                  <div className="border-t pt-4 mb-6">
-                    <div className="flex justify-between">
-                      <span className="text-lg font-bold">Total</span>
-                      <span className="text-lg font-bold">
-                        NT${pointPackages.find(pkg => pkg.id === selectedPackage)?.price.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                  
-                  <Button type="submit" className="w-full" size="lg">
-                    Complete Purchase
+              {selectedCard && (
+                <div className="mt-8 text-center">
+                  <Button 
+                    size="lg" 
+                    className="px-8"
+                    onClick={handlePurchase}
+                  >
+                    Purchase Card
                   </Button>
                 </div>
-              </form>
+              )}
             </div>
-          </div>
+          )}
         </div>
       </main>
       
@@ -229,9 +271,9 @@ const PointsPage = () => {
       <Dialog open={purchaseSuccess} onOpenChange={handleDialogClose}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Payment Successful!</DialogTitle>
+            <DialogTitle>Purchase Successful!</DialogTitle>
             <DialogDescription>
-              Your points have been added to your account and are ready to use.
+              Your course card has been added to your account and is ready to use.
             </DialogDescription>
           </DialogHeader>
           
@@ -243,15 +285,21 @@ const PointsPage = () => {
           
           <div className="bg-muted/30 rounded-md p-4 mb-4">
             <div className="flex justify-between mb-2">
-              <span className="text-muted-foreground">Package</span>
+              <span className="text-muted-foreground">Course Card</span>
               <span className="font-medium">
-                {pointPackages.find(pkg => pkg.id === selectedPackage)?.name}
+                {getCurrentCard()?.name}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Points Added</span>
+              <span className="text-muted-foreground">Price</span>
               <span className="font-medium">
-                {pointPackages.find(pkg => pkg.id === selectedPackage)?.points} Points
+                NT${getCurrentCard()?.price}
+              </span>
+            </div>
+            <div className="flex justify-between mt-2">
+              <span className="text-muted-foreground">Validity</span>
+              <span className="font-medium">
+                {getCurrentCard()?.validity}
               </span>
             </div>
           </div>
