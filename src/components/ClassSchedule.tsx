@@ -36,6 +36,7 @@ const ClassSchedule = () => {
     },
   ];
 
+  // Updated to have only these 4 classes
   const classes = [
     {
       type: 'tricking',

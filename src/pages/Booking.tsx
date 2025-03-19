@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
@@ -109,7 +108,7 @@ const difficultyLevels = [
   },
 ];
 
-// Mock class data that aligns with the new priority order
+// Updated class data to match the four specified classes
 const enhancedClassData = [
   {
     id: '1',
@@ -162,58 +161,6 @@ const enhancedClassData = [
     instructor: 'Lisa Wong',
     maxCapacity: 10,
     availableSpots: 6,
-  },
-  {
-    id: '5',
-    type: 'flip',
-    difficulty: 'beginner',
-    day: 'Wednesday',
-    time: '18:00-19:00',
-    name: 'Beginner Flips',
-    description: 'Learn the basics of safe flipping techniques.',
-    pointsCost: 2,
-    instructor: 'David Park',
-    maxCapacity: 15,
-    availableSpots: 10,
-  },
-  {
-    id: '6',
-    type: 'gymnastics',
-    difficulty: 'intermediate',
-    day: 'Wednesday',
-    time: '19:00-20:30',
-    name: 'Intermediate Gymnastics',
-    description: 'Build on your gymnastics foundation with more complex movements.',
-    pointsCost: 2,
-    instructor: 'Emma Liu',
-    maxCapacity: 12,
-    availableSpots: 7,
-  },
-  {
-    id: '7',
-    type: 'specialty',
-    difficulty: 'intermediate',
-    day: 'Thursday',
-    time: '19:00-20:30',
-    name: 'Specialty Transitions',
-    description: 'Focus on clean transitions between tricks for better flow.',
-    pointsCost: 3,
-    instructor: 'James Rodriguez',
-    maxCapacity: 10,
-    availableSpots: 8,
-  },
-  {
-    id: '8',
-    type: 'specialty',
-    difficulty: 'advanced',
-    day: 'Tuesday',
-    time: '20:00-21:30',
-    name: 'Advanced Specialty Techniques',
-    description: 'Master signature moves and create your own combinations.',
-    pointsCost: 4,
-    instructor: 'Nina Williams',
-    maxCapacity: 8,
-    availableSpots: 3,
   }
 ];
 
@@ -876,3 +823,4 @@ const BookingPage = () => {
 };
 
 export default BookingPage;
+
