@@ -3,7 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { difficultyLevels, getClassTypeDetails } from '@/lib/bookingData';
+import { getClassTypeDetails, getAvailableDifficulties } from '@/lib/bookingData';
 
 interface DifficultyStepProps {
   selectedType: string | null;
@@ -19,6 +19,25 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
   if (!selectedType) return null;
   
   const typeDetails = getClassTypeDetails(selectedType);
+  const availableDifficulties = getAvailableDifficulties(selectedType);
+  
+  if (availableDifficulties.length === 0) {
+    return (
+      <div className="p-6">
+        <h2 className="text-2xl font-bold mb-2">No Classes Available</h2>
+        <p className="text-muted-foreground">
+          There are no classes available for this type. Please select a different class type.
+        </p>
+      </div>
+    );
+  }
+  
+  // If there's only one difficulty available, auto-select it
+  if (availableDifficulties.length === 1 && !selectedDifficulty) {
+    setTimeout(() => {
+      setSelectedDifficulty(availableDifficulties[0].id);
+    }, 0);
+  }
   
   return (
     <div className="p-6">
@@ -44,7 +63,7 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
       </div>
       
       <div className="grid gap-6 md:grid-cols-3">
-        {difficultyLevels.map((level) => (
+        {availableDifficulties.map((level) => (
           <Card 
             key={level.id}
             className={cn(

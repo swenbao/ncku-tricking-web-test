@@ -1,5 +1,5 @@
 
-import { Flame, FlipHorizontal, Dumbbell, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
+import { Flame, FlipHorizontal, Dumbbell, ArrowDown, ArrowUp } from 'lucide-react';
 import React from 'react';
 import { ClassType, DifficultyLevel, ClassData } from '@/hooks/useBookingState';
 
@@ -36,13 +36,6 @@ export const difficultyLevels: DifficultyLevel[] = [
     icon: <ArrowDown className="h-5 w-5" />,
     color: 'bg-green-800/70 text-green-200',
     description: 'For those new to tricking or with minimal experience.'
-  },
-  {
-    id: 'intermediate',
-    name: 'Intermediate',
-    icon: <ArrowRight className="h-5 w-5" />,
-    color: 'bg-yellow-800/70 text-yellow-200',
-    description: 'For those with basic knowledge who want to build on their skills.'
   },
   {
     id: 'advanced',
@@ -131,4 +124,22 @@ export const getFilteredClasses = (selectedType: string | null, selectedDifficul
   }
   
   return filtered;
+};
+
+// Check if a class type has the specified difficulty level
+export const hasClassWithDifficulty = (typeId: string, difficultyId: string): boolean => {
+  return enhancedClassData.some(
+    classItem => classItem.type === typeId && classItem.difficulty === difficultyId
+  );
+};
+
+// Get available difficulties for a class type
+export const getAvailableDifficulties = (typeId: string): DifficultyLevel[] => {
+  const availableDifficultyIds = new Set(
+    enhancedClassData
+      .filter(classItem => classItem.type === typeId)
+      .map(classItem => classItem.difficulty)
+  );
+  
+  return difficultyLevels.filter(level => availableDifficultyIds.has(level.id));
 };

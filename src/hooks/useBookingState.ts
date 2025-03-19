@@ -1,8 +1,9 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import { addDays, format } from 'date-fns';
+import { getAvailableDifficulties } from '@/lib/bookingData';
 
 // Types
 export type BookingStep = 'type' | 'difficulty' | 'schedule' | 'confirm' | 'complete';
@@ -55,8 +56,38 @@ export const useBookingState = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   
+  // Auto-navigate when selecting type with only one difficulty level
+  useEffect(() => {
+    if (selectedType && currentStep === 'difficulty') {
+      const availableDifficulties = getAvailableDifficulties(selectedType);
+      if (availableDifficulties.length === 1) {
+        setSelectedDifficulty(availableDifficulties[0].id);
+        setTimeout(() => {
+          setCurrentStep('schedule');
+        }, 100);
+      }
+    }
+  }, [selectedType, currentStep]);
+  
   // Mock user points data - in a real app this would come from a user context or API
   const userPoints = 15;
+  
+  // Class type selection handler with auto-navigation
+  const setSelectedTypeWithNavigation = (type: string) => {
+    setSelectedType(type);
+    const availableDifficulties = getAvailableDifficulties(type);
+    
+    if (availableDifficulties.length === 0) {
+      toast({
+        title: "No Classes Available",
+        description: "There are no classes available for this type. Please select a different class type.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setSelectedType(type);
+  };
   
   // Navigate to next step
   const goToNextStep = () => {
@@ -179,7 +210,7 @@ export const useBookingState = () => {
     selectedDate,
     bookingSuccess,
     userPoints,
-    setSelectedType,
+    setSelectedType: setSelectedTypeWithNavigation,
     setSelectedDifficulty,
     setSelectedClass,
     goToNextStep,
