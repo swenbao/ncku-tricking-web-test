@@ -28,7 +28,7 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
             <Card 
               key={type.id}
               className={cn(
-                "cursor-pointer transition-all hover:shadow-md overflow-hidden flex-1",
+                "cursor-pointer transition-all hover:shadow-lg overflow-hidden flex-1 hover:border-red-800/40 transition-transform duration-300",
                 selectedType === type.id ? "ring-2 ring-red-800" : "border"
               )}
               onClick={() => setSelectedType(type.id)}
