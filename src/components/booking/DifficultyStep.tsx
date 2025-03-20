@@ -31,7 +31,7 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
               selectedDifficulty === level.id ? "ring-2 ring-red-800" : "border",
               level.id === 'beginner' 
                 ? "hover:shadow-md hover:border-gray-400" 
-                : "hover:shadow-lg hover:shadow-red-800/20 hover:border-red-800/50"
+                : "hover:shadow-xl hover:shadow-red-800/40 hover:border-red-800/70 hover:transform float-animation"
             )}
             onClick={() => setSelectedDifficulty(level.id)}
           >
