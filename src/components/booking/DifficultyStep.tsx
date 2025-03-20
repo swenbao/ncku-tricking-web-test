@@ -37,7 +37,7 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
           >
             <CardContent className="p-0 h-full">
               <div className={cn(
-                "flex flex-col h-full bg-black text-white",
+                "flex flex-col h-full bg-black text-white group-hover:bg-gray-900 transition-colors duration-300",
                 selectedDifficulty === level.id && "bg-gradient-to-br from-black to-red-950"
               )}>
                 <div className="p-5 flex items-center border-b border-gray-800">

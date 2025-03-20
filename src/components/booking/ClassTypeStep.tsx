@@ -37,7 +37,7 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
               onClick={() => setSelectedType(type.id)}
             >
               <CardContent className="p-0 h-full">
-                <div className="bg-black text-white h-full flex flex-col">
+                <div className="bg-black text-white h-full flex flex-col group-hover:bg-gray-900 transition-colors duration-300">
                   <div className="p-5 border-b border-gray-800">
                     <div className="flex items-center mb-3">
                       <div className="bg-black p-3 rounded-full mr-3 border border-gray-700 group-hover:border-red-800 transition-colors duration-300">
