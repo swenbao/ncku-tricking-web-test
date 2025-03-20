@@ -13,11 +13,14 @@ interface ClassTypeStepProps {
 
 const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelectedType, onNext }) => {
   const handleSelectType = (typeId: string) => {
+    // First set the type
     setSelectedType(typeId);
-    // Add a slight delay before navigation to next step
+    
+    // Then navigate to next step with a slight delay
+    // to ensure the state is updated
     setTimeout(() => {
       onNext();
-    }, 300);
+    }, 50);
   };
 
   return (

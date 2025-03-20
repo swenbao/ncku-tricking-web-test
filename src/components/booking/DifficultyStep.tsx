@@ -18,11 +18,14 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
   onNext
 }) => {
   const handleSelectDifficulty = (difficultyId: string) => {
+    // First set the difficulty
     setSelectedDifficulty(difficultyId);
-    // Add a slight delay before navigation to next step
+    
+    // Then navigate to next step with a slight delay
+    // to ensure the state is updated
     setTimeout(() => {
       onNext();
-    }, 300);
+    }, 50);
   };
 
   return (
