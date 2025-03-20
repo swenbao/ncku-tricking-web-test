@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -6,7 +5,7 @@ import { addDays, format } from 'date-fns';
 import { getAvailableDifficulties } from '@/lib/bookingData';
 
 // Types
-export type BookingStep = 'type' | 'difficulty' | 'schedule' | 'confirm' | 'complete';
+export type BookingStep = 'difficulty' | 'type' | 'schedule' | 'confirm' | 'complete';
 
 // Class type definition
 export interface ClassType {
@@ -47,18 +46,16 @@ export const useBookingState = () => {
   const { toast } = useToast();
   
   // Initialize state from URL parameters or defaults
-  const [currentStep, setCurrentStep] = useState<BookingStep>(
-    searchParams.get('type') ? 'difficulty' : 'type'
-  );
-  const [selectedType, setSelectedType] = useState<string | null>(searchParams.get('type') || null);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState<BookingStep>('difficulty');
+  const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(searchParams.get('difficulty') || null);
   const [selectedClass, setSelectedClass] = useState<ClassData | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   
-  // Auto-navigate when selecting type with only one difficulty level
+  // Auto-navigate when selecting a type with only one difficulty level
   useEffect(() => {
-    if (selectedType && currentStep === 'difficulty') {
+    if (selectedType && currentStep === 'type') {
       const availableDifficulties = getAvailableDifficulties(selectedType);
       if (availableDifficulties.length === 1) {
         setSelectedDifficulty(availableDifficulties[0].id);
@@ -92,24 +89,24 @@ export const useBookingState = () => {
   // Navigate to next step
   const goToNextStep = () => {
     switch (currentStep) {
-      case 'type':
-        if (selectedType) {
-          setCurrentStep('difficulty');
-        } else {
-          toast({
-            title: "Please Select a Class Type",
-            description: "You need to select a class type to proceed.",
-            variant: "destructive",
-          });
-        }
-        break;
       case 'difficulty':
         if (selectedDifficulty) {
-          setCurrentStep('schedule');
+          setCurrentStep('type');
         } else {
           toast({
             title: "Please Select a Difficulty Level",
             description: "You need to select a difficulty level to proceed.",
+            variant: "destructive",
+          });
+        }
+        break;
+      case 'type':
+        if (selectedType) {
+          setCurrentStep('schedule');
+        } else {
+          toast({
+            title: "Please Select a Class Type",
+            description: "You need to select a class type to proceed.",
             variant: "destructive",
           });
         }
@@ -133,11 +130,11 @@ export const useBookingState = () => {
   // Navigate to previous step
   const goToPreviousStep = () => {
     switch (currentStep) {
-      case 'difficulty':
-        setCurrentStep('type');
+      case 'type':
+        setCurrentStep('difficulty');
         break;
       case 'schedule':
-        setCurrentStep('difficulty');
+        setCurrentStep('type');
         break;
       case 'confirm':
         setCurrentStep('schedule');

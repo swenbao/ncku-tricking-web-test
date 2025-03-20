@@ -42,20 +42,19 @@ const BookingPage = () => {
             
             {/* Main Content Area */}
             <div className="booking-card rounded-xl shadow-sm border overflow-hidden">
-              {/* Step 1: Class Type Selection */}
-              {currentStep === 'type' && (
-                <ClassTypeStep 
-                  selectedType={selectedType}
-                  setSelectedType={setSelectedType}
+              {/* Step 1: Difficulty Level Selection */}
+              {currentStep === 'difficulty' && (
+                <DifficultyStep
+                  selectedDifficulty={selectedDifficulty}
+                  setSelectedDifficulty={setSelectedDifficulty}
                 />
               )}
               
-              {/* Step 2: Difficulty Level Selection */}
-              {currentStep === 'difficulty' && selectedType && (
-                <DifficultyStep
+              {/* Step 2: Class Type Selection */}
+              {currentStep === 'type' && selectedDifficulty && (
+                <ClassTypeStep 
                   selectedType={selectedType}
-                  selectedDifficulty={selectedDifficulty}
-                  setSelectedDifficulty={setSelectedDifficulty}
+                  setSelectedType={setSelectedType}
                 />
               )}
               
