@@ -28,27 +28,29 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
             <Card 
               key={type.id}
               className={cn(
-                "cursor-pointer transition-all hover:shadow-md overflow-hidden flex-1 transition-all duration-300",
+                "cursor-pointer transition-all hover:shadow-md overflow-hidden flex-1 transition-all duration-300 group",
                 selectedType === type.id 
                   ? "ring-2 ring-red-800/80" 
                   : "border hover:border-red-800/70"
               )}
               onClick={() => setSelectedType(type.id)}
             >
-              <CardContent className="p-0">
-                <div className="bg-red-300/80 text-red-900 hover:bg-red-800/90 hover:text-white p-5 transition-colors duration-300">
-                  <div className="flex items-center mb-3">
-                    <div className="bg-red-900/20 p-2 rounded-full mr-3 transition-colors duration-300 hover:bg-black/20">
-                      {type.icon}
+              <CardContent className="p-0 h-full">
+                <div className="bg-red-300/80 text-red-900 group-hover:bg-red-800/90 group-hover:text-white h-full flex flex-col transition-colors duration-300">
+                  <div className="p-5">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-red-900/20 p-2 rounded-full mr-3 transition-colors duration-300 group-hover:bg-white/20">
+                        {type.icon}
+                      </div>
+                      <h3 className="text-xl font-bold">{type.name}</h3>
                     </div>
-                    <h3 className="text-xl font-bold">{type.name}</h3>
                   </div>
-                </div>
-                <div className="p-5 bg-black/90 text-gray-300">
-                  <p className="mb-3">{type.description}</p>
-                  {selectedType === type.id && (
-                    <Badge className="bg-red-800/90 hover:bg-red-900">Selected</Badge>
-                  )}
+                  <div className="p-5 flex-grow">
+                    <p className="mb-3">{type.description}</p>
+                    {selectedType === type.id && (
+                      <Badge className="bg-red-900/60 group-hover:bg-white/20 transition-colors duration-300">Selected</Badge>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>

@@ -27,7 +27,7 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
           <Card 
             key={level.id}
             className={cn(
-              "cursor-pointer transition-all overflow-hidden",
+              "cursor-pointer transition-all overflow-hidden group",
               selectedDifficulty === level.id ? "ring-2 ring-red-800/80" : "border",
               level.id === 'beginner' 
                 ? "hover:shadow-md hover:border-gray-400 transition-all duration-300" 
@@ -35,28 +35,37 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
             )}
             onClick={() => setSelectedDifficulty(level.id)}
           >
-            <CardContent className="p-0">
+            <CardContent className="p-0 h-full">
               <div className={cn(
-                "p-5 flex items-center text-white transition-colors duration-300",
+                "flex flex-col h-full transition-colors duration-300",
                 level.id === 'beginner' 
-                  ? "bg-red-200/90 text-red-900 hover:bg-red-800/75 hover:text-white" 
-                  : "bg-red-400/60 text-red-950 hover:bg-red-800/90 hover:text-white"
+                  ? "bg-red-200/90 text-red-900 group-hover:bg-red-800/75 group-hover:text-white" 
+                  : "bg-red-400/60 text-red-950 group-hover:bg-red-800/90 group-hover:text-white"
               )}>
-                <div className={cn(
-                  "p-3 rounded-full mr-4 transition-colors duration-300",
-                  level.id === 'beginner'
-                    ? "bg-red-900/20 hover:bg-white/20"
-                    : "bg-red-950/20 hover:bg-white/20"
-                )}>
-                  {level.id === 'beginner' ? <ArrowDown className="w-6 h-6" /> : <ArrowUp className="w-6 h-6" />}
+                <div className="p-5 flex items-center">
+                  <div className={cn(
+                    "p-3 rounded-full mr-4 transition-colors duration-300",
+                    level.id === 'beginner'
+                      ? "bg-red-900/20 group-hover:bg-white/20"
+                      : "bg-red-950/20 group-hover:bg-white/20"
+                  )}>
+                    {level.id === 'beginner' ? <ArrowDown className="w-6 h-6" /> : <ArrowUp className="w-6 h-6" />}
+                  </div>
+                  <h3 className="text-2xl font-bold">{level.name}</h3>
                 </div>
-                <h3 className="text-2xl font-bold">{level.name}</h3>
-              </div>
-              <div className="p-5 bg-black/90 text-gray-300">
-                <p className="mb-4">{level.description}</p>
-                {selectedDifficulty === level.id && (
-                  <Badge className="bg-red-800/90 hover:bg-red-900">Selected</Badge>
-                )}
+                <div className="p-5 flex-grow">
+                  <p className="mb-4">{level.description}</p>
+                  {selectedDifficulty === level.id && (
+                    <Badge className={cn(
+                      "transition-colors duration-300",
+                      level.id === 'beginner'
+                        ? "bg-red-900/60 group-hover:bg-white/20"
+                        : "bg-red-950/60 group-hover:bg-white/20"
+                    )}>
+                      Selected
+                    </Badge>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
