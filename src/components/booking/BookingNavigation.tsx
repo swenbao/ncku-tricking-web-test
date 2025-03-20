@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
-import { BookingStep } from '@/hooks/useBookingState';
+import { BookingStep } from '@/hooks/booking/types';
 
 interface BookingNavigationProps {
   currentStep: BookingStep;
