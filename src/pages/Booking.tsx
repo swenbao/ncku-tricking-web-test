@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -30,12 +29,8 @@ const BookingPage = () => {
     getBookingDate
   } = useBookingState();
 
-  // Determine if we should show the continue button
-  const showContinueButton = (
-    (currentStep === 'type' && selectedType === null) ||
-    (currentStep === 'difficulty' && selectedDifficulty === null) ||
-    (currentStep === 'schedule' && selectedClass === null)
-  );
+  // Determine if we should show the continue button (always false now since we removed it)
+  const showContinueButton = false;
   
   return (
     <div className="page-transition min-h-screen flex flex-col booking-page">
@@ -59,7 +54,7 @@ const BookingPage = () => {
               )}
               
               {/* Step 2: Class Type Selection */}
-              {currentStep === 'type' && selectedDifficulty && (
+              {currentStep === 'type' && (
                 <ClassTypeStep 
                   selectedType={selectedType}
                   setSelectedType={setSelectedType}
