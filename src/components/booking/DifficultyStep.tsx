@@ -27,16 +27,16 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
           <Card 
             key={level.id}
             className={cn(
-              "cursor-pointer transition-all hover:shadow-md overflow-hidden",
-              selectedDifficulty === level.id ? "ring-2 ring-red-800" : "border"
+              "cursor-pointer transition-all overflow-hidden",
+              selectedDifficulty === level.id ? "ring-2 ring-red-800" : "border",
+              level.id === 'beginner' 
+                ? "hover:shadow-md hover:border-gray-400" 
+                : "hover:shadow-lg hover:shadow-red-800/20 hover:border-red-800/50"
             )}
             onClick={() => setSelectedDifficulty(level.id)}
           >
             <CardContent className="p-0">
-              <div className={cn(
-                "p-5 flex items-center",
-                level.id === 'beginner' ? "bg-black text-white" : "bg-red-800 text-white"
-              )}>
+              <div className="p-5 flex items-center bg-red-800 text-white">
                 <div className="bg-white/20 p-3 rounded-full mr-4">
                   {level.id === 'beginner' ? <ArrowDown className="w-6 h-6" /> : <ArrowUp className="w-6 h-6" />}
                 </div>
