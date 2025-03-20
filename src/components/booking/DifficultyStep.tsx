@@ -3,37 +3,47 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { getDifficultyDetails, difficultyLevels } from '@/lib/bookingData';
-import { Sparkles, Trophy } from 'lucide-react';
+import { Trophy, Sparkles } from 'lucide-react';
+import { difficultyLevels } from '@/lib/bookingData';
 
 interface DifficultyStepProps {
   selectedDifficulty: string | null;
   setSelectedDifficulty: (difficulty: string) => void;
+  onNext: () => void;
 }
 
 const DifficultyStep: React.FC<DifficultyStepProps> = ({ 
   selectedDifficulty, 
-  setSelectedDifficulty 
+  setSelectedDifficulty,
+  onNext
 }) => {
+  const handleSelectDifficulty = (difficultyId: string) => {
+    setSelectedDifficulty(difficultyId);
+    // Add a slight delay before navigation to next step
+    setTimeout(() => {
+      onNext();
+    }, 300);
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-2">Select Difficulty Level</h2>
       <p className="text-muted-foreground mb-6">
-        Choose the difficulty level that matches your experience.
+        Choose a difficulty level based on your experience.
       </p>
       
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid md:grid-cols-2 gap-6">
         {difficultyLevels.map((level) => (
           <Card 
             key={level.id}
             className={cn(
-              "cursor-pointer overflow-hidden border-2 transition-all duration-300 group",
+              "cursor-pointer transition-all border-2 overflow-hidden flex-1 duration-300 group",
               selectedDifficulty === level.id 
                 ? "ring-2 ring-red-600 border-red-600" 
                 : "border-gray-800 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)]",
               "transform transition-transform duration-300 hover:-translate-y-2"
             )}
-            onClick={() => setSelectedDifficulty(level.id)}
+            onClick={() => handleSelectDifficulty(level.id)}
           >
             <CardContent className="p-0 h-full">
               <div className={cn(

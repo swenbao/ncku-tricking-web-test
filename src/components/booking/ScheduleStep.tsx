@@ -15,6 +15,7 @@ interface ScheduleStepProps {
   userPoints: number;
   onSelectClass: (classItem: ClassData) => void;
   onPrevious: () => void;
+  onNext: () => void;
 }
 
 const ScheduleStep: React.FC<ScheduleStepProps> = ({
@@ -23,12 +24,23 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
   selectedClass,
   userPoints,
   onSelectClass,
-  onPrevious
+  onPrevious,
+  onNext
 }) => {
   if (!selectedType || !selectedDifficulty) return null;
   
   const filteredClasses = getFilteredClasses(selectedType, selectedDifficulty);
   
+  const handleSelectClass = (classItem: ClassData) => {
+    if (userPoints >= classItem.pointsCost) {
+      onSelectClass(classItem);
+      // Add a slight delay before navigation to next step
+      setTimeout(() => {
+        onNext();
+      }, 300);
+    }
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-2">Select a Class</h2>
@@ -73,9 +85,10 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
               key={classItem.id}
               className={cn(
                 "border-2 transition-all cursor-pointer hover:bg-gray-800/20",
-                selectedClass === classItem ? "border-primary" : "border-transparent"
+                selectedClass === classItem ? "border-primary" : "border-transparent",
+                userPoints >= classItem.pointsCost ? "opacity-100" : "opacity-70 cursor-not-allowed"
               )}
-              onClick={() => onSelectClass(classItem)}
+              onClick={() => handleSelectClass(classItem)}
             >
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row">

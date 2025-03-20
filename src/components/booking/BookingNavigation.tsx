@@ -8,12 +8,14 @@ interface BookingNavigationProps {
   currentStep: BookingStep;
   onPrevious: () => void;
   onNext: () => void;
+  showContinueButton: boolean;
 }
 
 const BookingNavigation: React.FC<BookingNavigationProps> = ({
   currentStep,
   onPrevious,
-  onNext
+  onNext,
+  showContinueButton = true
 }) => {
   if (currentStep === 'complete') return null;
   
@@ -31,7 +33,7 @@ const BookingNavigation: React.FC<BookingNavigationProps> = ({
         <div></div>
       )}
       
-      {currentStep !== 'confirm' && (
+      {currentStep !== 'confirm' && showContinueButton && (
         <Button
           onClick={onNext}
         >

@@ -29,6 +29,13 @@ const BookingPage = () => {
     handleSelectClass,
     getBookingDate
   } = useBookingState();
+
+  // Determine if we should show the continue button
+  const showContinueButton = (
+    (currentStep === 'type' && !selectedType) ||
+    (currentStep === 'difficulty' && !selectedDifficulty) ||
+    (currentStep === 'schedule' && !selectedClass)
+  );
   
   return (
     <div className="page-transition min-h-screen flex flex-col booking-page">
@@ -47,6 +54,7 @@ const BookingPage = () => {
                 <DifficultyStep
                   selectedDifficulty={selectedDifficulty}
                   setSelectedDifficulty={setSelectedDifficulty}
+                  onNext={goToNextStep}
                 />
               )}
               
@@ -55,6 +63,7 @@ const BookingPage = () => {
                 <ClassTypeStep 
                   selectedType={selectedType}
                   setSelectedType={setSelectedType}
+                  onNext={goToNextStep}
                 />
               )}
               
@@ -67,6 +76,7 @@ const BookingPage = () => {
                   userPoints={userPoints}
                   onSelectClass={handleSelectClass}
                   onPrevious={goToPreviousStep}
+                  onNext={goToNextStep}
                 />
               )}
               
@@ -94,6 +104,7 @@ const BookingPage = () => {
                 currentStep={currentStep}
                 onPrevious={goToPreviousStep}
                 onNext={goToNextStep}
+                showContinueButton={showContinueButton}
               />
             </div>
           </div>

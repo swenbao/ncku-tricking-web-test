@@ -8,9 +8,18 @@ import { classTypes, getAvailableDifficulties } from '@/lib/bookingData';
 interface ClassTypeStepProps {
   selectedType: string | null;
   setSelectedType: (type: string) => void;
+  onNext: () => void;
 }
 
-const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelectedType }) => {
+const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelectedType, onNext }) => {
+  const handleSelectType = (typeId: string) => {
+    setSelectedType(typeId);
+    // Add a slight delay before navigation to next step
+    setTimeout(() => {
+      onNext();
+    }, 300);
+  };
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-2">Select Class Type</h2>
@@ -34,7 +43,7 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
                   : "border-gray-800 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)]",
                 "transform transition-transform duration-300 hover:-translate-y-2"
               )}
-              onClick={() => setSelectedType(type.id)}
+              onClick={() => handleSelectType(type.id)}
             >
               <CardContent className="p-0 h-full">
                 <div className="bg-black text-white h-full flex flex-col group-hover:bg-gray-900 transition-colors duration-300">
