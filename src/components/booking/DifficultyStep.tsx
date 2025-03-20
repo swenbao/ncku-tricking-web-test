@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getDifficultyDetails, difficultyLevels } from '@/lib/bookingData';
+import { ArrowDown, ArrowUp } from 'lucide-react';
 
 interface DifficultyStepProps {
   selectedDifficulty: string | null;
@@ -33,18 +34,16 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
           >
             <CardContent className="p-0">
               <div className={cn(
-                "p-4",
+                "p-5 flex items-center",
                 level.id === 'beginner' ? "bg-black text-white" : "bg-red-500 text-white"
               )}>
-                <div className="flex items-center mb-3">
-                  <div className="bg-white/20 p-2 rounded-full mr-3">
-                    {level.icon}
-                  </div>
-                  <h3 className="text-xl font-bold">{level.name}</h3>
+                <div className="bg-white/20 p-3 rounded-full mr-4">
+                  {level.id === 'beginner' ? <ArrowDown className="w-6 h-6" /> : <ArrowUp className="w-6 h-6" />}
                 </div>
+                <h3 className="text-2xl font-bold">{level.name}</h3>
               </div>
-              <div className="p-4">
-                <p className="text-muted-foreground mb-3">{level.description}</p>
+              <div className="p-5 bg-black text-gray-300">
+                <p className="mb-4">{level.description}</p>
                 {selectedDifficulty === level.id && (
                   <Badge className="bg-red-500 hover:bg-red-600">Selected</Badge>
                 )}
