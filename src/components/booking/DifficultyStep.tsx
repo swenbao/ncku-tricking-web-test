@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getDifficultyDetails, difficultyLevels } from '@/lib/bookingData';
-import { ArrowDown, ArrowUp, Star } from 'lucide-react';
+import { Sparkles, Trophy } from 'lucide-react';
 
 interface DifficultyStepProps {
   selectedDifficulty: string | null;
@@ -30,7 +30,7 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
               "cursor-pointer overflow-hidden border-2 transition-all duration-300 group",
               selectedDifficulty === level.id 
                 ? "ring-2 ring-red-600 border-red-600" 
-                : "border-gray-800 hover:border-red-500",
+                : "border-gray-800 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)]",
               "transform transition-transform duration-300 hover:-translate-y-2"
             )}
             onClick={() => setSelectedDifficulty(level.id)}
@@ -48,8 +48,8 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
                       : "bg-red-950 border border-red-800"
                   )}>
                     {level.id === 'beginner' ? 
-                      <ArrowDown className="w-5 h-5 text-white/80" /> : 
-                      <Star className="w-5 h-5 text-red-500" />
+                      <Sparkles className="w-5 h-5 text-white/80" /> : 
+                      <Trophy className="w-5 h-5 text-red-500" />
                     }
                   </div>
                   <h3 className={cn(

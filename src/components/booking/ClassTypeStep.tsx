@@ -31,7 +31,7 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
                 "cursor-pointer transition-all overflow-hidden border-2 flex-1 duration-300 group",
                 selectedType === type.id 
                   ? "ring-2 ring-red-600 border-red-600" 
-                  : "border-gray-800 hover:border-red-500",
+                  : "border-gray-800 hover:shadow-[0_0_15px_rgba(255,255,255,0.3)]",
                 "transform transition-transform duration-300 hover:-translate-y-2"
               )}
               onClick={() => setSelectedType(type.id)}
