@@ -26,7 +26,7 @@ const BookingNavigation: React.FC<BookingNavigationProps> = ({
           onClick={onNext}
         >
           {currentStep === 'type' ? 'Choose Difficulty' : 
-            currentStep === 'difficulty' ? 'Select Schedule' : 
+            currentStep === 'difficulty' ? 'Select Class Type' : 
             'Continue'}
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>

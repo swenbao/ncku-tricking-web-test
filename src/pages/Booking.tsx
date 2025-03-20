@@ -32,9 +32,9 @@ const BookingPage = () => {
 
   // Determine if we should show the continue button
   const showContinueButton = (
-    (currentStep === 'type' && !selectedType) ||
-    (currentStep === 'difficulty' && !selectedDifficulty) ||
-    (currentStep === 'schedule' && !selectedClass)
+    (currentStep === 'type' && selectedType === null) ||
+    (currentStep === 'difficulty' && selectedDifficulty === null) ||
+    (currentStep === 'schedule' && selectedClass === null)
   );
   
   return (
