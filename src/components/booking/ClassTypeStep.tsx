@@ -29,12 +29,12 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
               key={type.id}
               className={cn(
                 "cursor-pointer transition-all hover:shadow-md overflow-hidden flex-1",
-                selectedType === type.id ? "ring-2 ring-red-500" : "border"
+                selectedType === type.id ? "ring-2 ring-red-800" : "border"
               )}
               onClick={() => setSelectedType(type.id)}
             >
               <CardContent className="p-0">
-                <div className="bg-red-500 text-white p-5">
+                <div className="bg-red-800 text-white p-5">
                   <div className="flex items-center mb-3">
                     <div className="bg-black/20 p-2 rounded-full mr-3">
                       {type.icon}
@@ -45,7 +45,7 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
                 <div className="p-5 bg-black text-gray-300">
                   <p className="mb-3">{type.description}</p>
                   {selectedType === type.id && (
-                    <Badge className="bg-red-500 hover:bg-red-600">Selected</Badge>
+                    <Badge className="bg-red-800 hover:bg-red-900">Selected</Badge>
                   )}
                 </div>
               </CardContent>
