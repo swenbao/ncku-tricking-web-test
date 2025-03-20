@@ -28,29 +28,35 @@ const ClassTypeStep: React.FC<ClassTypeStepProps> = ({ selectedType, setSelected
             <Card 
               key={type.id}
               className={cn(
-                "cursor-pointer transition-all hover:shadow-md overflow-hidden flex-1 transition-all duration-300 group",
+                "cursor-pointer transition-all overflow-hidden border-2 flex-1 duration-300 group",
                 selectedType === type.id 
-                  ? "ring-2 ring-red-800/80" 
-                  : "border hover:border-red-800/70"
+                  ? "ring-2 ring-red-600 border-red-600" 
+                  : "border-gray-800 hover:border-red-500",
+                "transform transition-transform duration-300 hover:-translate-y-2"
               )}
               onClick={() => setSelectedType(type.id)}
             >
               <CardContent className="p-0 h-full">
-                <div className="bg-red-200 text-red-900 group-hover:bg-red-800/90 group-hover:text-white h-full flex flex-col transition-colors duration-300">
-                  <div className="p-5">
+                <div className="bg-black text-white h-full flex flex-col">
+                  <div className="p-5 border-b border-gray-800">
                     <div className="flex items-center mb-3">
-                      <div className="bg-red-900/20 p-2 rounded-full mr-3 transition-colors duration-300 group-hover:bg-white/20">
-                        {type.icon}
+                      <div className="bg-black p-3 rounded-full mr-3 border border-gray-700 group-hover:border-red-800 transition-colors duration-300">
+                        <div className="text-white group-hover:text-red-500 transition-colors duration-300">
+                          {type.icon}
+                        </div>
                       </div>
-                      <h3 className="text-xl font-bold">{type.name}</h3>
+                      <h3 className="text-xl font-bold text-white group-hover:text-red-500 transition-colors duration-300">
+                        {type.name}
+                      </h3>
                     </div>
                   </div>
                   <div className="p-5 flex-grow">
-                    <p className="mb-3">{type.description}</p>
+                    <p className="mb-3 text-gray-300">{type.description}</p>
                     {selectedType === type.id && (
-                      <Badge className="bg-red-900/60 group-hover:bg-white/20 transition-colors duration-300">Selected</Badge>
+                      <Badge className="bg-red-600 text-white hover:bg-red-700">Selected</Badge>
                     )}
                   </div>
+                  <div className="h-1 w-full bg-gradient-to-r from-black to-gray-800 group-hover:from-red-800 group-hover:to-red-600 transition-all duration-500" />
                 </div>
               </CardContent>
             </Card>

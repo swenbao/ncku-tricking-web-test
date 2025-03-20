@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getDifficultyDetails, difficultyLevels } from '@/lib/bookingData';
-import { ArrowDown, ArrowUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, Star } from 'lucide-react';
 
 interface DifficultyStepProps {
   selectedDifficulty: string | null;
@@ -27,45 +27,52 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
           <Card 
             key={level.id}
             className={cn(
-              "cursor-pointer transition-all overflow-hidden group",
-              selectedDifficulty === level.id ? "ring-2 ring-red-800/80" : "border",
-              level.id === 'beginner' 
-                ? "hover:shadow-md hover:border-gray-400 transition-all duration-300" 
-                : "hover:shadow-[0_0_15px_rgba(185,28,28,0.4)] hover:border-red-800/90 hover:transform hover:translate-y-[-5px] transition-all duration-300"
+              "cursor-pointer overflow-hidden border-2 transition-all duration-300 group",
+              selectedDifficulty === level.id 
+                ? "ring-2 ring-red-600 border-red-600" 
+                : "border-gray-800 hover:border-red-500",
+              "transform transition-transform duration-300 hover:-translate-y-2"
             )}
             onClick={() => setSelectedDifficulty(level.id)}
           >
             <CardContent className="p-0 h-full">
               <div className={cn(
-                "flex flex-col h-full transition-colors duration-300",
-                level.id === 'beginner' 
-                  ? "bg-red-100 text-red-900 group-hover:bg-red-800/75 group-hover:text-white" 
-                  : "bg-red-200 text-red-950 group-hover:bg-red-800/90 group-hover:text-white"
+                "flex flex-col h-full bg-black text-white",
+                selectedDifficulty === level.id && "bg-gradient-to-br from-black to-red-950"
               )}>
-                <div className="p-5 flex items-center">
+                <div className="p-5 flex items-center border-b border-gray-800">
                   <div className={cn(
                     "p-3 rounded-full mr-4 transition-colors duration-300",
                     level.id === 'beginner'
-                      ? "bg-red-900/20 group-hover:bg-white/20"
-                      : "bg-red-950/20 group-hover:bg-white/20"
+                      ? "bg-black border border-gray-700" 
+                      : "bg-red-950 border border-red-800"
                   )}>
-                    {level.id === 'beginner' ? <ArrowDown className="w-6 h-6" /> : <ArrowUp className="w-6 h-6" />}
+                    {level.id === 'beginner' ? 
+                      <ArrowDown className="w-5 h-5 text-white/80" /> : 
+                      <Star className="w-5 h-5 text-red-500" />
+                    }
                   </div>
-                  <h3 className="text-2xl font-bold">{level.name}</h3>
+                  <h3 className={cn(
+                    "text-2xl font-bold",
+                    level.id === 'beginner' ? "text-white" : "text-red-500"
+                  )}>
+                    {level.name}
+                  </h3>
                 </div>
                 <div className="p-5 flex-grow">
-                  <p className="mb-4">{level.description}</p>
+                  <p className="mb-4 text-gray-300">{level.description}</p>
                   {selectedDifficulty === level.id && (
-                    <Badge className={cn(
-                      "transition-colors duration-300",
-                      level.id === 'beginner'
-                        ? "bg-red-900/60 group-hover:bg-white/20"
-                        : "bg-red-950/60 group-hover:bg-white/20"
-                    )}>
+                    <Badge className="bg-red-600 text-white hover:bg-red-700">
                       Selected
                     </Badge>
                   )}
                 </div>
+                <div className={cn(
+                  "h-1 w-full transition-all duration-500",
+                  level.id === 'beginner' 
+                    ? "bg-gradient-to-r from-gray-800 to-gray-600 group-hover:from-gray-700 group-hover:to-red-700" 
+                    : "bg-gradient-to-r from-red-800 to-red-600 group-hover:from-red-700 group-hover:to-red-500"
+                )} />
               </div>
             </CardContent>
           </Card>
