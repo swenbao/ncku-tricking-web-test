@@ -39,8 +39,8 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
               <div className={cn(
                 "flex flex-col h-full transition-colors duration-300",
                 level.id === 'beginner' 
-                  ? "bg-red-200/90 text-red-900 group-hover:bg-red-800/75 group-hover:text-white" 
-                  : "bg-red-400/60 text-red-950 group-hover:bg-red-800/90 group-hover:text-white"
+                  ? "bg-red-100 text-red-900 group-hover:bg-red-800/75 group-hover:text-white" 
+                  : "bg-red-200 text-red-950 group-hover:bg-red-800/90 group-hover:text-white"
               )}>
                 <div className="p-5 flex items-center">
                   <div className={cn(
