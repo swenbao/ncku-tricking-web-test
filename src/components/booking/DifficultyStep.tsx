@@ -28,24 +28,29 @@ const DifficultyStep: React.FC<DifficultyStepProps> = ({
             key={level.id}
             className={cn(
               "cursor-pointer transition-all overflow-hidden",
-              selectedDifficulty === level.id ? "ring-2 ring-red-800" : "border",
+              selectedDifficulty === level.id ? "ring-2 ring-red-800/80" : "border",
               level.id === 'beginner' 
-                ? "hover:shadow-md hover:border-gray-400" 
-                : "hover:shadow-[0_0_15px_rgba(185,28,28,0.5)] hover:border-red-800/70 hover:transform hover:translate-y-[-5px] transition-all duration-300"
+                ? "hover:shadow-md hover:border-gray-400 transition-all duration-300" 
+                : "hover:shadow-[0_0_15px_rgba(185,28,28,0.4)] hover:border-red-800/60 hover:transform hover:translate-y-[-5px] transition-all duration-300"
             )}
             onClick={() => setSelectedDifficulty(level.id)}
           >
             <CardContent className="p-0">
-              <div className="p-5 flex items-center bg-red-800 text-white">
+              <div className={cn(
+                "p-5 flex items-center text-white",
+                level.id === 'beginner' 
+                  ? "bg-red-800/75" 
+                  : "bg-red-800/85"
+              )}>
                 <div className="bg-white/20 p-3 rounded-full mr-4">
                   {level.id === 'beginner' ? <ArrowDown className="w-6 h-6" /> : <ArrowUp className="w-6 h-6" />}
                 </div>
                 <h3 className="text-2xl font-bold">{level.name}</h3>
               </div>
-              <div className="p-5 bg-black text-gray-300">
+              <div className="p-5 bg-black/90 text-gray-300">
                 <p className="mb-4">{level.description}</p>
                 {selectedDifficulty === level.id && (
-                  <Badge className="bg-red-800 hover:bg-red-900">Selected</Badge>
+                  <Badge className="bg-red-800/90 hover:bg-red-900">Selected</Badge>
                 )}
               </div>
             </CardContent>
