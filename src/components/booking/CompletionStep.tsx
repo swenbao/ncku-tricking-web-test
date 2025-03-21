@@ -59,19 +59,12 @@ const CompletionStep: React.FC<CompletionStepProps> = ({
         </div>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <div className="flex justify-center">
         <Button 
-          variant="outline" 
-          className="flex-1 max-w-xs" 
+          className="min-w-[200px]" 
           onClick={onReset}
         >
           Book Another Class
-        </Button>
-        <Button 
-          className="flex-1 max-w-xs" 
-          asChild
-        >
-          <a href="/profile">View My Bookings</a>
         </Button>
       </div>
     </div>

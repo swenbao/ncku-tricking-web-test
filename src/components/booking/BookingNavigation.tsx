@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BookingStep } from '@/hooks/booking/types';
 
@@ -12,7 +13,7 @@ const BookingNavigation: React.FC<BookingNavigationProps> = ({
   currentStep,
   onPrevious,
   onNext,
-  showContinueButton = true
+  showContinueButton = false
 }) => {
   if (currentStep === 'complete') return null;
   

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, ChevronRight, Flame, FlipHorizontal, Dumbbell, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
+import { AlertCircle, ChevronRight, ChevronLeft, Flame, FlipHorizontal, Dumbbell, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { getClassTypeDetails } from '@/lib/bookingData';
 import { ClassData } from '@/hooks/useBookingState';
@@ -10,6 +10,7 @@ interface ConfirmationStepProps {
   selectedClass: ClassData;
   userPoints: number;
   onConfirm: () => void;
+  onPrevious: () => void;
   getBookingDate: (day: string) => Date;
 }
 
@@ -17,13 +18,24 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
   selectedClass,
   userPoints,
   onConfirm,
+  onPrevious,
   getBookingDate
 }) => {
   if (!selectedClass) return null;
   
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Confirm Your Booking</h2>
+      <div className="flex items-center mb-6">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onPrevious}
+          className="mr-2"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+        <h2 className="text-2xl font-bold">Confirm Your Booking</h2>
+      </div>
       
       <div className="grid md:grid-cols-2 gap-8">
         <div>
@@ -71,8 +83,8 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               </div>
               <div className="border-t border-[hsl(var(--booking-border))] pt-3 mt-3">
                 <div className="flex justify-between font-medium">
-                  <span>Point Cost</span>
-                  <span>{selectedClass.pointsCost} points</span>
+                  <span>Course Card Cost</span>
+                  <span>{selectedClass.pointsCost} cards</span>
                 </div>
               </div>
             </div>
@@ -81,21 +93,21 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         
         <div>
           <div className="booking-highlight rounded-lg p-6 border mb-4">
-            <h3 className="text-lg font-bold mb-4">Your Points</h3>
+            <h3 className="text-lg font-bold mb-4">Your Course Cards</h3>
             
             <div className="space-y-4">
               <div className="flex justify-between text-lg">
                 <span className="text-muted-foreground">Current Balance</span>
-                <span className="font-medium">{userPoints} points</span>
+                <span className="font-medium">{userPoints} cards</span>
               </div>
               <div className="flex justify-between text-lg text-red-400">
                 <span>Cost</span>
-                <span>-{selectedClass.pointsCost} points</span>
+                <span>-{selectedClass.pointsCost} cards</span>
               </div>
               <div className="border-t border-[hsl(var(--booking-border))] pt-3 mt-3">
                 <div className="flex justify-between font-bold text-lg">
                   <span>Remaining Balance</span>
-                  <span>{userPoints - selectedClass.pointsCost} points</span>
+                  <span>{userPoints - selectedClass.pointsCost} cards</span>
                 </div>
               </div>
             </div>

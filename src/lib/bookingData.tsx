@@ -143,3 +143,20 @@ export const getAvailableDifficulties = (typeId: string): DifficultyLevel[] => {
   
   return difficultyLevels.filter(level => availableDifficultyIds.has(level.id));
 };
+
+// New function to get available class types for a difficulty level
+export const getAvailableClassTypes = (difficultyId: string): ClassType[] => {
+  // For beginners, only show tricking classes
+  if (difficultyId === 'beginner') {
+    return classTypes.filter(type => type.id === 'tricking');
+  }
+  
+  // For other difficulties, show all class types that have classes for that difficulty
+  const availableTypeIds = new Set(
+    enhancedClassData
+      .filter(classItem => classItem.difficulty === difficultyId)
+      .map(classItem => classItem.type)
+  );
+  
+  return classTypes.filter(type => availableTypeIds.has(type.id));
+};

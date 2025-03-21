@@ -3,7 +3,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Users, BookOpen, Flame, FlipHorizontal, Dumbbell } from 'lucide-react';
+import { Clock, Users, BookOpen, Flame, FlipHorizontal, Dumbbell, ChevronLeft } from 'lucide-react';
 import { getFilteredClasses, getClassTypeDetails, getDifficultyDetails } from '@/lib/bookingData';
 import { Button } from '@/components/ui/button';
 import { ClassData } from '@/hooks/useBookingState';
@@ -34,19 +34,29 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
   const handleSelectClass = (classItem: ClassData) => {
     if (userPoints >= classItem.pointsCost) {
       onSelectClass(classItem);
-      // Add a slight delay before navigation to next step
-      setTimeout(() => {
-        onNext();
-      }, 300);
+      // Navigate to next step immediately
+      onNext();
     }
   };
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-2">Select a Class</h2>
-      <p className="text-muted-foreground mb-6">
-        Choose from available classes that match your selection.
-      </p>
+      <div className="flex items-center mb-6">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={onPrevious}
+          className="mr-2"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Select a Class</h2>
+          <p className="text-muted-foreground">
+            Choose from available classes that match your selection.
+          </p>
+        </div>
+      </div>
       
       <div className="grid md:grid-cols-2 gap-4 mb-6">
         <div className="bg-blue-900/30 rounded-lg p-4 border border-blue-800/50 flex items-start gap-3">
@@ -104,9 +114,10 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
                        <Dumbbell className="h-6 w-6" />}
                     </div>
                     <p className="text-xl font-bold">{classItem.day}</p>
-                    <div className="flex items-center text-white/90 text-sm mt-1">
-                      <Clock className="h-3 w-3 mr-1" />
-                      <span>{classItem.time}</span>
+                    {/* Make time more prominent */}
+                    <div className="flex items-center text-white text-base mt-2 bg-black/30 px-3 py-1 rounded-full">
+                      <Clock className="h-4 w-4 mr-2 text-yellow-300" />
+                      <span className="font-bold">{classItem.time}</span>
                     </div>
                   </div>
                   
@@ -119,7 +130,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
                       <div className="mt-2 md:mt-0 flex items-start">
                         <div className="flex items-center bg-yellow-900/60 text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
                           <BookOpen className="h-3 w-3 mr-1" />
-                          {classItem.pointsCost} points
+                          {classItem.pointsCost} course cards
                         </div>
                       </div>
                     </div>
@@ -132,7 +143,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
                       
                       {userPoints < classItem.pointsCost ? (
                         <Badge variant="outline" className="text-red-400 border-red-800 bg-red-900/30">
-                          Insufficient Points
+                          Insufficient Course Cards
                         </Badge>
                       ) : (
                         <Badge 

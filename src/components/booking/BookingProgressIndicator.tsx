@@ -42,10 +42,11 @@ const BookingProgressIndicator: React.FC<BookingProgressIndicatorProps> = ({ cur
         ))}
       </div>
       <div className="mt-2 grid grid-cols-4 gap-2">
-        <div className={cn("h-1 rounded", currentStep === 'difficulty' ? "bg-gray-800" : "bg-green-500")}></div>
-        <div className={cn("h-1 rounded", currentStep === 'difficulty' || currentStep === 'type' ? "bg-gray-800" : "bg-green-500")}></div>
-        <div className={cn("h-1 rounded", currentStep === 'difficulty' || currentStep === 'type' || currentStep === 'schedule' ? "bg-gray-800" : "bg-green-500")}></div>
-        <div className={cn("h-1 rounded", currentStep !== 'complete' ? "bg-gray-800" : "bg-green-500")}></div>
+        {/* Show 4 progress bars connecting the 5 steps */}
+        <div className={cn("h-1 rounded", steps.indexOf(currentStep) > 0 || currentStep === 'complete' ? "bg-green-500" : "bg-gray-800")}></div>
+        <div className={cn("h-1 rounded", steps.indexOf(currentStep) > 1 || currentStep === 'complete' ? "bg-green-500" : "bg-gray-800")}></div>
+        <div className={cn("h-1 rounded", steps.indexOf(currentStep) > 2 || currentStep === 'complete' ? "bg-green-500" : "bg-gray-800")}></div>
+        <div className={cn("h-1 rounded", steps.indexOf(currentStep) > 3 || currentStep === 'complete' ? "bg-green-500" : "bg-gray-800")}></div>
       </div>
     </div>
   );

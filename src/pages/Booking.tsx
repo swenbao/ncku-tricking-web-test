@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -57,8 +58,10 @@ const BookingPage = () => {
               {currentStep === 'type' && (
                 <ClassTypeStep 
                   selectedType={selectedType}
+                  selectedDifficulty={selectedDifficulty}
                   setSelectedType={setSelectedType}
                   onNext={goToNextStep}
+                  onPrevious={goToPreviousStep}
                 />
               )}
               
@@ -81,6 +84,7 @@ const BookingPage = () => {
                   selectedClass={selectedClass}
                   userPoints={userPoints}
                   onConfirm={processBooking}
+                  onPrevious={goToPreviousStep}
                   getBookingDate={getBookingDate}
                 />
               )}
