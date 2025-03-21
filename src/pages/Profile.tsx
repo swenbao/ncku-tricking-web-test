@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,8 +11,9 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAuth, User, UserStatus } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
+import { Clock } from 'lucide-react';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -32,17 +34,17 @@ const StatusCard = ({ status }: { status: UserStatus }) => {
   
   switch (status) {
     case 'Blank Card':
-      bgGradient = 'bg-gradient-to-r from-gray-900 to-black';
+      bgGradient = 'bg-black';
       accentColor = 'border-gray-400';
       statusDetail = 'Begin your tricking journey with basic access';
       break;
     case 'Beginner Card':
-      bgGradient = 'bg-gradient-to-r from-gray-900 to-black';
+      bgGradient = 'bg-black';
       accentColor = 'border-red-400';
       statusDetail = 'Access to all beginner-level classes and resources';
       break;
     case 'Advanced Card':
-      bgGradient = 'bg-gradient-to-r from-black to-gray-900';
+      bgGradient = 'bg-black';
       accentColor = 'border-red-600';
       statusDetail = 'Full access to all classes and exclusive content';
       break;
@@ -67,7 +69,7 @@ const StatusCard = ({ status }: { status: UserStatus }) => {
               <p className="text-gray-300">{statusDetail}</p>
             </div>
           </div>
-          <div className="flex flex-col items-end">
+          <div className="flex flex-col items-end gap-3">
             <div className="px-5 py-3 rounded-lg bg-black border border-red-600 mb-3">
               <div className="text-xs uppercase tracking-wide mb-1 text-gray-400">NCKU Tricking Club</div>
               <div className="text-sm font-medium text-white">{new Date().getFullYear()} Member</div>
@@ -77,6 +79,16 @@ const StatusCard = ({ status }: { status: UserStatus }) => {
               className="text-white border-2 border-red-600 hover:bg-red-900 hover:text-white"
             >
               View Membership Details
+            </Button>
+            <Button 
+              variant="outline" 
+              className="text-white border-2 border-red-600 hover:bg-red-900 hover:text-white"
+              asChild
+            >
+              <Link to="/booking-history">
+                <Clock className="mr-2 h-4 w-4" />
+                View Booking History
+              </Link>
             </Button>
           </div>
         </div>
