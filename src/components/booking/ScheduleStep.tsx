@@ -34,6 +34,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
   const navigate = useNavigate();
   const { toast } = useToast();
   
+  // Safety check - prevent rendering if required props are missing
   if (!selectedType || !selectedDifficulty) return null;
   
   const filteredClasses = getFilteredClasses(selectedType, selectedDifficulty);
@@ -52,12 +53,18 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
       return;
     }
     
-    if (userPoints >= 1) { // Always requires just 1 course card
+    if (userPoints >= classItem.pointsCost) {
       onSelectClass(classItem);
       // Navigate to next step after a brief delay to ensure state is updated
       setTimeout(() => {
         onNext();
       }, 10);
+    } else {
+      toast({
+        title: "Insufficient Course Cards",
+        description: "You don't have enough course cards to book this class.",
+        variant: "destructive",
+      });
     }
   };
 

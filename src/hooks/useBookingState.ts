@@ -17,27 +17,28 @@ export const useBookingState = () => {
   // Initialize selection state with URL parameter
   const initialDifficulty = searchParams.get('difficulty') || null;
   
-  // Use modular hooks
+  // Use the improved class selection hook
   const {
     selectedType,
     selectedDifficulty: classSelectedDifficulty,
     selectedClass,
     selectedDate,
     userPoints,
-    isResetting,
-    setIsResetting,
     setSelectedType,
     setSelectedDifficulty: setClassSelectedDifficulty,
     setSelectedClass,
     setSelectedDate,
-    handleSelectClass
+    handleSelectClass,
+    resetSelections
   } = useClassSelection();
   
   // Override difficulty with URL parameter if present
   const selectedDifficulty = initialDifficulty || classSelectedDifficulty;
   const setSelectedDifficulty = setClassSelectedDifficulty;
   
-  // Setup booking navigation
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  
+  // Setup booking navigation - must be called after useState hooks
   const {
     currentStep,
     setCurrentStep,
@@ -49,8 +50,6 @@ export const useBookingState = () => {
     selectedClass
   });
   
-  const [bookingSuccess, setBookingSuccess] = useState(false);
-  
   // Process booking
   const processBooking = () => {
     // In a real app, this would make an API call to create the booking
@@ -58,25 +57,16 @@ export const useBookingState = () => {
     setBookingSuccess(true);
   };
   
-  // Reset booking - with proper flag to prevent toast notifications
+  // Reset booking - completely refactored to fix the toast issue
   const resetBooking = () => {
-    // Set the resetting flag to true to skip validations
-    setIsResetting(true);
+    // First reset all selections without triggering validation
+    resetSelections();
     
-    // Clear selections first to prevent validation
-    setSelectedType(null);
-    setSelectedDifficulty(null);
-    setSelectedClass(null);
-    setSelectedDate(null);
+    // Reset booking success state
     setBookingSuccess(false);
     
     // Then set the step to difficulty
     setCurrentStep('difficulty');
-    
-    // Reset the flag after a short delay
-    setTimeout(() => {
-      setIsResetting(false);
-    }, 100);
   };
   
   return {

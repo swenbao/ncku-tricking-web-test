@@ -7,7 +7,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 3000 // Changed to 3 seconds for better UX
+const TOAST_REMOVE_DELAY = 3000 // 3 seconds
 
 type ToasterToast = ToastProps & {
   id: string
@@ -127,7 +127,7 @@ export const reducer = (state: State, action: Action): State => {
   }
 }
 
-// Dismiss all toasts immediately
+// Clear all toasts immediately - useful for resets and navigation
 export const dismissAllToasts = () => {
   dispatch({ type: "DISMISS_TOAST" })
 }
@@ -191,6 +191,7 @@ function useToast() {
     ...state,
     toast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    dismissAll: () => dispatch({ type: "DISMISS_TOAST" }),
   }
 }
 

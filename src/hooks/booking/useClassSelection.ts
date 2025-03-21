@@ -17,19 +17,24 @@ export const useClassSelection = () => {
   
   // Auto-navigate when selecting a type with only one difficulty level
   useEffect(() => {
-    if (selectedType) {
+    if (!isResetting && selectedType) {
       const availableDifficulties = getAvailableDifficulties(selectedType);
       if (availableDifficulties.length === 1) {
         setSelectedDifficulty(availableDifficulties[0].id);
       }
     }
-  }, [selectedType]);
+  }, [selectedType, isResetting]);
   
-  // Class type selection handler with auto-navigation
+  // Internal state setter without validation
+  const setSelectedTypeInternal = (type: string | null) => {
+    setSelectedType(type);
+  };
+  
+  // Class type selection handler with auto-navigation and validation
   const setSelectedTypeWithNavigation = (type: string) => {
     // Skip validation checks during reset operations
     if (isResetting) {
-      setSelectedType(type);
+      setSelectedTypeInternal(type);
       return;
     }
     
@@ -44,11 +49,16 @@ export const useClassSelection = () => {
       return;
     }
     
-    setSelectedType(type);
+    setSelectedTypeInternal(type);
   };
   
   // Handle class selection
   const handleSelectClass = (classItem: ClassData) => {
+    if (isResetting) {
+      setSelectedClass(classItem);
+      return;
+    }
+    
     if (userPoints < classItem.pointsCost) {
       toast({
         title: "Insufficient Course Cards",
@@ -59,7 +69,20 @@ export const useClassSelection = () => {
     }
     
     setSelectedClass(classItem);
-    // No navigation here - the component will handle navigation
+  };
+  
+  // Reset all selections without triggering validation
+  const resetSelections = () => {
+    setIsResetting(true);
+    setSelectedTypeInternal(null);
+    setSelectedDifficulty(null);
+    setSelectedClass(null);
+    setSelectedDate(null);
+    
+    // Reset the resetting flag after a short delay
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 100);
   };
 
   return {
@@ -74,6 +97,7 @@ export const useClassSelection = () => {
     setSelectedDifficulty,
     setSelectedClass,
     setSelectedDate,
-    handleSelectClass
+    handleSelectClass,
+    resetSelections
   };
 };
