@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -58,18 +57,15 @@ export const useBookingState = () => {
   
   // Reset booking - improved to directly jump to difficulty step
   const resetBooking = () => {
-    // First reset the current step directly to difficulty
-    setCurrentStep('difficulty');
+    // Clear selections first to prevent validation
+    setSelectedType(null);
+    setSelectedDifficulty(null);
+    setSelectedClass(null);
+    setSelectedDate(null);
+    setBookingSuccess(false);
     
-    // Then clear all selections after navigation
-    // This prevents any validation errors from the current step
-    setTimeout(() => {
-      setSelectedType(null);
-      setSelectedDifficulty(null);
-      setSelectedClass(null);
-      setSelectedDate(null);
-      setBookingSuccess(false);
-    }, 10);
+    // Then set the step to difficulty
+    setCurrentStep('difficulty');
   };
   
   return {
