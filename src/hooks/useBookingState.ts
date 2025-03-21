@@ -56,18 +56,19 @@ export const useBookingState = () => {
     setBookingSuccess(true);
   };
   
-  // Reset booking
+  // Reset booking - improved to directly jump to difficulty step
   const resetBooking = () => {
-    // First clear all selections
-    setSelectedType(null);
-    setSelectedDifficulty(null);
-    setSelectedClass(null);
-    setSelectedDate(null);
-    setBookingSuccess(false);
+    // First reset the current step directly to difficulty
+    setCurrentStep('difficulty');
     
-    // Then reset to the first step after state has been cleared
+    // Then clear all selections after navigation
+    // This prevents any validation errors from the current step
     setTimeout(() => {
-      setCurrentStep('difficulty');
+      setSelectedType(null);
+      setSelectedDifficulty(null);
+      setSelectedClass(null);
+      setSelectedDate(null);
+      setBookingSuccess(false);
     }, 10);
   };
   
