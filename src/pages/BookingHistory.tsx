@@ -131,7 +131,7 @@ const BookingHistoryPage = () => {
                         >
                           Cancel Booking
                         </Button>
-                      </Card>
+                      </CardContent>
                     </Card>
                   );
                 })}
