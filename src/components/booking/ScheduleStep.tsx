@@ -32,7 +32,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
   const filteredClasses = getFilteredClasses(selectedType, selectedDifficulty);
   
   const handleSelectClass = (classItem: ClassData) => {
-    if (userPoints >= classItem.pointsCost) {
+    if (userPoints >= 1) { // Always requires just 1 course card
       onSelectClass(classItem);
       // Navigate to next step after a brief delay to ensure state is updated
       setTimeout(() => {
@@ -98,7 +98,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
               className={cn(
                 "border-2 transition-all cursor-pointer hover:bg-gray-800/20",
                 selectedClass?.id === classItem.id ? "border-primary" : "border-transparent",
-                userPoints >= classItem.pointsCost ? "opacity-100" : "opacity-70 cursor-not-allowed"
+                userPoints >= 1 ? "opacity-100" : "opacity-70 cursor-not-allowed"
               )}
               onClick={() => handleSelectClass(classItem)}
             >
@@ -138,7 +138,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
                       <div className="mt-2 md:mt-0 flex items-start">
                         <div className="flex items-center bg-yellow-900/60 text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
                           <BookOpen className="h-3 w-3 mr-1" />
-                          {classItem.pointsCost} course cards
+                          1 course card
                         </div>
                       </div>
                     </div>
@@ -149,7 +149,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
                         <span>{classItem.availableSpots} of {classItem.maxCapacity} spots available</span>
                       </div>
                       
-                      {userPoints < classItem.pointsCost ? (
+                      {userPoints < 1 ? (
                         <Badge variant="outline" className="text-red-400 border-red-800 bg-red-900/30">
                           Insufficient Course Cards
                         </Badge>

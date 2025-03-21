@@ -23,6 +23,9 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
 }) => {
   if (!selectedClass) return null;
   
+  // Always use 1 course card per class
+  const courseCost = 1;
+  
   return (
     <div className="p-6">
       <div className="flex items-center mb-6">
@@ -84,7 +87,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               <div className="border-t border-[hsl(var(--booking-border))] pt-3 mt-3">
                 <div className="flex justify-between font-medium">
                   <span>Course Card Cost</span>
-                  <span>{selectedClass.pointsCost} cards</span>
+                  <span>{courseCost} card</span>
                 </div>
               </div>
             </div>
@@ -102,12 +105,12 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               </div>
               <div className="flex justify-between text-lg text-red-400">
                 <span>Cost</span>
-                <span>-{selectedClass.pointsCost} cards</span>
+                <span>-{courseCost} card</span>
               </div>
               <div className="border-t border-[hsl(var(--booking-border))] pt-3 mt-3">
                 <div className="flex justify-between font-bold text-lg">
                   <span>Remaining Balance</span>
-                  <span>{userPoints - selectedClass.pointsCost} cards</span>
+                  <span>{userPoints - courseCost} cards</span>
                 </div>
               </div>
             </div>
