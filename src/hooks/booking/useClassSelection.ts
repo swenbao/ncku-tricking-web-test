@@ -10,6 +10,7 @@ export const useClassSelection = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState<string | null>(null);
   const [selectedClass, setSelectedClass] = useState<ClassData | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isResetting, setIsResetting] = useState<boolean>(false);
   
   // Mock user points data - in a real app this would come from a user context or API
   const userPoints = 15;
@@ -26,6 +27,12 @@ export const useClassSelection = () => {
   
   // Class type selection handler with auto-navigation
   const setSelectedTypeWithNavigation = (type: string) => {
+    // Skip validation checks during reset operations
+    if (isResetting) {
+      setSelectedType(type);
+      return;
+    }
+    
     const availableDifficulties = getAvailableDifficulties(type);
     
     if (availableDifficulties.length === 0) {
@@ -61,6 +68,8 @@ export const useClassSelection = () => {
     selectedClass,
     selectedDate,
     userPoints,
+    isResetting,
+    setIsResetting,
     setSelectedType: setSelectedTypeWithNavigation,
     setSelectedDifficulty,
     setSelectedClass,

@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
@@ -23,6 +24,8 @@ export const useBookingState = () => {
     selectedClass,
     selectedDate,
     userPoints,
+    isResetting,
+    setIsResetting,
     setSelectedType,
     setSelectedDifficulty: setClassSelectedDifficulty,
     setSelectedClass,
@@ -55,8 +58,11 @@ export const useBookingState = () => {
     setBookingSuccess(true);
   };
   
-  // Reset booking - improved to directly jump to difficulty step
+  // Reset booking - with proper flag to prevent toast notifications
   const resetBooking = () => {
+    // Set the resetting flag to true to skip validations
+    setIsResetting(true);
+    
     // Clear selections first to prevent validation
     setSelectedType(null);
     setSelectedDifficulty(null);
@@ -66,6 +72,11 @@ export const useBookingState = () => {
     
     // Then set the step to difficulty
     setCurrentStep('difficulty');
+    
+    // Reset the flag after a short delay
+    setTimeout(() => {
+      setIsResetting(false);
+    }, 100);
   };
   
   return {

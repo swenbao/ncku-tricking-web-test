@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import type {
@@ -6,7 +7,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 5000 // Changed from 1000000 to 5000ms (5 seconds)
+const TOAST_REMOVE_DELAY = 3000 // Changed to 3 seconds for better UX
 
 type ToasterToast = ToastProps & {
   id: string
@@ -124,6 +125,11 @@ export const reducer = (state: State, action: Action): State => {
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
   }
+}
+
+// Dismiss all toasts immediately
+export const dismissAllToasts = () => {
+  dispatch({ type: "DISMISS_TOAST" })
 }
 
 const listeners: Array<(state: State) => void> = []
