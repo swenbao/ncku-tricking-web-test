@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import TricktionaryPage from "./pages/Tricktionary";
 import PointsPage from "./pages/Points";
 import BookingPage from "./pages/Booking";
+import BookingHistoryPage from "./pages/BookingHistory";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Signup";
 import ProfilePage from "./pages/Profile";
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/tricktionary" element={<TricktionaryPage />} />
               <Route path="/points" element={<PointsPage />} />
               <Route path="/booking" element={<BookingPage />} />
+              <Route path="/booking-history" element={<BookingHistoryPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/profile" element={<ProfilePage />} />

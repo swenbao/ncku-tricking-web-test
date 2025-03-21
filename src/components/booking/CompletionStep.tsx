@@ -5,6 +5,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { getClassTypeDetails } from '@/lib/bookingData';
 import { ClassData } from '@/hooks/useBookingState';
+import { Link } from 'react-router-dom';
 
 interface CompletionStepProps {
   selectedClass: ClassData;
@@ -59,12 +60,22 @@ const CompletionStep: React.FC<CompletionStepProps> = ({
         </div>
       </div>
       
-      <div className="flex justify-center">
+      <div className="flex flex-col sm:flex-row justify-center gap-4">
         <Button 
           className="min-w-[200px]" 
           onClick={onReset}
         >
           Book Another Class
+        </Button>
+        
+        <Button 
+          className="min-w-[200px]"
+          variant="outline"
+          asChild
+        >
+          <Link to="/booking-history">
+            View My Bookings
+          </Link>
         </Button>
       </div>
     </div>
