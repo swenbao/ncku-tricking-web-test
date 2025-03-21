@@ -12,6 +12,7 @@ import { useAuth, User, UserStatus } from '@/contexts/AuthContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Navigate } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -26,41 +27,70 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const StatusCard = ({ status }: { status: UserStatus }) => {
-  let bgColor = 'bg-gray-100';
+  let bgGradient = '';
   let textColor = 'text-gray-700';
+  let borderColor = 'border-gray-300';
   let statusText = '';
+  let statusDetail = '';
   
   switch (status) {
     case 'Blank Card':
-      bgColor = 'bg-gray-200';
+      bgGradient = 'bg-gradient-to-r from-gray-100 to-gray-200';
       textColor = 'text-gray-700';
-      statusText = 'You are a new member';
+      borderColor = 'border-gray-300';
+      statusText = 'New Member';
+      statusDetail = 'Begin your tricking journey with basic access';
       break;
     case 'Beginner Card':
-      bgColor = 'bg-blue-100';
+      bgGradient = 'bg-gradient-to-r from-blue-50 to-blue-100';
       textColor = 'text-blue-700';
-      statusText = 'You can attend beginner classes';
+      borderColor = 'border-blue-300';
+      statusText = 'Beginner Access';
+      statusDetail = 'Access to all beginner-level classes and resources';
       break;
     case 'Advanced Card':
-      bgColor = 'bg-purple-100';
+      bgGradient = 'bg-gradient-to-r from-purple-50 to-purple-100';
       textColor = 'text-purple-700';
-      statusText = 'You can attend all classes';
+      borderColor = 'border-purple-300';
+      statusText = 'Advanced Access';
+      statusDetail = 'Full access to all classes and exclusive content';
       break;
   }
   
   return (
-    <div className={`border rounded-lg p-4 ${bgColor} mb-8`}>
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold">NCKU Tricking</h3>
-          <p className={`font-medium ${textColor}`}>{status}</p>
-          <p className="text-sm mt-1">{statusText}</p>
-        </div>
-        <div className={`p-3 rounded-full ${bgColor} border-2 border-white shadow-sm`}>
-          <span className={`text-2xl font-bold ${textColor}`}>{status.charAt(0)}</span>
+    <Card className={`mb-8 overflow-hidden shadow-lg ${borderColor} border-2`}>
+      <div className={`${bgGradient} h-full p-8`}>
+        <div className="flex flex-col md:flex-row items-center justify-between">
+          <div className="mb-6 md:mb-0">
+            <div className="flex items-center mb-3">
+              <div className={`w-16 h-16 rounded-full border-4 ${borderColor} bg-white flex items-center justify-center mr-4 shadow-md`}>
+                <span className={`text-3xl font-bold ${textColor}`}>{status.charAt(0)}</span>
+              </div>
+              <div>
+                <p className="text-sm uppercase tracking-wide font-medium text-gray-500 mb-1">Membership Status</p>
+                <h3 className={`text-2xl font-bold ${textColor}`}>{status}</h3>
+              </div>
+            </div>
+            <div className="space-y-2 ml-1 pl-1 border-l-2 border-gray-300">
+              <p className={`font-medium ${textColor}`}>{statusText}</p>
+              <p className="text-gray-600">{statusDetail}</p>
+            </div>
+          </div>
+          <div className="flex flex-col items-end">
+            <div className={`px-5 py-3 rounded-lg ${textColor.replace('text', 'bg').replace('700', '100')} border ${borderColor} mb-3`}>
+              <div className="text-xs uppercase tracking-wide mb-1">NCKU Tricking Club</div>
+              <div className="text-sm font-medium">{new Date().getFullYear()} Member</div>
+            </div>
+            <Button 
+              variant="outline" 
+              className={`${textColor} border-2 ${borderColor} hover:bg-white`}
+            >
+              View Membership Details
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
