@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 type CourseType = 'introductory' | 'advanced' | null;
 type CourseCard = {
@@ -23,6 +25,8 @@ const PointsPage = () => {
   const [selectedCard, setSelectedCard] = useState<string | null>(null);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const { toast } = useToast();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   // Course card data
   const introductoryCourseCards: CourseCard[] = [
@@ -95,6 +99,19 @@ const PointsPage = () => {
   // Simulate purchase process
   const handlePurchase = () => {
     if (!selectedCard) return;
+    
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      toast({
+        title: "Login Required",
+        description: "Please login to purchase a course card.",
+        variant: "destructive",
+      });
+      
+      // Redirect to login page
+      navigate('/login');
+      return;
+    }
     
     // Get selected card details
     const cardList = courseType === 'introductory' ? introductoryCourseCards : advancedCourseCards;

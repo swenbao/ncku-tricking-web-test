@@ -7,6 +7,9 @@ import { Clock, Users, BookOpen, Flame, FlipHorizontal, Dumbbell, ChevronLeft } 
 import { getFilteredClasses, getClassTypeDetails, getDifficultyDetails } from '@/lib/bookingData';
 import { Button } from '@/components/ui/button';
 import { ClassData } from '@/hooks/useBookingState';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/components/ui/use-toast';
 
 interface ScheduleStepProps {
   selectedType: string | null;
@@ -27,11 +30,28 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
   onPrevious,
   onNext
 }) => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
   if (!selectedType || !selectedDifficulty) return null;
   
   const filteredClasses = getFilteredClasses(selectedType, selectedDifficulty);
   
   const handleSelectClass = (classItem: ClassData) => {
+    // Check if user is authenticated first
+    if (!isAuthenticated) {
+      toast({
+        title: "Login Required",
+        description: "Please login to book a class.",
+        variant: "destructive",
+      });
+      
+      // Redirect to login page
+      navigate('/login');
+      return;
+    }
+    
     if (userPoints >= 1) { // Always requires just 1 course card
       onSelectClass(classItem);
       // Navigate to next step after a brief delay to ensure state is updated
