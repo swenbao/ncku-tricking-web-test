@@ -104,8 +104,9 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
             >
               <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row">
+                  {/* Left column with class type and day */}
                   <div className={cn(
-                    "p-5 flex flex-col justify-center items-center md:w-1/4 text-white",
+                    "p-4 flex flex-col justify-center items-center md:w-1/5 text-white",
                     `bg-${classItem.type === 'tricking' ? 'orange' : 
                             classItem.type === 'flip' ? 'purple' : 
                             'blue'}-800`
@@ -115,19 +116,24 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
                        classItem.type === 'flip' ? <FlipHorizontal className="h-6 w-6" /> :
                        <Dumbbell className="h-6 w-6" />}
                     </div>
-                    <p className="text-xl font-bold">{classItem.day}</p>
-                    {/* Make time more prominent */}
-                    <div className="flex items-center text-white text-base mt-2 bg-black/30 px-3 py-1 rounded-full">
+                    <p className="text-base font-bold">{classItem.day}</p>
+                  </div>
+                  
+                  {/* Center column with time - now more prominent */}
+                  <div className="bg-black/40 flex flex-col justify-center items-center py-4 md:w-1/5">
+                    <div className="text-xs uppercase text-yellow-300 font-medium mb-1">Time</div>
+                    <div className="flex items-center justify-center px-4 py-2 bg-yellow-900/60 rounded-full">
                       <Clock className="h-4 w-4 mr-2 text-yellow-300" />
-                      <span className="font-bold">{classItem.time}</span>
+                      <span className="text-yellow-200 font-bold text-lg tracking-tight">{classItem.time}</span>
                     </div>
                   </div>
                   
+                  {/* Right column with class details */}
                   <div className="p-5 flex-1">
                     <div className="flex flex-col md:flex-row justify-between mb-3">
                       <div>
                         <h3 className="text-xl font-bold">{classItem.name}</h3>
-                        <p className="text-muted-foreground">{classItem.description}</p>
+                        <p className="text-muted-foreground text-sm">{classItem.description}</p>
                       </div>
                       <div className="mt-2 md:mt-0 flex items-start">
                         <div className="flex items-center bg-yellow-900/60 text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
