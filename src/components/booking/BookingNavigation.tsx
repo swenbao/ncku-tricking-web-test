@@ -15,13 +15,8 @@ const BookingNavigation: React.FC<BookingNavigationProps> = ({
   onNext,
   showContinueButton = false
 }) => {
-  if (currentStep === 'complete') return null;
-  
-  return (
-    <div className="px-6 py-4 border-t border-[hsl(var(--booking-border))]">
-      {/* Navigation footer is now empty but we're keeping the container for consistent spacing */}
-    </div>
-  );
+  // Simply return null for all steps - this component is no longer being used for navigation
+  return null;
 };
 
 export default BookingNavigation;

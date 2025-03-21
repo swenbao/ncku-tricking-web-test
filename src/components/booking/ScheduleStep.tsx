@@ -34,8 +34,10 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
   const handleSelectClass = (classItem: ClassData) => {
     if (userPoints >= classItem.pointsCost) {
       onSelectClass(classItem);
-      // Navigate to next step immediately
-      onNext();
+      // Navigate to next step after a brief delay to ensure state is updated
+      setTimeout(() => {
+        onNext();
+      }, 10);
     }
   };
 
@@ -95,7 +97,7 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
               key={classItem.id}
               className={cn(
                 "border-2 transition-all cursor-pointer hover:bg-gray-800/20",
-                selectedClass === classItem ? "border-primary" : "border-transparent",
+                selectedClass?.id === classItem.id ? "border-primary" : "border-transparent",
                 userPoints >= classItem.pointsCost ? "opacity-100" : "opacity-70 cursor-not-allowed"
               )}
               onClick={() => handleSelectClass(classItem)}
@@ -150,12 +152,12 @@ const ScheduleStep: React.FC<ScheduleStepProps> = ({
                           variant="outline" 
                           className={cn(
                             "transition-colors",
-                            selectedClass === classItem 
+                            selectedClass?.id === classItem.id 
                               ? "bg-green-900/30 text-green-300 border-green-700" 
                               : "bg-gray-800/30 text-gray-300 border-gray-700"
                           )}
                         >
-                          {selectedClass === classItem ? "Selected" : "Available"}
+                          {selectedClass?.id === classItem.id ? "Selected" : "Available"}
                         </Badge>
                       )}
                     </div>

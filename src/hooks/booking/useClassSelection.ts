@@ -44,14 +44,15 @@ export const useClassSelection = () => {
   const handleSelectClass = (classItem: ClassData) => {
     if (userPoints < classItem.pointsCost) {
       toast({
-        title: "Insufficient Points",
-        description: "You don't have enough points to book this class.",
+        title: "Insufficient Course Cards",
+        description: "You don't have enough course cards to book this class.",
         variant: "destructive",
       });
       return;
     }
     
     setSelectedClass(classItem);
+    // No navigation here - the component will handle navigation
   };
 
   return {

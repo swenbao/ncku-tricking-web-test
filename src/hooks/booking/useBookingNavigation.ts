@@ -27,15 +27,8 @@ export const useBookingNavigation = ({
         setCurrentStep('schedule');
         break;
       case 'schedule':
-        if (selectedClass) {
-          setCurrentStep('confirm');
-        } else {
-          toast({
-            title: "Please Select a Class",
-            description: "You need to select a class to proceed.",
-            variant: "destructive",
-          });
-        }
+        // Remove the validation here - it will be handled by the handleSelectClass function
+        setCurrentStep('confirm');
         break;
       default:
         break;
