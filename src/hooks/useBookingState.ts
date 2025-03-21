@@ -58,12 +58,17 @@ export const useBookingState = () => {
   
   // Reset booking
   const resetBooking = () => {
-    setCurrentStep('type');
+    // First clear all selections
     setSelectedType(null);
     setSelectedDifficulty(null);
     setSelectedClass(null);
     setSelectedDate(null);
     setBookingSuccess(false);
+    
+    // Then reset to the first step after state has been cleared
+    setTimeout(() => {
+      setCurrentStep('difficulty');
+    }, 10);
   };
   
   return {

@@ -20,6 +20,11 @@ const CompletionStep: React.FC<CompletionStepProps> = ({
 }) => {
   if (!selectedClass) return null;
   
+  const handleBookAnother = () => {
+    // Call the reset function provided by props
+    onReset();
+  };
+  
   return (
     <div className="p-6 text-center">
       <div className="mb-6 flex justify-center">
@@ -63,7 +68,7 @@ const CompletionStep: React.FC<CompletionStepProps> = ({
       <div className="flex flex-col sm:flex-row justify-center gap-4">
         <Button 
           className="min-w-[200px]" 
-          onClick={onReset}
+          onClick={handleBookAnother}
         >
           Book Another Class
         </Button>
