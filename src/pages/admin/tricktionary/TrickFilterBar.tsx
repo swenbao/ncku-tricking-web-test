@@ -34,8 +34,8 @@ const TrickFilterBar: React.FC<TrickFilterBarProps> = ({
   onCreateClick,
 }) => {
   const handleResetFilters = () => {
-    setFilterCategory('');
-    setFilterLevel('');
+    setFilterCategory('all');
+    setFilterLevel('all');
     setSearchQuery('');
   };
 
@@ -65,7 +65,7 @@ const TrickFilterBar: React.FC<TrickFilterBarProps> = ({
             <SelectValue placeholder="Filter by category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Categories</SelectItem>
+            <SelectItem value="all">All Categories</SelectItem>
             {categories.map((category) => (
               <SelectItem key={category} value={category}>
                 {category}
@@ -79,7 +79,7 @@ const TrickFilterBar: React.FC<TrickFilterBarProps> = ({
             <SelectValue placeholder="Filter by level" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">All Levels</SelectItem>
+            <SelectItem value="all">All Levels</SelectItem>
             <SelectItem value="beginner">Beginner</SelectItem>
             <SelectItem value="intermediate">Intermediate</SelectItem>
             <SelectItem value="advanced">Advanced</SelectItem>
