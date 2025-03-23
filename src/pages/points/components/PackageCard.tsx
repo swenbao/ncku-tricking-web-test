@@ -57,8 +57,8 @@ const PackageCard: React.FC<PackageCardProps> = ({ packageData, onPurchase }) =>
             <Check className="h-4 w-4 mr-2 text-green-500" />
             <span>
               {language === 'en' 
-                ? `Access to ${packageData.id > 1 ? 'all class types' : 'beginner classes'}` 
-                : `可參加${packageData.id > 1 ? '所有類型課程' : '初學者課程'}`}
+                ? `Access to ${parseInt(packageData.id) > 1 ? 'all class types' : 'beginner classes'}` 
+                : `可參加${parseInt(packageData.id) > 1 ? '所有類型課程' : '初學者課程'}`}
             </span>
           </li>
         </ul>

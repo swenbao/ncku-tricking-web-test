@@ -8,7 +8,7 @@ import { AuthProvider, useAuth } from "@/contexts/auth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import TricktionaryPage from "./pages/Tricktionary";
-import PointsPage from "./pages/Points";
+import PointsPage from "./pages/points";
 import BookingPage from "./pages/Booking";
 import BookingHistoryPage from "./pages/BookingHistory";
 import LoginPage from "./pages/Login";
