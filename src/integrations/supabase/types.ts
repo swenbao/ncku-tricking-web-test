@@ -9,13 +9,293 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      bookings: {
+        Row: {
+          booking_date: string
+          class_id: string | null
+          created_at: string | null
+          id: string
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          booking_date: string
+          class_id?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          booking_date?: string
+          class_id?: string | null
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "class_schedule"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      class_schedule: {
+        Row: {
+          created_at: string | null
+          day: string
+          description: string | null
+          difficulty: string
+          id: string
+          level: string
+          name: string
+          points_cost: number
+          time: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          day: string
+          description?: string | null
+          difficulty: string
+          id?: string
+          level: string
+          name: string
+          points_cost: number
+          time: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          day?: string
+          description?: string | null
+          difficulty?: string
+          id?: string
+          level?: string
+          name?: string
+          points_cost?: number
+          time?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      completed_tricks: {
+        Row: {
+          completed_at: string | null
+          id: string
+          status: string | null
+          trick_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          status?: string | null
+          trick_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          status?: string | null
+          trick_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "completed_tricks_trick_id_fkey"
+            columns: ["trick_id"]
+            isOneToOne: false
+            referencedRelation: "tricks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "completed_tricks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          package_id: string | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          package_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          package_id?: string | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "point_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      point_packages: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          points: number
+          popular: boolean | null
+          price: number
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          points: number
+          popular?: boolean | null
+          price: number
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          points?: number
+          popular?: boolean | null
+          price?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          age: number | null
+          created_at: string | null
+          email: string | null
+          id: string
+          name: string | null
+          phone_number: string | null
+          points: number | null
+          profile_picture: string | null
+          role: string | null
+          sex: string | null
+          status: string | null
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string | null
+          email?: string | null
+          id: string
+          name?: string | null
+          phone_number?: string | null
+          points?: number | null
+          profile_picture?: string | null
+          role?: string | null
+          sex?: string | null
+          status?: string | null
+        }
+        Update: {
+          age?: number | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          name?: string | null
+          phone_number?: string | null
+          points?: number | null
+          profile_picture?: string | null
+          role?: string | null
+          sex?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      tricks: {
+        Row: {
+          categories: string[]
+          created_at: string | null
+          description: string | null
+          id: string
+          level: string
+          name: string
+          prerequisites: string[] | null
+          video_url: string | null
+        }
+        Insert: {
+          categories: string[]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          level: string
+          name: string
+          prerequisites?: string[] | null
+          video_url?: string | null
+        }
+        Update: {
+          categories?: string[]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          level?: string
+          name?: string
+          prerequisites?: string[] | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_tricks_with_status: {
+        Args: {
+          user_uuid: string
+        }
+        Returns: {
+          id: string
+          name: string
+          level: string
+          description: string
+          video_url: string
+          categories: string[]
+          prerequisites: string[]
+          status: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
