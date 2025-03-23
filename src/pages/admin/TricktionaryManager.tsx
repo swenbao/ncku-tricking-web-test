@@ -1,4 +1,6 @@
+
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -19,6 +21,8 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
+import { ArrowLeft } from 'lucide-react';
+import AdminLayout from '@/components/admin/AdminLayout';
 import {
   fetchTricks,
   createTrick,
@@ -38,6 +42,7 @@ interface TrickFormData {
 }
 
 const TricktionaryManager = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<string>('Absolute Novice');
@@ -55,17 +60,32 @@ const TricktionaryManager = () => {
   
   const queryClient = useQueryClient();
   
-  // Fetch tricks from Supabase
-  const { data: trickList = [], isLoading } = useQuery({
+  // Fetch tricks from Supabase with better error handling and automatic refresh
+  const { data: trickList = [], isLoading, error: fetchError, refetch } = useQuery({
     queryKey: ['tricks'],
     queryFn: fetchTricks,
+    refetchOnWindowFocus: true, // Refresh when window regains focus
+    retry: 3, // Retry failed requests 3 times
   });
+  
+  // If there was an error fetching the tricks, show an error toast
+  React.useEffect(() => {
+    if (fetchError) {
+      toast({
+        title: "Error fetching tricks",
+        description: "There was an error loading the tricks. Please try again.",
+        variant: "destructive",
+      });
+      console.error('Fetch error:', fetchError);
+    }
+  }, [fetchError, toast]);
   
   // Create trick mutation
   const createTrickMutation = useMutation({
     mutationFn: createTrick,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tricks'] });
+      refetch(); // Explicitly trigger a refetch
       toast({
         title: "Success!",
         description: "Trick created successfully.",
@@ -87,6 +107,7 @@ const TricktionaryManager = () => {
     mutationFn: updateTrick,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tricks'] });
+      refetch(); // Explicitly trigger a refetch
       toast({
         title: "Success!",
         description: "Trick updated successfully.",
@@ -108,6 +129,7 @@ const TricktionaryManager = () => {
     mutationFn: deleteTrick,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tricks'] });
+      refetch(); // Explicitly trigger a refetch
       toast({
         title: "Success!",
         description: "Trick deleted successfully.",
@@ -233,6 +255,7 @@ const TricktionaryManager = () => {
 
   // Filter tricks based on active tab and search query
   const filteredTricks = useMemo(() => {
+    console.log('Filtering tricks:', trickList);
     return trickList.filter(trick => 
       trick.level === activeTab &&
       (searchQuery === '' || 
@@ -242,9 +265,19 @@ const TricktionaryManager = () => {
   }, [trickList, activeTab, searchQuery]);
 
   return (
-    <div className="container mx-auto py-10">
+    <AdminLayout title="Tricktionary Manager">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Tricktionary Manager</h1>
+        <div className="flex items-center gap-4">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={() => navigate('/admin')}
+            className="flex items-center justify-center"
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h1 className="text-2xl font-bold">Tricks Database</h1>
+        </div>
         <Button onClick={handleOpenAddDialog}>Add Trick</Button>
       </div>
 
@@ -258,7 +291,7 @@ const TricktionaryManager = () => {
       </div>
 
       <div className="mb-4">
-        <div className="flex space-x-2">
+        <div className="flex space-x-2 flex-wrap gap-2">
           {['Absolute Novice', 'Beginner', 'Intermediate', 'Advanced', 'Expert'].map(level => (
             <Button
               key={level}
@@ -421,7 +454,7 @@ const TricktionaryManager = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </AdminLayout>
   );
 };
 

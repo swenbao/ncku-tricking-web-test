@@ -8,7 +8,8 @@ import {
   CreditCard, 
   Users, 
   Settings,
-  LogOut
+  LogOut,
+  ArrowLeft
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
@@ -40,6 +41,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
     { label: 'Advanced Class Prerequisites', icon: <Settings className="w-5 h-5" />, href: '/admin/prerequisites' },
   ];
   
+  const handleBackToMainSite = () => {
+    navigate('/');
+  };
+  
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
@@ -66,6 +71,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
               </li>
             ))}
             <li className="pt-4">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-left font-normal"
+                onClick={handleBackToMainSite}
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span className="ml-2">Back to Main Site</span>
+              </Button>
+            </li>
+            <li>
               <Button
                 variant="ghost"
                 className="w-full justify-start text-left font-normal text-destructive hover:text-destructive hover:bg-destructive/10"

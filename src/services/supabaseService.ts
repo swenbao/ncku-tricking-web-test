@@ -8,15 +8,18 @@ import { Trick, TrickLevel } from '@/lib/data';
 
 // Tricks
 export const fetchTricks = async (): Promise<Trick[]> => {
+  console.log('Fetching tricks from Supabase');
+  
   const { data, error } = await supabase
     .from('tricks')
     .select('*');
 
   if (error) {
     console.error('Error fetching tricks:', error);
-    return [];
+    throw error;
   }
 
+  console.log('Fetch result:', data);
   return data.map(dbTrickToAppTrick);
 };
 
@@ -28,38 +31,43 @@ export const fetchTricksByLevel = async (level: TrickLevel): Promise<Trick[]> =>
 
   if (error) {
     console.error('Error fetching tricks by level:', error);
-    return [];
+    throw error;
   }
 
   return data.map(dbTrickToAppTrick);
 };
 
 export const createTrick = async (trick: Omit<Trick, 'id'>): Promise<Trick | null> => {
+  const dbTrick = appTrickToDbTrick(trick as Trick);
+  console.log('Creating trick:', dbTrick);
+  
   const { data, error } = await supabase
     .from('tricks')
-    .insert(appTrickToDbTrick(trick as Trick))
+    .insert(dbTrick)
     .select()
     .single();
 
   if (error) {
     console.error('Error creating trick:', error);
-    return null;
+    throw error;
   }
 
   return dbTrickToAppTrick(data);
 };
 
 export const updateTrick = async (trick: Trick): Promise<Trick | null> => {
+  const dbTrick = appTrickToDbTrick(trick);
+  
   const { data, error } = await supabase
     .from('tricks')
-    .update(appTrickToDbTrick(trick))
+    .update(dbTrick)
     .eq('id', trick.id)
     .select()
     .single();
 
   if (error) {
     console.error('Error updating trick:', error);
-    return null;
+    throw error;
   }
 
   return dbTrickToAppTrick(data);
@@ -73,7 +81,7 @@ export const deleteTrick = async (id: string): Promise<boolean> => {
 
   if (error) {
     console.error('Error deleting trick:', error);
-    return false;
+    throw error;
   }
 
   return true;
