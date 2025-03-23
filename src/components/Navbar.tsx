@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -21,6 +21,9 @@ const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -31,8 +34,34 @@ const Navbar = () => {
     navigate('/');
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Make navbar visible when scrolling down past 10px
+      if (currentScrollY > 10) {
+        setScrolled(true);
+        setVisible(true);
+      } else {
+        // At the top of the page
+        setScrolled(false);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
   return (
-    <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
+    <nav className={cn(
+      "fixed top-0 w-full z-50 transition-all duration-300",
+      scrolled 
+        ? "bg-background/95 backdrop-blur-md shadow-sm border-b border-border/40" 
+        : "bg-background/80 backdrop-blur-sm border-b border-border/40",
+      visible ? "translate-y-0" : "-translate-y-full"
+    )}>
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex-shrink-0 font-bold text-xl">
@@ -54,22 +83,19 @@ const Navbar = () => {
                 {language === 'en' ? 'Tricktionary' : '技巧字典'}
               </Link>
               
-              {isAuthenticated && (
-                <>
-                  <Link
-                    to="/points"
-                    className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
-                  >
-                    {language === 'en' ? 'Course Cards' : '課程卡'}
-                  </Link>
-                  <Link
-                    to="/booking"
-                    className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
-                  >
-                    {language === 'en' ? 'Book Class' : '預約課程'}
-                  </Link>
-                </>
-              )}
+              {/* Always show these links, but handle authentication in the respective components */}
+              <Link
+                to="/points"
+                className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
+              >
+                {language === 'en' ? 'Course Cards' : '課程卡'}
+              </Link>
+              <Link
+                to="/booking"
+                className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
+              >
+                {language === 'en' ? 'Book Class' : '預約課程'}
+              </Link>
             </div>
           </div>
 
@@ -163,24 +189,21 @@ const Navbar = () => {
             {language === 'en' ? 'Tricktionary' : '技巧字典'}
           </Link>
           
-          {isAuthenticated && (
-            <>
-              <Link
-                to="/points"
-                className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
-                onClick={toggleMenu}
-              >
-                {language === 'en' ? 'Course Cards' : '課程卡'}
-              </Link>
-              <Link
-                to="/booking"
-                className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
-                onClick={toggleMenu}
-              >
-                {language === 'en' ? 'Book Class' : '預約課程'}
-              </Link>
-            </>
-          )}
+          {/* Always show these links in mobile menu as well */}
+          <Link
+            to="/points"
+            className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+            onClick={toggleMenu}
+          >
+            {language === 'en' ? 'Course Cards' : '課程卡'}
+          </Link>
+          <Link
+            to="/booking"
+            className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+            onClick={toggleMenu}
+          >
+            {language === 'en' ? 'Book Class' : '預約課程'}
+          </Link>
 
           {isAuthenticated ? (
             <>

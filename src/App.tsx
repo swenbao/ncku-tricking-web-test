@@ -67,17 +67,11 @@ const App = () => (
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
               
+              {/* All users can visit these pages - auth checks happen within components */}
+              <Route path="/points" element={<PointsPage />} />
+              <Route path="/booking" element={<BookingPage />} />
+              
               {/* Protected user routes - require login */}
-              <Route path="/points" element={
-                <ProtectedUserRoute>
-                  <PointsPage />
-                </ProtectedUserRoute>
-              } />
-              <Route path="/booking" element={
-                <ProtectedUserRoute>
-                  <BookingPage />
-                </ProtectedUserRoute>
-              } />
               <Route path="/booking-history" element={
                 <ProtectedUserRoute>
                   <BookingHistoryPage />

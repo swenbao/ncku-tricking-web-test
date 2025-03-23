@@ -4,7 +4,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { pointPackages, PointPackage } from '@/lib/data';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Tabs,
@@ -30,7 +30,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -41,7 +40,6 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 
 const CourseCardsPage = () => {
@@ -58,6 +56,13 @@ const CourseCardsPage = () => {
   
   const handlePurchase = (pkg: PointPackage) => {
     if (!isAuthenticated) {
+      toast({
+        title: language === 'en' ? 'Login Required' : '需要登入',
+        description: language === 'en' 
+          ? 'Please login to purchase course cards.' 
+          : '請登入以購買課程卡。',
+        variant: 'destructive',
+      });
       navigate('/login');
       return;
     }
