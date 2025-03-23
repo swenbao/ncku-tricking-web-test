@@ -1,12 +1,13 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { Trick } from '@/lib/data';
 
 interface TrickCardProps {
-  trick: Trick;
+  trick: Trick & { points?: number };
 }
 
 const TrickCard: React.FC<TrickCardProps> = ({ trick }) => {
@@ -25,7 +26,7 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick }) => {
         <Badge variant="secondary">{trick.level}</Badge>
       </CardContent>
       <CardFooter className="flex justify-between items-center">
-        <p>Points: {trick.points}</p>
+        {trick.points !== undefined && <p>Points: {trick.points}</p>}
         {isCompleted ? (
           <Button variant="outline" disabled>
             Completed
