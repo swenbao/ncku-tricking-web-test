@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PointsHeader } from './components/PointsHeader';
+import PointsHeader from './components/PointsHeader';
 import PointsPackages from './components/PointsPackages';
 import FAQ from './components/FAQ';
 import Navbar from '@/components/Navbar';
