@@ -1,79 +1,70 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
+import { useTricktionaryManager } from './useTricktionaryManager';
 import TrickList from './TrickList';
 import TrickDialog from './TrickDialog';
 import TrickFilterBar from './TrickFilterBar';
-import { useTricktionaryManager } from './useTricktionaryManager';
 
 const TricktionaryManager = () => {
-  const navigate = useNavigate();
   const {
-    searchQuery,
-    setSearchQuery,
-    activeTab,
-    setActiveTab,
-    filteredTricks,
+    tricks,
+    allTricks,
     isLoading,
-    isAddDialogOpen,
-    isEditDialogOpen,
-    formData,
-    createTrickMutation,
-    updateTrickMutation,
-    handleOpenAddDialog,
-    handleOpenEditDialog,
-    handleCloseDialog,
-    handleInputChange,
-    handleCategoryChange,
-    handleLevelChange,
-    handleSave,
-    handleDelete,
+    error,
+    selectedTrick,
+    isDialogOpen,
+    filterCategory,
+    filterLevel,
+    searchQuery,
+    openCreateDialog,
+    openEditDialog,
+    closeDialog,
+    saveTrick,
+    deleteTrick,
+    setFilterCategory,
+    setFilterLevel,
+    setSearchQuery,
   } = useTricktionaryManager();
+
+  // Extract all unique categories from all tricks
+  const allCategories = React.useMemo(() => {
+    const categories = new Set<string>();
+    allTricks.forEach(trick => {
+      trick.categories.forEach(category => {
+        categories.add(category);
+      });
+    });
+    return Array.from(categories).sort();
+  }, [allTricks]);
 
   return (
     <AdminLayout title="Tricktionary Manager">
-      <div className="mb-8 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={() => navigate('/admin')}
-            className="flex items-center justify-center"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold">Tricks Database</h1>
-        </div>
-        <Button id="add-trick-button" onClick={handleOpenAddDialog}>Add Trick</Button>
-      </div>
-
       <TrickFilterBar
+        categories={allCategories}
+        filterCategory={filterCategory}
+        setFilterCategory={setFilterCategory}
+        filterLevel={filterLevel}
+        setFilterLevel={setFilterLevel}
         searchQuery={searchQuery}
-        activeTab={activeTab}
-        onSearchChange={setSearchQuery}
-        onTabChange={setActiveTab}
+        setSearchQuery={setSearchQuery}
+        onCreateClick={openCreateDialog}
       />
 
       <TrickList
-        tricks={filteredTricks}
+        tricks={tricks}
         isLoading={isLoading}
-        onEdit={handleOpenEditDialog}
-        onDelete={handleDelete}
+        error={error}
+        onEditClick={openEditDialog}
+        onDeleteClick={deleteTrick}
       />
 
       <TrickDialog
-        isOpen={isAddDialogOpen || isEditDialogOpen}
-        isEditing={isEditDialogOpen}
-        formData={formData}
-        isSubmitting={createTrickMutation.isPending || updateTrickMutation.isPending}
-        onInputChange={handleInputChange}
-        onCategoryChange={handleCategoryChange}
-        onLevelChange={handleLevelChange}
-        onSave={handleSave}
-        onClose={handleCloseDialog}
+        isOpen={isDialogOpen}
+        trick={selectedTrick}
+        onClose={closeDialog}
+        onSave={saveTrick}
+        categories={allCategories}
       />
     </AdminLayout>
   );
