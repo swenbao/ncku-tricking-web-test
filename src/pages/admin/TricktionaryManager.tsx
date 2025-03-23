@@ -8,7 +8,7 @@ import {
   CardHeader, 
   CardTitle 
 } from '@/components/ui/card';
-import { tricks, TrickLevel } from '@/lib/data';
+import { tricks, TrickLevel, Trick } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Edit, Trash, ArrowUp, ArrowDown, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -50,11 +50,11 @@ interface TrickFormData {
 const TricktionaryManager = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
-  const [trickList, setTrickList] = useState([...tricks]);
+  const [trickList, setTrickList] = useState<Trick[]>([...tricks]);
   const [activeTab, setActiveTab] = useState<string>('Absolute Novice');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedTrick, setSelectedTrick] = useState<typeof tricks[0] | null>(null);
+  const [selectedTrick, setSelectedTrick] = useState<Trick | null>(null);
   const [formData, setFormData] = useState<TrickFormData>({
     name: '',
     level: 'Absolute Novice',
@@ -133,7 +133,7 @@ const TricktionaryManager = () => {
     
     if (isAddDialogOpen) {
       // Adding a new trick
-      const newTrick = {
+      const newTrick: Trick = {
         id: Date.now().toString(),
         ...formData,
       };
