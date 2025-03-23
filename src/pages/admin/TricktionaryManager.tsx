@@ -21,7 +21,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useToast } from "@/components/ui/use-toast"
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
   fetchTricks,
@@ -31,6 +31,7 @@ import {
 } from '@/services/supabaseService';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Trick, TrickLevel } from '@/lib/data';
+import Skeleton from '@/components/ui/skeleton';
 
 interface TrickFormData {
   name: string;
@@ -248,7 +249,7 @@ const TricktionaryManager = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this trick?")) {
+    if (window.confirm("Are you sure you want to delete this trick?")) {
       deleteTrickMutation.mutate(id);
     }
   };
@@ -316,12 +317,29 @@ const TricktionaryManager = () => {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center">Loading...</TableCell>
-              </TableRow>
+              Array.from({ length: 3 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell><Skeleton className="h-5 w-[180px]" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-full" /></TableCell>
+                  <TableCell><Skeleton className="h-5 w-[120px]" /></TableCell>
+                  <TableCell className="text-right">
+                    <Skeleton className="h-9 w-[140px] ml-auto" />
+                  </TableCell>
+                </TableRow>
+              ))
             ) : filteredTricks.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center">No tricks found.</TableCell>
+                <TableCell colSpan={4} className="text-center py-8">
+                  <p className="text-muted-foreground">No tricks found for the selected level.</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="mt-2"
+                    onClick={handleOpenAddDialog}
+                  >
+                    Add your first trick
+                  </Button>
+                </TableCell>
               </TableRow>
             ) : (
               filteredTricks.map((trick) => (
@@ -340,6 +358,7 @@ const TricktionaryManager = () => {
                       variant="secondary"
                       size="sm"
                       onClick={() => handleOpenEditDialog(trick)}
+                      className="mr-2"
                     >
                       Edit
                     </Button>
@@ -347,7 +366,6 @@ const TricktionaryManager = () => {
                       variant="destructive"
                       size="sm"
                       onClick={() => handleDelete(trick.id)}
-                      className="ml-2"
                     >
                       Delete
                     </Button>
@@ -448,8 +466,19 @@ const TricktionaryManager = () => {
             <Button type="button" variant="secondary" onClick={handleCloseDialog}>
               Cancel
             </Button>
-            <Button type="submit" onClick={handleSave}>
-              {isEditDialogOpen ? 'Update Trick' : 'Add Trick'}
+            <Button 
+              type="submit" 
+              onClick={handleSave}
+              disabled={createTrickMutation.isPending || updateTrickMutation.isPending}
+            >
+              {(createTrickMutation.isPending || updateTrickMutation.isPending) ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {isEditDialogOpen ? 'Updating...' : 'Creating...'}
+                </>
+              ) : (
+                isEditDialogOpen ? 'Update Trick' : 'Add Trick'
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
