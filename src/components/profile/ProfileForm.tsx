@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -14,7 +13,7 @@ const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
   email: z.string().email('Please enter a valid email'),
   password: z.string().min(6, 'Password must be at least 6 characters').optional(),
-  profilePicture: z.string().optional(),
+  profileImage: z.string().optional(),
   sex: z.enum(['Male', 'Female', 'Other']).optional(),
   age: z.coerce.number().min(5).max(100).optional(),
   phoneNumber: z.string().optional(),
@@ -27,9 +26,9 @@ interface ProfileFormProps {
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
-  const { updateUser } = useAuth();
+  const { updateUserProfile } = useAuth();
   const { toast } = useToast();
-  const [profileImage, setProfileImage] = useState<string | null>(user?.profilePicture || null);
+  const [profileImage, setProfileImage] = useState<string | null>(user?.profileImage || null);
   
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -37,7 +36,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
       name: user?.name || '',
       email: user?.email || '',
       password: '',
-      profilePicture: user?.profilePicture || '',
+      profileImage: user?.profileImage || '',
       sex: user?.sex,
       age: user?.age,
       phoneNumber: user?.phoneNumber || '',
@@ -51,7 +50,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
       reader.onload = (event) => {
         const imageUrl = event.target?.result as string;
         setProfileImage(imageUrl);
-        form.setValue('profilePicture', imageUrl);
+        form.setValue('profileImage', imageUrl);
       };
       reader.readAsDataURL(file);
     }
@@ -62,13 +61,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
       const updateData: Partial<User> = {
         name: data.name,
         email: data.email,
-        profilePicture: data.profilePicture,
+        profileImage: data.profileImage,
         sex: data.sex,
         age: data.age,
         phoneNumber: data.phoneNumber,
       };
       
-      updateUser(updateData);
+      updateUserProfile(updateData);
       
       toast({
         title: 'Profile updated',
@@ -142,7 +141,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
             <div className="flex-1 space-y-6">
               <FormField
                 control={form.control}
-                name="profilePicture"
+                name="profileImage"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Profile Picture</FormLabel>

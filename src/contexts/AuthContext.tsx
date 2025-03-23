@@ -1,6 +1,4 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { useToast } from '@/components/ui/use-toast';
@@ -8,6 +6,7 @@ import { useToast } from '@/components/ui/use-toast';
 // Define user types
 export type UserStatus = 'Blank Card' | 'Beginner Card' | 'Advanced Card';
 export type UserRole = 'student' | 'official';
+export type UserSex = 'Male' | 'Female' | 'Other';
 
 export interface User {
   id: string;
@@ -17,6 +16,10 @@ export interface User {
   status?: UserStatus;
   profileImage?: string | null;
   role?: UserRole;
+  sex?: UserSex;
+  age?: number;
+  phoneNumber?: string;
+  completedTricks?: string[];
 }
 
 interface AuthContextType {
@@ -100,7 +103,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         points: data.points,
         status: data.status as UserStatus,
         profileImage: data.profile_picture,
-        role: data.role as UserRole
+        role: data.role as UserRole,
+        sex: data.sex as UserSex,
+        age: data.age,
+        phoneNumber: data.phone_number,
+        completedTricks: data.completed_tricks || []
       });
     }
   };
@@ -211,9 +218,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Convert from app user type to DB type
       const dbUpdates: any = {};
       if (updates.name !== undefined) dbUpdates.name = updates.name;
+      if (updates.email !== undefined) dbUpdates.email = updates.email;
       if (updates.points !== undefined) dbUpdates.points = updates.points;
       if (updates.status !== undefined) dbUpdates.status = updates.status;
       if (updates.profileImage !== undefined) dbUpdates.profile_picture = updates.profileImage;
+      if (updates.sex !== undefined) dbUpdates.sex = updates.sex;
+      if (updates.age !== undefined) dbUpdates.age = updates.age;
+      if (updates.phoneNumber !== undefined) dbUpdates.phone_number = updates.phoneNumber;
       
       const { error } = await supabase
         .from('profiles')
