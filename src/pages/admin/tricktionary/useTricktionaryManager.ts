@@ -1,164 +1,109 @@
-
-import { useState, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  fetchTricks,
-  createTrick,
-  updateTrick,
-  deleteTrick
-} from '@/services/supabaseService';
-import { Trick, TrickLevel } from '@/lib/data';
-import { useToast } from "@/components/ui/use-toast";
-import { TrickFormData } from './TrickDialog';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { Trick } from '@/lib/data';
 
 export const useTricktionaryManager = () => {
-  const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<string>('Absolute Novice');
+  const [activeTab, setActiveTab] = useState('Beginner');
+  const [tricks, setTricks] = useState<Trick[]>([]);
+  const [filteredTricks, setFilteredTricks] = useState<Trick[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedTrick, setSelectedTrick] = useState<Trick | null>(null);
-  const [formData, setFormData] = useState<TrickFormData>({
+  const [formData, setFormData] = useState<Trick>({
+    id: '',
     name: '',
-    level: 'Absolute Novice',
     description: '',
+    level: 'Beginner',
     categories: [],
-    videoUrl: '',
-    prerequisites: [],
+    tutorial_url: '',
+    image_url: '',
   });
-  
-  const queryClient = useQueryClient();
-  
-  // Fetch tricks from Supabase
-  const { data: trickList = [], isLoading, error: fetchError, refetch } = useQuery({
-    queryKey: ['tricks'],
-    queryFn: fetchTricks,
-    refetchOnWindowFocus: true,
-    retry: 3,
-  });
-  
-  // Handle fetch error
-  React.useEffect(() => {
-    if (fetchError) {
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchTricks();
+  }, []);
+
+  useEffect(() => {
+    filterTricks();
+  }, [tricks, searchQuery, activeTab]);
+
+  const fetchTricks = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('tricks')
+        .select('*');
+
+      if (error) {
+        console.error('Error fetching tricks:', error);
+        toast({
+          title: 'Error fetching tricks',
+          description: error.message,
+          variant: 'destructive',
+        });
+      }
+
+      if (data) {
+        setTricks(data);
+      }
+    } catch (error: any) {
+      console.error('Unexpected error fetching tricks:', error);
       toast({
-        title: "Error fetching tricks",
-        description: "There was an error loading the tricks. Please try again.",
-        variant: "destructive",
+        title: 'Unexpected error',
+        description: error.message,
+        variant: 'destructive',
       });
-      console.error('Fetch error:', fetchError);
+    } finally {
+      setIsLoading(false);
     }
-  }, [fetchError, toast]);
-  
-  // Create trick mutation
-  const createTrickMutation = useMutation({
-    mutationFn: createTrick,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tricks'] });
-      refetch();
-      toast({
-        title: "Success!",
-        description: "Trick created successfully.",
-      });
-      handleCloseDialog();
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to create trick. Please try again.",
-        variant: "destructive",
-      });
-      console.error('Create trick error:', error);
+  };
+
+  const filterTricks = () => {
+    let filtered = [...tricks];
+
+    if (searchQuery) {
+      filtered = filtered.filter(trick =>
+        trick.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        trick.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
-  });
-  
-  // Update trick mutation
-  const updateTrickMutation = useMutation({
-    mutationFn: updateTrick,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tricks'] });
-      refetch();
-      toast({
-        title: "Success!",
-        description: "Trick updated successfully.",
-      });
-      handleCloseDialog();
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to update trick. Please try again.",
-        variant: "destructive",
-      });
-      console.error('Update trick error:', error);
+
+    if (activeTab !== 'All Levels') {
+      filtered = filtered.filter(trick => trick.level === activeTab);
     }
-  });
-  
-  // Delete trick mutation
-  const deleteTrickMutation = useMutation({
-    mutationFn: deleteTrick,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tricks'] });
-      refetch();
-      toast({
-        title: "Success!",
-        description: "Trick deleted successfully.",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error",
-        description: "Failed to delete trick. Please try again.",
-        variant: "destructive",
-      });
-      console.error('Delete trick error:', error);
-    }
-  });
+
+    setFilteredTricks(filtered);
+  };
 
   const handleOpenAddDialog = () => {
     setFormData({
+      id: '',
       name: '',
-      level: 'Absolute Novice',
       description: '',
+      level: 'Beginner',
       categories: [],
-      videoUrl: '',
-      prerequisites: [],
+      tutorial_url: '',
+      image_url: '',
     });
     setIsAddDialogOpen(true);
   };
 
   const handleOpenEditDialog = (trick: Trick) => {
-    setSelectedTrick(trick);
-    setFormData({
-      name: trick.name,
-      level: trick.level,
-      description: trick.description,
-      categories: trick.categories,
-      videoUrl: trick.videoUrl || '',
-      prerequisites: trick.prerequisites || [],
-    });
+    setFormData(trick);
     setIsEditDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setIsAddDialogOpen(false);
     setIsEditDialogOpen(false);
-    setSelectedTrick(null);
-    setFormData({
-      name: '',
-      level: 'Absolute Novice',
-      description: '',
-      categories: [],
-      videoUrl: '',
-      prerequisites: [],
-    });
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleCategoryChange = (category: string) => {
@@ -181,66 +126,143 @@ export const useTricktionaryManager = () => {
     setFormData(prev => ({ ...prev, level }));
   };
 
-  const handleSave = () => {
-    // Validate form data
-    if (!formData.name || formData.categories.length === 0) {
+  const createTrickMutation = {
+    mutateAsync: async (newTrick: Omit<Trick, 'id'>) => {
+      try {
+        const { data, error } = await supabase
+          .from('tricks')
+          .insert([newTrick])
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Error creating trick:', error);
+          toast({
+            title: 'Error creating trick',
+            description: error.message,
+            variant: 'destructive',
+          });
+          throw error;
+        }
+
+        if (data) {
+          setTricks(prev => [...prev, data]);
+          toast({
+            title: 'Trick created',
+            description: `${data.name} has been created successfully.`,
+          });
+          handleCloseDialog();
+          return data;
+        }
+      } catch (error: any) {
+        console.error('Unexpected error creating trick:', error);
+        toast({
+          title: 'Unexpected error',
+          description: error.message,
+          variant: 'destructive',
+        });
+        throw error;
+      }
+    },
+    isPending: false, // Mocked for now
+  };
+
+  const updateTrickMutation = {
+    mutateAsync: async (updatedTrick: Trick) => {
+      try {
+        const { data, error } = await supabase
+          .from('tricks')
+          .update(updatedTrick)
+          .eq('id', updatedTrick.id)
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Error updating trick:', error);
+          toast({
+            title: 'Error updating trick',
+            description: error.message,
+            variant: 'destructive',
+          });
+          throw error;
+        }
+
+        if (data) {
+          setTricks(prev => prev.map(trick => (trick.id === data.id ? data : trick)));
+          toast({
+            title: 'Trick updated',
+            description: `${data.name} has been updated successfully.`,
+          });
+          handleCloseDialog();
+          return data;
+        }
+      } catch (error: any) {
+        console.error('Unexpected error updating trick:', error);
+        toast({
+          title: 'Unexpected error',
+          description: error.message,
+          variant: 'destructive',
+        });
+        throw error;
+      }
+    },
+    isPending: false, // Mocked for now
+  };
+
+  const handleSave = async () => {
+    if (isAddDialogOpen) {
+      try {
+        await createTrickMutation.mutateAsync(formData);
+      } catch (error) {
+        console.error('Failed to create trick', error);
+      }
+    } else if (isEditDialogOpen) {
+      try {
+        await updateTrickMutation.mutateAsync(formData);
+      } catch (error) {
+        console.error('Failed to update trick', error);
+      }
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('tricks')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting trick:', error);
+        toast({
+          title: 'Error deleting trick',
+          description: error.message,
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      setTricks(prev => prev.filter(trick => trick.id !== id));
       toast({
-        title: "Validation Error",
-        description: "Please fill in all required fields.",
-        variant: "destructive",
+        title: 'Trick deleted',
+        description: 'Trick has been deleted successfully.',
       });
-      return;
-    }
-    
-    if (isEditDialogOpen && selectedTrick) {
-      // Updating an existing trick
-      const updatedTrick: Trick = {
-        ...selectedTrick,
-        name: formData.name,
-        level: formData.level as TrickLevel,
-        description: formData.description,
-        categories: formData.categories,
-        prerequisites: formData.prerequisites,
-        videoUrl: formData.videoUrl,
-      };
-      
-      updateTrickMutation.mutate(updatedTrick);
-    } else {
-      // Adding a new trick
-      const newTrick: Omit<Trick, 'id'> = {
-        name: formData.name,
-        level: formData.level as TrickLevel,
-        description: formData.description,
-        categories: formData.categories,
-        prerequisites: formData.prerequisites,
-        videoUrl: formData.videoUrl,
-      };
-      
-      createTrickMutation.mutate(newTrick);
+    } catch (error: any) {
+      console.error('Unexpected error deleting trick:', error);
+      toast({
+        title: 'Unexpected error',
+        description: error.message,
+        variant: 'destructive',
+      });
     }
   };
-
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this trick?")) {
-      deleteTrickMutation.mutate(id);
-    }
-  };
-
-  // Filter tricks based on active tab and search query
-  const filteredTricks = useMemo(() => {
-    return trickList.filter(trick => 
-      trick.level === activeTab &&
-      (searchQuery === '' || 
-        trick.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trick.description.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-  }, [trickList, activeTab, searchQuery]);
 
   return {
     searchQuery,
     setSearchQuery,
     activeTab,
     setActiveTab,
+    tricks,
     filteredTricks,
     isLoading,
     isAddDialogOpen,

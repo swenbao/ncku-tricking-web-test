@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/auth";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import TricktionaryPage from "./pages/Tricktionary";
@@ -41,6 +41,17 @@ const ProtectedAdminRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Protected route for logged-in users only
+const ProtectedUserRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return <>{children}</>;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -50,15 +61,33 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Public routes */}
+              {/* Public routes - accessible to everyone */}
               <Route path="/" element={<Index />} />
               <Route path="/tricktionary" element={<TricktionaryPage />} />
-              <Route path="/points" element={<PointsPage />} />
-              <Route path="/booking" element={<BookingPage />} />
-              <Route path="/booking-history" element={<BookingHistoryPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
+              
+              {/* Protected user routes - require login */}
+              <Route path="/points" element={
+                <ProtectedUserRoute>
+                  <PointsPage />
+                </ProtectedUserRoute>
+              } />
+              <Route path="/booking" element={
+                <ProtectedUserRoute>
+                  <BookingPage />
+                </ProtectedUserRoute>
+              } />
+              <Route path="/booking-history" element={
+                <ProtectedUserRoute>
+                  <BookingHistoryPage />
+                </ProtectedUserRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedUserRoute>
+                  <ProfilePage />
+                </ProtectedUserRoute>
+              } />
               
               {/* Admin routes */}
               <Route path="/admin" element={

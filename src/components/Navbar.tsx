@@ -53,18 +53,23 @@ const Navbar = () => {
               >
                 {language === 'en' ? 'Tricktionary' : '技巧字典'}
               </Link>
-              <Link
-                to="/points"
-                className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
-              >
-                {language === 'en' ? 'Course Cards' : '課程卡'}
-              </Link>
-              <Link
-                to="/booking"
-                className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
-              >
-                {language === 'en' ? 'Book Class' : '預約課程'}
-              </Link>
+              
+              {isAuthenticated && (
+                <>
+                  <Link
+                    to="/points"
+                    className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
+                  >
+                    {language === 'en' ? 'Course Cards' : '課程卡'}
+                  </Link>
+                  <Link
+                    to="/booking"
+                    className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
+                  >
+                    {language === 'en' ? 'Book Class' : '預約課程'}
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -157,20 +162,25 @@ const Navbar = () => {
           >
             {language === 'en' ? 'Tricktionary' : '技巧字典'}
           </Link>
-          <Link
-            to="/points"
-            className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
-            onClick={toggleMenu}
-          >
-            {language === 'en' ? 'Course Cards' : '課程卡'}
-          </Link>
-          <Link
-            to="/booking"
-            className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
-            onClick={toggleMenu}
-          >
-            {language === 'en' ? 'Book Class' : '預約課程'}
-          </Link>
+          
+          {isAuthenticated && (
+            <>
+              <Link
+                to="/points"
+                className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+                onClick={toggleMenu}
+              >
+                {language === 'en' ? 'Course Cards' : '課程卡'}
+              </Link>
+              <Link
+                to="/booking"
+                className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+                onClick={toggleMenu}
+              >
+                {language === 'en' ? 'Book Class' : '預約課程'}
+              </Link>
+            </>
+          )}
 
           {isAuthenticated ? (
             <>

@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { AuthContextType, User } from './types';
+import type { AuthContextType, User, UserStatus, UserRole, UserSex } from './types';
 import { DbProfile } from '@/lib/supabaseTypes';
 
 export const useAuthProvider = (): AuthContextType => {
@@ -61,16 +61,16 @@ export const useAuthProvider = (): AuthContextType => {
         return;
       }
       
-      // Map DB profile to app user
+      // Map DB profile to app user with proper type casting
       const mappedUser: User = {
         id: data.id,
         name: data.name,
         email: data.email,
         points: data.points,
-        status: data.status,
+        status: data.status as UserStatus,
         profileImage: data.profile_picture,
-        role: data.role,
-        sex: data.sex,
+        role: data.role as UserRole,
+        sex: data.sex as UserSex,
         age: data.age,
         phoneNumber: data.phone_number,
         completedTricks: [] // Initialize with empty array
