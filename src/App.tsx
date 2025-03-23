@@ -18,7 +18,7 @@ import NotFound from "./pages/NotFound";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import TricktionaryManager from "./pages/admin/TricktionaryManager";
+import TricktionaryManager from "./pages/admin/tricktionary";
 import ClassManager from "./pages/admin/ClassManager";
 import CourseCardManager from "./pages/admin/CourseCardManager";
 import OrdersManager from "./pages/admin/OrdersManager";
