@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { AuthContextType, User, UserStatus, UserRole, UserSex } from './types';
 import { DbProfile } from '@/lib/supabaseTypes';
+import { toast } from 'sonner';
 
 export const useAuthProvider = (): AuthContextType => {
   const [user, setUser] = useState<User | null>(null);
@@ -10,15 +11,37 @@ export const useAuthProvider = (): AuthContextType => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Auth provider initialized');
+    
+    // Set up the auth state listener first
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log(`Auth event: ${event}`);
+      setSession(session);
+      
+      if (session?.user.id) {
+        console.log('User authenticated, fetching profile');
+        await fetchUserProfile(session.user.id);
+      } else {
+        console.log('No user session, clearing user state');
+        setUser(null);
+      }
+      
+      setIsLoading(false);
+    });
+
     // Check active session
     const getSession = async () => {
       setIsLoading(true);
+      console.log('Checking for existing session');
+      
       const { data, error } = await supabase.auth.getSession();
       
       if (!error && data?.session) {
+        console.log('Found existing session');
         setSession(data.session);
         await fetchUserProfile(data.session.user.id);
       } else {
+        console.log('No existing session found');
         setUser(null);
         setSession(null);
       }
@@ -28,27 +51,15 @@ export const useAuthProvider = (): AuthContextType => {
 
     getSession();
 
-    // Listen for auth changes
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`Auth event: ${event}`);
-      setSession(session);
-      
-      if (session?.user.id) {
-        await fetchUserProfile(session.user.id);
-      } else {
-        setUser(null);
-      }
-      
-      setIsLoading(false);
-    });
-
     return () => {
+      console.log('Cleaning up auth listener');
       authListener?.subscription?.unsubscribe();
     };
   }, []);
 
   const fetchUserProfile = async (userId: string) => {
     try {
+      console.log(`Fetching profile for user: ${userId}`);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -60,6 +71,8 @@ export const useAuthProvider = (): AuthContextType => {
         setUser(null);
         return;
       }
+      
+      console.log('Profile data received:', data);
       
       // Map DB profile to app user with proper type casting
       const mappedUser: User = {
@@ -86,6 +99,7 @@ export const useAuthProvider = (): AuthContextType => {
         mappedUser.completedTricks = completedTricksData.map(t => t.trick_id);
       }
       
+      console.log('Setting user state:', mappedUser);
       setUser(mappedUser);
     } catch (error) {
       console.error('Exception in fetchUserProfile:', error);
@@ -96,8 +110,16 @@ export const useAuthProvider = (): AuthContextType => {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
+      console.log(`Attempting login for: ${email}`);
       const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (error) {
+        console.error('Login failed:', error);
+        throw error;
+      }
+      
+      console.log('Login successful');
+      toast.success('Login successful');
+      // Don't manually set user here - let the auth listener handle it
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -117,6 +139,8 @@ export const useAuthProvider = (): AuthContextType => {
         }
       });
       if (error) throw error;
+      
+      toast.success('Sign up successful! Please check your email to verify your account.');
     } catch (error) {
       console.error('Signup error:', error);
       throw error;
@@ -132,6 +156,7 @@ export const useAuthProvider = (): AuthContextType => {
       if (error) throw error;
       setUser(null);
       setSession(null);
+      toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
       throw error;
@@ -165,6 +190,7 @@ export const useAuthProvider = (): AuthContextType => {
       
       // Update local user state
       setUser({ ...user, ...updates });
+      toast.success('Profile updated successfully');
     } catch (error) {
       console.error('Update profile error:', error);
       throw error;

@@ -1,14 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 import { Loader2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { toast } from 'sonner';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -19,8 +20,9 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   // Redirect if already logged in
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated) {
+      console.log('User is authenticated, redirecting to home');
       navigate('/');
     }
   }, [isAuthenticated, navigate]);
@@ -31,9 +33,14 @@ const LoginPage = () => {
     setIsSubmitting(true);
 
     try {
+      console.log('Attempting login with:', email);
       await login(email, password);
-      navigate('/');
+      console.log('Login successful, authentication state:', isAuthenticated);
+      
+      // Avoid navigation here, let the useEffect handle it
+      toast.success('Login successful');
     } catch (err: any) {
+      console.error('Login error:', err);
       setError(err.message || 'Failed to login. Please check your credentials.');
     } finally {
       setIsSubmitting(false);
