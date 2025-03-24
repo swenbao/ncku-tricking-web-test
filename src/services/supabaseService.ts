@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { 
   dbTrickToAppTrick, 
@@ -28,6 +27,7 @@ export const fetchTricks = async (): Promise<Trick[]> => {
     return data ? data.map(dbTrickToAppTrick) : [];
   } catch (error) {
     console.error('Exception in fetchTricks:', error);
+    toast.error('Failed to load tricks');
     return [];
   }
 };

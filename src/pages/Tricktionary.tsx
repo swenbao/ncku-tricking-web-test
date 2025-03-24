@@ -20,9 +20,6 @@ const TricktionaryPage = () => {
     retry: 3,
     retryDelay: 1000,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    onError: (err) => {
-      console.error('Error fetching tricks:', err);
-    }
   });
   
   console.log('Tricktionary render state:', { isLoading, tricksCount: tricks.length, error });
