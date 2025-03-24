@@ -16,16 +16,17 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if already logged in
   useEffect(() => {
-    if (isAuthenticated) {
+    console.log('Login page useEffect - Auth state:', { isAuthenticated, user });
+    if (isAuthenticated && user) {
       console.log('User is authenticated, redirecting to home');
       navigate('/');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,15 +36,11 @@ const LoginPage = () => {
     try {
       console.log('Attempting login with:', email);
       await login(email, password);
-      console.log('Login successful, authentication state:', isAuthenticated);
-      
-      // Avoid navigation here, let the useEffect handle it
-      toast.success('Login successful');
+      // Let the useEffect handle navigation
     } catch (err: any) {
       console.error('Login error:', err);
       setError(err.message || 'Failed to login. Please check your credentials.');
-    } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Only set to false on error
     }
   };
 

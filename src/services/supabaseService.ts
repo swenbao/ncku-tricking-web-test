@@ -24,7 +24,7 @@ export const fetchTricks = async (): Promise<Trick[]> => {
       throw error;
     }
 
-    console.log('Fetch result:', data);
+    console.log('Fetch tricks result:', data ? `${data.length} tricks found` : 'No tricks found');
     return data ? data.map(dbTrickToAppTrick) : [];
   } catch (error) {
     console.error('Exception in fetchTricks:', error);

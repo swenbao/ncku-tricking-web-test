@@ -13,47 +13,68 @@ export const useAuthProvider = (): AuthContextType => {
   useEffect(() => {
     console.log('Auth provider initialized');
     
-    // Set up the auth state listener first
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`Auth event: ${event}`);
-      setSession(session);
-      
-      if (session?.user.id) {
-        console.log('User authenticated, fetching profile');
-        await fetchUserProfile(session.user.id);
-      } else {
-        console.log('No user session, clearing user state');
-        setUser(null);
-      }
-      
-      setIsLoading(false);
-    });
-
-    // Check active session
-    const getSession = async () => {
+    const checkSession = async () => {
       setIsLoading(true);
-      console.log('Checking for existing session');
       
-      const { data, error } = await supabase.auth.getSession();
+      try {
+        // First check for existing session
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError);
+          setUser(null);
+          setSession(null);
+          setIsLoading(false);
+          return;
+        }
+        
+        if (sessionData?.session) {
+          console.log('Found existing session');
+          setSession(sessionData.session);
+          
+          // Fetch user profile
+          if (sessionData.session.user?.id) {
+            await fetchUserProfile(sessionData.session.user.id);
+          }
+        } else {
+          console.log('No existing session found');
+          setUser(null);
+          setSession(null);
+        }
+      } catch (err) {
+        console.error('Error checking session:', err);
+        setUser(null);
+        setSession(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    // Set up the auth state listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      console.log(`Auth event: ${event}`, newSession?.user?.id);
       
-      if (!error && data?.session) {
-        console.log('Found existing session');
-        setSession(data.session);
-        await fetchUserProfile(data.session.user.id);
+      if (newSession) {
+        setSession(newSession);
+        if (newSession.user?.id) {
+          await fetchUserProfile(newSession.user.id);
+        }
       } else {
-        console.log('No existing session found');
         setUser(null);
         setSession(null);
       }
       
       setIsLoading(false);
-    };
-
-    getSession();
-
+    });
+    
+    // Initial session check
+    checkSession();
+    
     return () => {
       console.log('Cleaning up auth listener');
-      authListener?.subscription?.unsubscribe();
+      if (authListener?.subscription) {
+        authListener.subscription.unsubscribe();
+      }
     };
   }, []);
 
@@ -68,6 +89,12 @@ export const useAuthProvider = (): AuthContextType => {
         
       if (error) {
         console.error('Error fetching user profile:', error);
+        setUser(null);
+        return;
+      }
+      
+      if (!data) {
+        console.error('No profile found for user:', userId);
         setUser(null);
         return;
       }
@@ -119,12 +146,12 @@ export const useAuthProvider = (): AuthContextType => {
       
       console.log('Login successful');
       toast.success('Login successful');
-      // Don't manually set user here - let the auth listener handle it
+      // Auth state listener will handle setting user state
     } catch (error) {
       console.error('Login error:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      // Don't set isLoading to false here, let the auth state listener handle it
     }
   };
 

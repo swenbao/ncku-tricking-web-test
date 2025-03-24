@@ -17,14 +17,23 @@ const TricktionaryPage = () => {
   const { data: tricks = [], isLoading, error } = useQuery({
     queryKey: ['tricks'],
     queryFn: fetchTricks,
+    retry: 3,
+    retryDelay: 1000,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    onError: (err) => {
+      console.error('Error fetching tricks:', err);
+    }
   });
+  
+  console.log('Tricktionary render state:', { isLoading, tricksCount: tricks.length, error });
   
   // Filter tricks based on level and search query
   const filteredTricks = tricks.filter(trick => {
     const matchesLevel = selectedLevel === 'All' || trick.level === selectedLevel;
     const matchesSearch = 
+      !searchQuery || 
       trick.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      trick.description.toLowerCase().includes(searchQuery.toLowerCase());
+      (trick.description && trick.description.toLowerCase().includes(searchQuery.toLowerCase()));
     
     return matchesLevel && matchesSearch;
   });

@@ -16,14 +16,27 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick }) => {
   // Check if the trick is completed by the user
   const isCompleted = user?.completedTricks?.includes(trick.id);
   
+  if (!trick) {
+    return null;
+  }
+  
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{trick.name}</CardTitle>
-        <CardDescription>{trick.description}</CardDescription>
+        <CardTitle>{trick.name || 'Unnamed Trick'}</CardTitle>
+        <CardDescription>{trick.description || 'No description available'}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Badge variant="secondary">{trick.level}</Badge>
+        <Badge variant="secondary">{trick.level || 'Unspecified Level'}</Badge>
+        {trick.categories && trick.categories.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {trick.categories.map((category, idx) => (
+              <Badge key={idx} variant="outline" className="text-xs">
+                {category}
+              </Badge>
+            ))}
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         {trick.points !== undefined && <p>Points: {trick.points}</p>}
