@@ -1,9 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
-import { NavLink, useLocation, Link } from 'react-router-dom';
-import { Menu, X, User, LogOut, Globe } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth, UserAvatar } from '@/contexts/AuthContext';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Button } from '@/components/ui/button';
+import { UserAvatar, useAuth } from '@/contexts/AuthContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,230 +14,257 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [navVisible, setNavVisible] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const location = useLocation();
-  const { user, logout } = useAuth();
   const { language, toggleLanguage } = useLanguage();
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      if (currentScrollY > 10) {
-        setIsScrolled(true);
-        setNavVisible(true); // Always show when scrolled past 10px
-      } else {
-        setIsScrolled(false);
-        setNavVisible(false); // Hidden when at top (unless hovering)
-      }
-      
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Function to handle mouse entering the top area
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-    setNavVisible(true);
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
   };
 
-  // Function to handle mouse leaving the navbar
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-    if (window.scrollY <= 10) {
-      setNavVisible(false);
-    }
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
-
-  // Close mobile menu when route changes
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
 
   return (
-    <>
-      {/* Hover detection area - invisible bar at the top of the screen */}
-      <div 
-        className="fixed top-0 left-0 right-0 h-10 z-40" 
-        onMouseEnter={handleMouseEnter}
-      />
-      
-      <header 
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-          isScrolled 
-            ? "py-3 bg-black/80 backdrop-blur-md shadow-sm border-b border-white/10" 
-            : "py-5 bg-transparent",
-          navVisible 
-            ? "translate-y-0 opacity-100 pointer-events-auto" 
-            : "-translate-y-full opacity-0 pointer-events-none"
-        )}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        <div className="container mx-auto px-4 md:px-6">
-          <nav className="flex items-center justify-between">
-            <NavLink to="/" className="text-xl md:text-2xl font-bold">
-              <span className="text-white">NCKU</span>
-              <span className="text-red-500">TRICKING</span>
-            </NavLink>
+    <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/40">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="flex items-center justify-between h-16">
+          <Link to="/" className="flex-shrink-0 font-bold text-xl">
+            {language === 'en' ? 'NCKU Tricking' : '成大特技社'}
+          </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-2">
-              <NavLink to="/" className={({isActive}) => cn("nav-link", isActive && "active")}>
+          <div className="hidden md:block">
+            <div className="ml-10 flex items-center space-x-4">
+              <Link
+                to="/"
+                className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
+              >
                 {language === 'en' ? 'Home' : '首頁'}
-              </NavLink>
-              <NavLink to="/tricktionary" className={({isActive}) => cn("nav-link", isActive && "active")}>
-                {language === 'en' ? 'Tricktionary' : '招式字典'}
-              </NavLink>
-              <NavLink to="/points" className={({isActive}) => cn("nav-link", isActive && "active")}>
-                {language === 'en' ? 'Buy Points' : '購買點數'}
-              </NavLink>
-              <NavLink to="/booking" className={({isActive}) => cn("nav-link", isActive && "active")}>
-                {language === 'en' ? 'Book Classes' : '預約課程'}
-              </NavLink>
-              
-              {/* Language Toggle Button */}
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={toggleLanguage} 
-                className="rounded-full"
+              </Link>
+              <Link
+                to="/tricktionary"
+                className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
               >
-                <Globe className="h-5 w-5" />
-                <span className="ml-1 text-xs">{language === 'en' ? 'EN' : '中'}</span>
-              </Button>
-              
-              {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="ml-2 rounded-full">
-                      <UserAvatar />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>
-                      <div className="flex flex-col">
-                        <span>{user.name}</span>
-                        <span className="text-xs text-muted-foreground">{user.email}</span>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer flex items-center">
-                        <User className="mr-2 h-4 w-4" />
-                        <span>{language === 'en' ? 'Profile' : '個人資料'}</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => logout()} className="cursor-pointer text-red-500">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>{language === 'en' ? 'Log out' : '登出'}</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Button asChild variant="ghost" className="ml-2">
-                  <Link to="/login">{language === 'en' ? 'Log In' : '登入'}</Link>
-                </Button>
-              )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center">
-              {/* Mobile Language Toggle */}
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={toggleLanguage} 
-                className="mr-2"
+                {language === 'en' ? 'Tricktionary' : '技巧字典'}
+              </Link>
+              <Link
+                to="/points"
+                className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
               >
-                <Globe className="h-5 w-5" />
-              </Button>
-
-              {user ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="mr-2 rounded-full">
-                      <UserAvatar />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuLabel>
-                      <div className="flex flex-col">
-                        <span>{user.name}</span>
-                        <span className="text-xs text-muted-foreground">{user.email}</span>
-                      </div>
-                    </DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer flex items-center">
-                        <User className="mr-2 h-4 w-4" />
-                        <span>{language === 'en' ? 'Profile' : '個人資料'}</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onSelect={() => logout()} className="cursor-pointer text-red-500">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>{language === 'en' ? 'Log out' : '登出'}</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Button asChild variant="ghost" size="sm" className="mr-2">
-                  <Link to="/login">{language === 'en' ? 'Log In' : '登入'}</Link>
-                </Button>
-              )}
-              
-              <button 
-                className="flex items-center"
-                onClick={() => setIsOpen(!isOpen)}
-                aria-label="Toggle menu"
+                {language === 'en' ? 'Course Cards' : '課程卡'}
+              </Link>
+              <Link
+                to="/booking"
+                className="px-3 py-2 text-sm hover:text-accent-foreground transition-colors"
               >
-                {isOpen ? (
-                  <X className="h-6 w-6 text-white" />
-                ) : (
-                  <Menu className="h-6 w-6 text-white" />
-                )}
-              </button>
-            </div>
-          </nav>
-
-          {/* Mobile Navigation */}
-          <div 
-            className={cn(
-              "md:hidden fixed inset-0 bg-black z-40 transition-transform transform duration-300 ease-in-out pt-20",
-              isOpen ? "translate-x-0" : "translate-x-full"
-            )}
-          >
-            <div className="flex flex-col items-center space-y-6 p-8">
-              <NavLink to="/" className="text-lg font-medium text-white">
-                {language === 'en' ? 'Home' : '首頁'}
-              </NavLink>
-              <NavLink to="/tricktionary" className="text-lg font-medium text-white">
-                {language === 'en' ? 'Tricktionary' : '招式字典'}
-              </NavLink>
-              <NavLink to="/points" className="text-lg font-medium text-white">
-                {language === 'en' ? 'Buy Points' : '購買點數'}
-              </NavLink>
-              <NavLink to="/booking" className="text-lg font-medium text-white">
-                {language === 'en' ? 'Book Classes' : '預約課程'}
-              </NavLink>
+                {language === 'en' ? 'Book Class' : '預約課程'}
+              </Link>
             </div>
           </div>
+
+          <div className="hidden md:flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleLanguage}
+            >
+              {language === 'en' ? '中文' : 'EN'}
+            </Button>
+
+            {isAuthenticated ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <UserAvatar />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>
+                    {user?.name || 'User'}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  
+                  <DropdownMenuItem onSelect={() => navigate('/profile')}>
+                    {language === 'en' ? 'Profile' : '個人資料'}
+                  </DropdownMenuItem>
+                  
+                  <DropdownMenuItem onSelect={() => navigate('/booking-history')}>
+                    {language === 'en' ? 'Booking History' : '預約紀錄'}
+                  </DropdownMenuItem>
+                  
+                  {user?.role === 'official' && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onSelect={() => navigate('/admin')}>
+                        {language === 'en' ? 'Admin Panel' : '管理員面板'}
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={handleLogout}>
+                    {language === 'en' ? 'Logout' : '登出'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => navigate('/login')}
+              >
+                {language === 'en' ? 'Login' : '登入'}
+              </Button>
+            )}
+          </div>
+
+          <div className="md:hidden">
+            <button
+              onClick={toggleMenu}
+              className="text-gray-400 hover:text-white"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
-      </header>
-    </>
+      </div>
+
+      {/* Mobile menu */}
+      <div
+        className={cn(
+          "md:hidden transition-all duration-300 ease-in-out",
+          isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0 overflow-hidden"
+        )}
+      >
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-border/20">
+          <Link
+            to="/"
+            className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+            onClick={toggleMenu}
+          >
+            {language === 'en' ? 'Home' : '首頁'}
+          </Link>
+          <Link
+            to="/tricktionary"
+            className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+            onClick={toggleMenu}
+          >
+            {language === 'en' ? 'Tricktionary' : '技巧字典'}
+          </Link>
+          <Link
+            to="/points"
+            className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+            onClick={toggleMenu}
+          >
+            {language === 'en' ? 'Course Cards' : '課程卡'}
+          </Link>
+          <Link
+            to="/booking"
+            className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+            onClick={toggleMenu}
+          >
+            {language === 'en' ? 'Book Class' : '預約課程'}
+          </Link>
+
+          {isAuthenticated ? (
+            <>
+              <div className="pt-4 pb-3 border-t border-border/20">
+                <div className="flex items-center px-5">
+                  <div className="flex-shrink-0">
+                    <UserAvatar />
+                  </div>
+                  <div className="ml-3">
+                    <div className="text-base font-medium">{user?.name}</div>
+                    <div className="text-sm text-muted-foreground">{user?.email}</div>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1 px-2">
+                  <Link
+                    to="/profile"
+                    className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+                    onClick={toggleMenu}
+                  >
+                    {language === 'en' ? 'Profile' : '個人資料'}
+                  </Link>
+                  <Link
+                    to="/booking-history"
+                    className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+                    onClick={toggleMenu}
+                  >
+                    {language === 'en' ? 'Booking History' : '預約紀錄'}
+                  </Link>
+                  
+                  {user?.role === 'official' && (
+                    <Link
+                      to="/admin"
+                      className="block px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+                      onClick={toggleMenu}
+                    >
+                      {language === 'en' ? 'Admin Panel' : '管理員面板'}
+                    </Link>
+                  )}
+                  
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      toggleMenu();
+                    }}
+                    className="block w-full text-left px-3 py-2 text-base hover:text-accent-foreground transition-colors"
+                  >
+                    {language === 'en' ? 'Logout' : '登出'}
+                  </button>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="pt-4 pb-3 border-t border-border/20">
+              <div className="flex gap-2 px-2">
+                <Button
+                  variant="default"
+                  className="w-full"
+                  onClick={() => {
+                    navigate('/login');
+                    toggleMenu();
+                  }}
+                >
+                  {language === 'en' ? 'Login' : '登入'}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    navigate('/signup');
+                    toggleMenu();
+                  }}
+                >
+                  {language === 'en' ? 'Sign Up' : '註冊'}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="px-5 pt-4 flex justify-between items-center border-t border-border/20">
+            <span className="text-sm text-muted-foreground">
+              {language === 'en' ? 'Language' : '語言'}:
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                toggleLanguage();
+              }}
+            >
+              {language === 'en' ? '中文' : 'EN'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </nav>
   );
 };
 
