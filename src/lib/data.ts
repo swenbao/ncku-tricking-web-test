@@ -1,3 +1,4 @@
+
 // Mock data for the Tricking Club Website
 
 export type TrickLevel = 'Absolute Novice' | 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
@@ -9,7 +10,7 @@ export interface Trick {
   description: string;
   videoUrl?: string;
   prerequisites?: string[];
-  categories: string[];
+  categories: ('Kick' | 'Flip' | 'Twist' | 'Transition')[];
 }
 
 export interface ClassSchedule {
@@ -118,6 +119,7 @@ export const tricks: Trick[] = [
     description: 'A basic forward rotation in the air, landing on both feet.',
     categories: ['Flip'],
   },
+  // More tricks can be added as needed
 ];
 
 // Class schedule data

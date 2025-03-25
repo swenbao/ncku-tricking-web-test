@@ -3,8 +3,6 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Clock, BookOpen, Flame, FlipHorizontal, Dumbbell, ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/auth';
-import { useToast } from '@/components/ui/use-toast';
 
 interface ClassCardProps {
   classItem: {
@@ -27,8 +25,6 @@ interface ClassCardProps {
 
 const ClassCard: React.FC<ClassCardProps> = ({ classItem, typeDetails, language }) => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
 
   // Get difficulty icon based on level
   const getDifficultyIcon = (difficulty: string) => {

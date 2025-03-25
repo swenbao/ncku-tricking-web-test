@@ -2,8 +2,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/auth';
-import { useToast } from '@/components/ui/use-toast';
 
 interface ClassTypeCardProps {
   type: string;
@@ -21,8 +19,6 @@ const ClassTypeCard: React.FC<ClassTypeCardProps> = ({
   language
 }) => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-  const { toast } = useToast();
   
   const handleBookClass = (classType: string) => {
     navigate(`/booking?type=${classType}`);
