@@ -4,6 +4,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 // Define user types
 export type UserStatus = 'Blank Card' | 'Beginner Card' | 'Advanced Card';
+export type UserRole = 'student' | 'official';
 
 export interface User {
   id: string;
@@ -14,6 +15,7 @@ export interface User {
   age?: number;
   phoneNumber?: string;
   status: UserStatus;
+  role: UserRole;
   completedTricks: {
     trickId: string;
     status: 'Started' | 'Completed' | 'Proficient';
@@ -24,6 +26,7 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (userData: Partial<User> & { password: string }) => Promise<void>;
@@ -34,15 +37,27 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Mock user data for now, to be replaced with actual backend later
-const MOCK_USER: User = {
+// Mock user data for students and admin
+const MOCK_STUDENT: User = {
   id: '1',
   name: 'John Doe',
-  email: 'john@example.com',
+  email: 'student@example.com',
   profilePicture: '',
   status: 'Beginner Card',
+  role: 'student',
   completedTricks: [],
   points: 20
+};
+
+const MOCK_ADMIN: User = {
+  id: '2',
+  name: 'Admin User',
+  email: 'admin@example.com',
+  profilePicture: '',
+  status: 'Advanced Card',
+  role: 'official',
+  completedTricks: [],
+  points: 100
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -68,12 +83,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [user]);
 
   const login = async (email: string, password: string) => {
-    // Mock login - would connect to backend in production
+    // Mock login - would connect to Supabase in production
     setLoading(true);
     try {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      setUser(MOCK_USER);
+      
+      // Check if email matches admin or student account
+      if (email === 'admin@example.com') {
+        setUser(MOCK_ADMIN);
+      } else {
+        setUser(MOCK_STUDENT);
+      }
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -98,6 +119,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         age: userData.age,
         phoneNumber: userData.phoneNumber,
         status: 'Blank Card',
+        role: 'student', // Default to student role
         completedTricks: [],
         points: 0
       };
@@ -141,6 +163,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       value={{ 
         user, 
         isAuthenticated: !!user, 
+        isAdmin: user?.role === 'official',
         loading,
         login, 
         signup, 
