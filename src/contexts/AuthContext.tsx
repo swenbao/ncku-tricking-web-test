@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { Session } from '@supabase/supabase-js';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/use-toast";
 // Define user types
 export type UserStatus = 'Blank Card' | 'Beginner Card' | 'Advanced Card';
 
-export interface User {
+export interface AppUser {
   id: string;
   name: string;
   email: string;
@@ -25,21 +25,20 @@ export interface User {
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: AppUser | null;
   isAuthenticated: boolean;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (userData: Partial<User> & { password: string }) => Promise<void>;
+  signup: (userData: Partial<AppUser> & { password: string }) => Promise<void>;
   logout: () => void;
-  updateUser: (userData: Partial<User>) => void;
+  updateUser: (userData: Partial<AppUser>) => void;
   updateTrickStatus: (trickId: string, status: 'Started' | 'Completed' | 'Proficient') => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [supabaseUser, setSupabaseUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -97,8 +96,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (tricksError) throw tricksError;
 
-      // Transform the data to match our User interface
-      const formattedUser: User = {
+      // Transform the data to match our AppUser interface
+      const formattedUser: AppUser = {
         id: profile.id,
         name: profile.name || '',
         email: profile.email || '',
@@ -147,7 +146,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signup = async (userData: Partial<User> & { password: string }) => {
+  const signup = async (userData: Partial<AppUser> & { password: string }) => {
     setLoading(true);
     try {
       // Register the user with Supabase Auth
@@ -202,7 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateUser = async (userData: Partial<User>) => {
+  const updateUser = async (userData: Partial<AppUser>) => {
     if (!user) return;
     
     try {
