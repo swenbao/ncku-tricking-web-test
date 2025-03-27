@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { tricks, TrickLevel } from '@/lib/data';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -30,23 +31,45 @@ import {
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/auth';
-
-const levelOrder: TrickLevel[] = [
-  'Absolute Novice',
-  'Beginner',
-  'Intermediate',
-  'Advanced',
-  'Expert',
-];
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 const TRICK_CATEGORIES = ['Kick', 'Flip', 'Twist', 'Ground Movement', 'Transition'];
+
+// Function to fetch difficulty levels
+const fetchDifficultyLevels = async () => {
+  const { data, error } = await supabase
+    .from('difficulty_levels')
+    .select('*')
+    .order('display_order', { ascending: true });
+  
+  if (error) {
+    console.error('Error fetching difficulty levels:', error);
+    throw error;
+  }
+  
+  return data || [];
+};
 
 const TricktionaryPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTrick, setSelectedTrick] = useState<typeof tricks[0] | null>(null);
-  const [activeTab, setActiveTab] = useState<string>(levelOrder[0]);
+  const [activeTab, setActiveTab] = useState<string>('');
   const { user, isAuthenticated, updateTrickStatus } = useAuth();
+
+  // Fetch difficulty levels from Supabase
+  const { data: difficultyLevels, isLoading: isLoadingDifficulties } = useQuery({
+    queryKey: ['difficultyLevels'],
+    queryFn: fetchDifficultyLevels
+  });
+
+  // Set initial active tab once difficulty levels are loaded
+  useEffect(() => {
+    if (difficultyLevels && difficultyLevels.length > 0 && !activeTab) {
+      setActiveTab(difficultyLevels[0].name);
+    }
+  }, [difficultyLevels, activeTab]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories(prev => 
@@ -61,6 +84,7 @@ const TricktionaryPage = () => {
     setSearchQuery('');
   };
 
+  // Adjusted to use the dynamic difficulty levels
   const filteredTricks = tricks.filter(trick => {
     const matchesSearch = trick.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           trick.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -98,6 +122,14 @@ const TricktionaryPage = () => {
       default: return 'Not Started';
     }
   };
+
+  if (isLoadingDifficulties) {
+    return (
+      <div className="page-transition min-h-screen flex flex-col items-center justify-center">
+        <div className="animate-pulse text-white">Loading difficulty levels...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-transition min-h-screen flex flex-col">
@@ -192,38 +224,40 @@ const TricktionaryPage = () => {
             </div>
           </div>
           
-          <Tabs defaultValue={levelOrder[0]} value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="mb-8 flex overflow-x-auto pb-2 scrollbar-hide">
-              {levelOrder.map((level) => (
-                <TabsTrigger key={level} value={level} className="min-w-max">
-                  {level}
-                </TabsTrigger>
+          {difficultyLevels && (
+            <Tabs defaultValue={difficultyLevels[0]?.name} value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="mb-8 flex overflow-x-auto pb-2 scrollbar-hide">
+                {difficultyLevels.map((level) => (
+                  <TabsTrigger key={level.id} value={level.name} className="min-w-max">
+                    {level.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+              
+              {difficultyLevels.map((level) => (
+                <TabsContent key={level.id} value={level.name} className="space-y-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredTricks.length > 0 ? (
+                      filteredTricks.map((trick) => (
+                        <TrickCard
+                          key={trick.id}
+                          trick={trick}
+                          onClick={() => setSelectedTrick(trick)}
+                        />
+                      ))
+                    ) : (
+                      <div className="col-span-full text-center py-12">
+                        <h3 className="text-lg font-medium mb-2">No tricks found</h3>
+                        <p className="text-muted-foreground">
+                          Try adjusting your filters or search query.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
               ))}
-            </TabsList>
-            
-            {levelOrder.map((level) => (
-              <TabsContent key={level} value={level} className="space-y-8">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredTricks.length > 0 ? (
-                    filteredTricks.map((trick) => (
-                      <TrickCard
-                        key={trick.id}
-                        trick={trick}
-                        onClick={() => setSelectedTrick(trick)}
-                      />
-                    ))
-                  ) : (
-                    <div className="col-span-full text-center py-12">
-                      <h3 className="text-lg font-medium mb-2">No tricks found</h3>
-                      <p className="text-muted-foreground">
-                        Try adjusting your filters or search query.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
+            </Tabs>
+          )}
         </div>
       </main>
       

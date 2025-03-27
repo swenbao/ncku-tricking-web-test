@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Trick, TrickLevel } from '@/lib/data';
@@ -17,7 +18,7 @@ const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
   const progressStatus = trickProgress?.status || null;
   
   // Determine card styling based on progress
-  let cardClassNames = "trick-card transition-all duration-300 transform hover:-translate-y-1";
+  let cardClassNames = "border rounded-lg p-5 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer";
   let titleClassNames = "font-medium text-lg";
   let descriptionClassNames = "text-sm text-muted-foreground mb-3";
   

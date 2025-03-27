@@ -30,12 +30,37 @@ export type Database = {
         }
         Relationships: []
       }
+      difficulty_levels: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order: number
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       tricks: {
         Row: {
           category_id: string | null
           created_at: string
           description: string | null
           difficulty: number
+          difficulty_level_id: string | null
           id: string
           name: string
           prerequisites: string[] | null
@@ -46,6 +71,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           difficulty: number
+          difficulty_level_id?: string | null
           id?: string
           name: string
           prerequisites?: string[] | null
@@ -56,6 +82,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           difficulty?: number
+          difficulty_level_id?: string | null
           id?: string
           name?: string
           prerequisites?: string[] | null
@@ -67,6 +94,13 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tricks_difficulty_level_id_fkey"
+            columns: ["difficulty_level_id"]
+            isOneToOne: false
+            referencedRelation: "difficulty_levels"
             referencedColumns: ["id"]
           },
         ]
