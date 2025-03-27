@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/auth';
 import { Trick } from '@/lib/data';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { translations } from '@/lib/translations';
 import {
   Dialog,
   DialogContent,
@@ -25,6 +27,8 @@ export const TrickDetailDialog: React.FC<TrickDetailDialogProps> = ({
   setSelectedTrick,
 }) => {
   const { user, isAuthenticated, updateTrickStatus } = useAuth();
+  const { language } = useLanguage();
+  const t = translations[language].tricktionary;
 
   const getTrickProgress = (trickId: string) => {
     if (!user) return null;
@@ -45,10 +49,10 @@ export const TrickDetailDialog: React.FC<TrickDetailDialogProps> = ({
 
   const getProgressStatusLabel = (status: string | null) => {
     switch(status) {
-      case 'Started': return 'Learning';
-      case 'Completed': return 'Completed';
-      case 'Proficient': return 'Mastered';
-      default: return 'Not Started';
+      case 'Started': return t.progressStatus.started;
+      case 'Completed': return t.progressStatus.completed;
+      case 'Proficient': return t.progressStatus.proficient;
+      default: return t.progressStatus.notStarted;
     }
   };
 
@@ -80,7 +84,7 @@ export const TrickDetailDialog: React.FC<TrickDetailDialogProps> = ({
             
             <div className="space-y-4">
               <div className="aspect-video bg-muted/20 rounded-md flex items-center justify-center mb-4 border border-white/10">
-                <p className="text-muted-foreground">Demo animation</p>
+                <p className="text-muted-foreground">{t.demoAnimation}</p>
               </div>
               
               <DialogDescription className="text-base">
@@ -89,7 +93,7 @@ export const TrickDetailDialog: React.FC<TrickDetailDialogProps> = ({
               
               {selectedTrick.prerequisites && selectedTrick.prerequisites.length > 0 && (
                 <div>
-                  <h4 className="text-sm font-medium mb-1">Prerequisites</h4>
+                  <h4 className="text-sm font-medium mb-1">{t.prerequisites}</h4>
                   <ul className="list-disc list-inside text-sm text-muted-foreground">
                     {selectedTrick.prerequisites.map((prereq, index) => (
                       <li key={index}>{prereq}</li>
@@ -100,7 +104,7 @@ export const TrickDetailDialog: React.FC<TrickDetailDialogProps> = ({
               
               {user && (
                 <div className="border-t border-white/10 pt-4 mt-6">
-                  <h4 className="text-sm font-medium mb-3">Update Your Progress</h4>
+                  <h4 className="text-sm font-medium mb-3">{t.updateProgress}</h4>
                   
                   <div className="grid grid-cols-3 gap-2">
                     {(['Started', 'Completed', 'Proficient'] as const).map((status) => {
@@ -131,9 +135,9 @@ export const TrickDetailDialog: React.FC<TrickDetailDialogProps> = ({
             
             {!user && (
               <DialogFooter>
-                <p className="text-muted-foreground text-sm mr-auto">Log in to track your progress</p>
+                <p className="text-muted-foreground text-sm mr-auto">{t.logInPrompt}</p>
                 <Button asChild>
-                  <Link to="/login">Log In</Link>
+                  <Link to="/login">{t.logIn}</Link>
                 </Button>
               </DialogFooter>
             )}

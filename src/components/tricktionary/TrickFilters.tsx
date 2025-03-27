@@ -22,6 +22,13 @@ interface TrickFiltersProps {
   setSelectedCategories: (categories: string[]) => void;
   clearFilters: () => void;
   searchQuery: string;
+  translations: {
+    filterButton: string;
+    categoriesHeading: string;
+    clearFilters: string;
+    applyFilters: string;
+    clearAll: string;
+  };
 }
 
 export const TrickFilters: React.FC<TrickFiltersProps> = ({
@@ -29,6 +36,7 @@ export const TrickFilters: React.FC<TrickFiltersProps> = ({
   setSelectedCategories,
   clearFilters,
   searchQuery,
+  translations
 }) => {
   const handleCategoryChange = (category: string) => {
     setSelectedCategories(
@@ -44,7 +52,7 @@ export const TrickFilters: React.FC<TrickFiltersProps> = ({
         <SheetTrigger asChild>
           <Button variant="outline" size="sm" className="flex items-center gap-2">
             <Filter className="h-4 w-4" />
-            Filter
+            {translations.filterButton}
             {selectedCategories.length > 0 && (
               <Badge variant="secondary" className="ml-1">
                 {selectedCategories.length}
@@ -54,14 +62,14 @@ export const TrickFilters: React.FC<TrickFiltersProps> = ({
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Filter Tricks</SheetTitle>
+            <SheetTitle>{translations.filterButton}</SheetTitle>
             <SheetDescription>
-              Select categories to filter the tricks list.
+              {translations.categoriesHeading}
             </SheetDescription>
           </SheetHeader>
           
           <div className="py-6">
-            <h3 className="text-sm font-medium mb-4">Categories</h3>
+            <h3 className="text-sm font-medium mb-4">{translations.categoriesHeading}</h3>
             <div className="space-y-3">
               {TRICK_CATEGORIES.map((category) => (
                 <div key={category} className="flex items-center">
@@ -83,10 +91,10 @@ export const TrickFilters: React.FC<TrickFiltersProps> = ({
           
           <div className="flex justify-between">
             <Button variant="outline" onClick={clearFilters} size="sm">
-              Clear Filters
+              {translations.clearFilters}
             </Button>
             <SheetClose asChild>
-              <Button size="sm">Apply Filters</Button>
+              <Button size="sm">{translations.applyFilters}</Button>
             </SheetClose>
           </div>
         </SheetContent>
@@ -94,7 +102,7 @@ export const TrickFilters: React.FC<TrickFiltersProps> = ({
       
       {(searchQuery || selectedCategories.length > 0) && (
         <Button variant="ghost" size="sm" onClick={clearFilters}>
-          Clear All
+          {translations.clearAll}
         </Button>
       )}
     </div>

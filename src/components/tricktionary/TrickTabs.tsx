@@ -10,6 +10,10 @@ interface TrickTabsProps {
   setActiveTab: (tab: string) => void;
   filteredTricks: Trick[];
   onTrickSelect: (trick: Trick) => void;
+  translations: {
+    noTricksFound: string;
+    tryAdjusting: string;
+  };
 }
 
 export const TrickTabs: React.FC<TrickTabsProps> = ({
@@ -18,6 +22,7 @@ export const TrickTabs: React.FC<TrickTabsProps> = ({
   setActiveTab,
   filteredTricks,
   onTrickSelect,
+  translations
 }) => {
   return (
     <Tabs defaultValue={difficultyLevels[0]?.name} value={activeTab} onValueChange={setActiveTab}>
@@ -42,9 +47,9 @@ export const TrickTabs: React.FC<TrickTabsProps> = ({
               ))
             ) : (
               <div className="col-span-full text-center py-12">
-                <h3 className="text-lg font-medium mb-2">No tricks found</h3>
+                <h3 className="text-lg font-medium mb-2">{translations.noTricksFound}</h3>
                 <p className="text-muted-foreground">
-                  Try adjusting your filters or search query.
+                  {translations.tryAdjusting}
                 </p>
               </div>
             )}

@@ -9,6 +9,8 @@ import { TrickTabs } from '@/components/tricktionary/TrickTabs';
 import { TrickDetailDialog } from '@/components/tricktionary/TrickDetailDialog';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { translations } from '@/lib/translations';
 
 // Function to fetch difficulty levels
 const fetchDifficultyLevels = async () => {
@@ -30,6 +32,8 @@ const TricktionaryPage = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTrick, setSelectedTrick] = useState(null);
   const [activeTab, setActiveTab] = useState<string>('');
+  const { language } = useLanguage();
+  const t = translations[language].tricktionary;
 
   // Fetch difficulty levels from Supabase
   const { data: difficultyLevels, isLoading: isLoadingDifficulties } = useQuery({
@@ -65,7 +69,7 @@ const TricktionaryPage = () => {
   if (isLoadingDifficulties) {
     return (
       <div className="page-transition min-h-screen flex flex-col items-center justify-center">
-        <div className="animate-pulse text-white">Loading difficulty levels...</div>
+        <div className="animate-pulse text-white">{t.loading}</div>
       </div>
     );
   }
@@ -77,9 +81,9 @@ const TricktionaryPage = () => {
       <main className="flex-grow pt-24">
         <div className="container mx-auto px-4 md:px-6 py-8">
           <header className="mb-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Tricktionary</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">{t.title}</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Explore our database of tricking moves, from basic to advanced techniques.
+              {t.subtitle}
             </p>
           </header>
           
@@ -87,6 +91,7 @@ const TricktionaryPage = () => {
             <TrickSearch 
               searchQuery={searchQuery} 
               setSearchQuery={setSearchQuery} 
+              placeholder={t.searchPlaceholder}
             />
             
             <TrickFilters 
@@ -94,6 +99,13 @@ const TricktionaryPage = () => {
               setSelectedCategories={setSelectedCategories}
               clearFilters={clearFilters}
               searchQuery={searchQuery}
+              translations={{
+                filterButton: t.filterButton,
+                categoriesHeading: t.categoriesHeading,
+                clearFilters: t.clearFilters,
+                applyFilters: t.applyFilters,
+                clearAll: t.clearAll
+              }}
             />
           </div>
           
@@ -104,6 +116,10 @@ const TricktionaryPage = () => {
               setActiveTab={setActiveTab}
               filteredTricks={filteredTricks}
               onTrickSelect={setSelectedTrick}
+              translations={{
+                noTricksFound: t.noTricksFound,
+                tryAdjusting: t.tryAdjusting
+              }}
             />
           )}
         </div>
