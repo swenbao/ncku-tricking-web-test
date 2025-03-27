@@ -9,7 +9,139 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      tricks: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          difficulty: number
+          id: string
+          name: string
+          prerequisites: string[] | null
+          video_url: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty: number
+          id?: string
+          name: string
+          prerequisites?: string[] | null
+          video_url?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          difficulty?: number
+          id?: string
+          name?: string
+          prerequisites?: string[] | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tricks_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_completed_tricks: {
+        Row: {
+          completed_at: string | null
+          id: string
+          status: string | null
+          trick_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          status?: string | null
+          trick_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          status?: string | null
+          trick_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_completed_tricks_trick_id_fkey"
+            columns: ["trick_id"]
+            isOneToOne: false
+            referencedRelation: "tricks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_profiles: {
+        Row: {
+          age: number | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string | null
+          phone_number: string | null
+          points: number | null
+          profile_picture: string | null
+          sex: string | null
+          status: string | null
+        }
+        Insert: {
+          age?: number | null
+          created_at?: string
+          email?: string | null
+          id: string
+          name?: string | null
+          phone_number?: string | null
+          points?: number | null
+          profile_picture?: string | null
+          sex?: string | null
+          status?: string | null
+        }
+        Update: {
+          age?: number | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string | null
+          phone_number?: string | null
+          points?: number | null
+          profile_picture?: string | null
+          sex?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
