@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { AppUser } from "./types";
+import { AppUser, UserStatus } from "./types";
 
 // Fetch user profile data from Supabase
 export const fetchUserProfile = async (userId: string): Promise<AppUser> => {
@@ -30,7 +30,7 @@ export const fetchUserProfile = async (userId: string): Promise<AppUser> => {
     sex: profile.sex as 'Male' | 'Female' | 'Other',
     age: profile.age,
     phoneNumber: profile.phone_number,
-    status: profile.status,
+    status: profile.status as UserStatus,
     points: profile.points || 0,
     completedTricks: tricks.map(trick => ({
       trickId: trick.trick_id,

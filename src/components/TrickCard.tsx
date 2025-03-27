@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Trick, TrickLevel } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/contexts/auth';
 
 interface TrickCardProps {
   trick: Trick;
