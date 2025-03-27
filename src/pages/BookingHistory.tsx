@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useAuth } from '@/contexts/auth';
+import { useAuth } from '@/contexts/AuthContext';
 import { enhancedClassData } from '@/lib/bookingData';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';

@@ -2,7 +2,7 @@
 import React from 'react';
 import { getFilteredClasses } from '@/lib/bookingData';
 import { ClassData } from '@/hooks/useBookingState';
-import { useAuth } from '@/contexts/auth';
+import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 
