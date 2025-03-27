@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import { User, useAuth } from '@/contexts/AuthContext';
+import { AppUser, useAuth } from '@/contexts/auth';
 
 const profileSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -23,7 +22,7 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface ProfileFormProps {
-  user: User;
+  user: AppUser;
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
@@ -59,7 +58,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ user }) => {
   
   const onSubmit = async (data: ProfileFormValues) => {
     try {
-      const updateData: Partial<User> = {
+      const updateData: Partial<AppUser> = {
         name: data.name,
         email: data.email,
         profilePicture: data.profilePicture,

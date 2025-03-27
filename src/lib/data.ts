@@ -33,6 +33,15 @@ export interface PointPackage {
   popular?: boolean;
 }
 
+// Difficulty levels (now referenced from the database)
+export const difficultyLevels = [
+  { id: 'absolute-novice', name: 'Absolute Novice', displayOrder: 1 },
+  { id: 'beginner', name: 'Beginner', displayOrder: 2 },
+  { id: 'intermediate', name: 'Intermediate', displayOrder: 3 },
+  { id: 'advanced', name: 'Advanced', displayOrder: 4 },
+  { id: 'expert', name: 'Expert', displayOrder: 5 }
+];
+
 // Trick data
 export const tricks: Trick[] = [
   {
