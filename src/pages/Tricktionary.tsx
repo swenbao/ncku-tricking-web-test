@@ -40,7 +40,7 @@ const fetchCategories = async () => {
   return data || [];
 };
 
-// Function to fetch tricks from Supabase
+// Improved function to fetch tricks with proper category handling
 const fetchTricks = async () => {
   // First, fetch all categories
   const categories = await fetchCategories();
@@ -60,12 +60,11 @@ const fetchTricks = async () => {
   
   // Transform the data to match our Trick type
   return (data || []).map(trick => {
-    // Parse the category_id field - if it's a string representation of an array, parse it
-    // Otherwise, create an array with the single category_id if it exists
+    // Parse the category_id field to handle multiple formats
     let categoryIds = [];
     
     if (trick.category_id) {
-      // If category_id is a JSON string array, parse it
+      // If category_id is a JSON string array
       if (typeof trick.category_id === 'string' && trick.category_id.startsWith('[')) {
         try {
           categoryIds = JSON.parse(trick.category_id);
@@ -84,7 +83,7 @@ const fetchTricks = async () => {
       }
     }
     
-    // Map category IDs to category names using the categories data
+    // Map category IDs to category names
     const trickCategories = categoryIds
       .map(id => {
         const category = categories.find(cat => cat.id === id);
