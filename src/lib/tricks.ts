@@ -1,3 +1,4 @@
+
 // Types for tricks data
 export type TrickLevel = string;
 
@@ -8,7 +9,7 @@ export interface Trick {
   description: string;
   videoUrl?: string;
   prerequisites?: string[];
-  categories: string[];
+  categories: string[]; // This will store category names, not IDs
 }
 
 // Note: We're keeping this array for backwards compatibility,

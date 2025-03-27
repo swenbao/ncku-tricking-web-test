@@ -14,8 +14,22 @@ import {
   SheetTrigger,
   SheetClose,
 } from '@/components/ui/sheet';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
-const TRICK_CATEGORIES = ['Kick', 'Flip', 'Twist', 'Ground Movement', 'Transition'];
+// Function to fetch categories from Supabase
+const fetchCategories = async () => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*');
+  
+  if (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+  
+  return data || [];
+};
 
 interface TrickFiltersProps {
   selectedCategories: string[];
@@ -38,6 +52,12 @@ export const TrickFilters: React.FC<TrickFiltersProps> = ({
   searchQuery,
   translations
 }) => {
+  // Fetch categories from Supabase
+  const { data: categories = [], isLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories
+  });
+
   const handleCategoryChange = (category: string) => {
     setSelectedCategories(
       selectedCategories.includes(category)
@@ -71,21 +91,25 @@ export const TrickFilters: React.FC<TrickFiltersProps> = ({
           <div className="py-6">
             <h3 className="text-sm font-medium mb-4">{translations.categoriesHeading}</h3>
             <div className="space-y-3">
-              {TRICK_CATEGORIES.map((category) => (
-                <div key={category} className="flex items-center">
-                  <Checkbox
-                    id={`category-${category}`}
-                    checked={selectedCategories.includes(category)}
-                    onCheckedChange={() => handleCategoryChange(category)}
-                  />
-                  <Label
-                    htmlFor={`category-${category}`}
-                    className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {category}
-                  </Label>
-                </div>
-              ))}
+              {isLoading ? (
+                <div className="animate-pulse text-muted-foreground">Loading categories...</div>
+              ) : (
+                categories.map((category) => (
+                  <div key={category.id} className="flex items-center">
+                    <Checkbox
+                      id={`category-${category.id}`}
+                      checked={selectedCategories.includes(category.name)}
+                      onCheckedChange={() => handleCategoryChange(category.name)}
+                    />
+                    <Label
+                      htmlFor={`category-${category.id}`}
+                      className="ml-2 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      {category.name}
+                    </Label>
+                  </div>
+                ))
+              )}
             </div>
           </div>
           

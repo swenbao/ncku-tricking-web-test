@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -27,8 +26,26 @@ const fetchDifficultyLevels = async () => {
   return data || [];
 };
 
+// Function to fetch categories from Supabase
+const fetchCategories = async () => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*');
+  
+  if (error) {
+    console.error('Error fetching categories:', error);
+    throw error;
+  }
+  
+  return data || [];
+};
+
 // Function to fetch tricks from Supabase
 const fetchTricks = async () => {
+  // First, fetch all categories
+  const categories = await fetchCategories();
+  
+  // Then fetch tricks data
   const { data, error } = await supabase
     .from('tricks')
     .select(`
@@ -42,18 +59,49 @@ const fetchTricks = async () => {
   }
   
   // Transform the data to match our Trick type
-  return (data || []).map(trick => ({
-    id: trick.id,
-    name: trick.name,
-    level: trick.difficulty_levels?.name || '',
-    description: trick.description || '',
-    videoUrl: trick.video_url || undefined,
-    prerequisites: trick.prerequisites || [],
-    // Since the database doesn't have a categories array directly,
-    // we're creating a temporary array with the category_id if it exists
-    // This should be replaced with proper category data fetching
-    categories: trick.category_id ? [trick.category_id] : [],
-  }));
+  return (data || []).map(trick => {
+    // Parse the category_id field - if it's a string representation of an array, parse it
+    // Otherwise, create an array with the single category_id if it exists
+    let categoryIds = [];
+    
+    if (trick.category_id) {
+      // If category_id is a JSON string array, parse it
+      if (typeof trick.category_id === 'string' && trick.category_id.startsWith('[')) {
+        try {
+          categoryIds = JSON.parse(trick.category_id);
+        } catch (e) {
+          console.error('Error parsing category_id as JSON:', e);
+          categoryIds = [trick.category_id];
+        }
+      } 
+      // If it's already an array
+      else if (Array.isArray(trick.category_id)) {
+        categoryIds = trick.category_id;
+      }
+      // If it's a single value
+      else {
+        categoryIds = [trick.category_id];
+      }
+    }
+    
+    // Map category IDs to category names using the categories data
+    const trickCategories = categoryIds
+      .map(id => {
+        const category = categories.find(cat => cat.id === id);
+        return category ? category.name : null;
+      })
+      .filter(Boolean); // Remove any null values
+    
+    return {
+      id: trick.id,
+      name: trick.name,
+      level: trick.difficulty_levels?.name || '',
+      description: trick.description || '',
+      videoUrl: trick.video_url || undefined,
+      prerequisites: trick.prerequisites || [],
+      categories: trickCategories,
+    };
+  });
 };
 
 const TricktionaryPage = () => {
@@ -63,6 +111,12 @@ const TricktionaryPage = () => {
   const [activeTab, setActiveTab] = useState<string>('');
   const { language } = useLanguage();
   const t = translations[language].tricktionary;
+
+  // Fetch categories for the filters
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories
+  });
 
   // Fetch difficulty levels from Supabase
   const { data: difficultyLevels, isLoading: isLoadingDifficulties } = useQuery({
@@ -94,14 +148,15 @@ const TricktionaryPage = () => {
                           (trick.description && trick.description.toLowerCase().includes(searchQuery.toLowerCase()));
     
     const matchesCategory = selectedCategories.length === 0 || 
-                            (trick.categories && trick.categories.some(category => selectedCategories.includes(category)));
+                            (trick.categories && trick.categories.some(category => 
+                              selectedCategories.includes(category)));
     
     const matchesLevel = activeTab === 'all' || trick.level === activeTab;
     
     return matchesSearch && matchesCategory && matchesLevel;
   });
 
-  const isLoading = isLoadingDifficulties || isLoadingTricks;
+  const isLoading = isLoadingDifficulties || isLoadingTricks || isLoadingCategories;
 
   if (isLoading) {
     return (
