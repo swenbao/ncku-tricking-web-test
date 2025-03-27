@@ -49,7 +49,10 @@ const fetchTricks = async () => {
     description: trick.description || '',
     videoUrl: trick.video_url || undefined,
     prerequisites: trick.prerequisites || [],
-    categories: trick.categories || [],
+    // Since the database doesn't have a categories array directly,
+    // we're creating a temporary array with the category_id if it exists
+    // This should be replaced with proper category data fetching
+    categories: trick.category_id ? [trick.category_id] : [],
   }));
 };
 
