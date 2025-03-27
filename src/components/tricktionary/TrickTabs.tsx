@@ -24,6 +24,11 @@ export const TrickTabs: React.FC<TrickTabsProps> = ({
   onTrickSelect,
   translations
 }) => {
+  // Filter tricks based on the active difficulty level
+  const tricksInActiveTab = activeTab === 'all' 
+    ? filteredTricks 
+    : filteredTricks.filter(trick => trick.level === activeTab);
+
   return (
     <Tabs defaultValue={difficultyLevels[0]?.name} value={activeTab} onValueChange={setActiveTab}>
       <TabsList className="mb-8 flex overflow-x-auto pb-2 scrollbar-hide">
@@ -37,8 +42,8 @@ export const TrickTabs: React.FC<TrickTabsProps> = ({
       {difficultyLevels.map((level) => (
         <TabsContent key={level.id} value={level.name} className="space-y-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTricks.length > 0 ? (
-              filteredTricks.map((trick) => (
+            {tricksInActiveTab.length > 0 ? (
+              tricksInActiveTab.map((trick) => (
                 <TrickCard
                   key={trick.id}
                   trick={trick}

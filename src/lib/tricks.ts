@@ -1,6 +1,5 @@
-
 // Types for tricks data
-export type TrickLevel = 'Absolute Novice' | 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
+export type TrickLevel = string;
 
 export interface Trick {
   id: string;
@@ -9,10 +8,11 @@ export interface Trick {
   description: string;
   videoUrl?: string;
   prerequisites?: string[];
-  categories: ('Kick' | 'Flip' | 'Twist' | 'Transition')[];
+  categories: string[];
 }
 
-// Trick data
+// Note: We're keeping this array for backwards compatibility,
+// but the actual data is now fetched from Supabase
 export const tricks: Trick[] = [
   {
     id: '1',

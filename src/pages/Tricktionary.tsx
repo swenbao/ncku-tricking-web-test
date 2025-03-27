@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { tricks } from '@/lib/data';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { TrickSearch } from '@/components/tricktionary/TrickSearch';
@@ -11,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { translations } from '@/lib/translations';
+import { Trick } from '@/lib/data';
 
 // Function to fetch difficulty levels
 const fetchDifficultyLevels = async () => {
@@ -27,6 +27,32 @@ const fetchDifficultyLevels = async () => {
   return data || [];
 };
 
+// Function to fetch tricks from Supabase
+const fetchTricks = async () => {
+  const { data, error } = await supabase
+    .from('tricks')
+    .select(`
+      *,
+      difficulty_levels(name)
+    `);
+  
+  if (error) {
+    console.error('Error fetching tricks:', error);
+    throw error;
+  }
+  
+  // Transform the data to match our Trick type
+  return (data || []).map(trick => ({
+    id: trick.id,
+    name: trick.name,
+    level: trick.difficulty_levels?.name || '',
+    description: trick.description || '',
+    videoUrl: trick.video_url || undefined,
+    prerequisites: trick.prerequisites || [],
+    categories: trick.categories || [],
+  }));
+};
+
 const TricktionaryPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -41,6 +67,12 @@ const TricktionaryPage = () => {
     queryFn: fetchDifficultyLevels
   });
 
+  // Fetch tricks from Supabase
+  const { data: tricks = [], isLoading: isLoadingTricks } = useQuery({
+    queryKey: ['tricks'],
+    queryFn: fetchTricks
+  });
+
   // Set initial active tab once difficulty levels are loaded
   useEffect(() => {
     if (difficultyLevels && difficultyLevels.length > 0 && !activeTab) {
@@ -53,20 +85,22 @@ const TricktionaryPage = () => {
     setSearchQuery('');
   };
 
-  // Adjusted to use the dynamic difficulty levels
+  // Adjusted to use the dynamic difficulty levels and fetched tricks
   const filteredTricks = tricks.filter(trick => {
     const matchesSearch = trick.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          trick.description.toLowerCase().includes(searchQuery.toLowerCase());
+                          (trick.description && trick.description.toLowerCase().includes(searchQuery.toLowerCase()));
     
     const matchesCategory = selectedCategories.length === 0 || 
-                            trick.categories.some(category => selectedCategories.includes(category));
+                            (trick.categories && trick.categories.some(category => selectedCategories.includes(category)));
     
     const matchesLevel = activeTab === 'all' || trick.level === activeTab;
     
     return matchesSearch && matchesCategory && matchesLevel;
   });
 
-  if (isLoadingDifficulties) {
+  const isLoading = isLoadingDifficulties || isLoadingTricks;
+
+  if (isLoading) {
     return (
       <div className="page-transition min-h-screen flex flex-col items-center justify-center">
         <div className="animate-pulse text-white">{t.loading}</div>
