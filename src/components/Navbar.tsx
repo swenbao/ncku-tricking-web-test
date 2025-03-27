@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation, Link } from 'react-router-dom';
 import { Menu, X, User, LogOut, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useAuth, UserAvatar } from '@/contexts/AuthContext';
+import { useAuth, UserAvatar } from '@/contexts/auth';
 import {
   DropdownMenu,
   DropdownMenuContent,
