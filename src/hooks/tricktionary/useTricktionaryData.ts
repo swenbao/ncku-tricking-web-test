@@ -52,27 +52,25 @@ export const fetchTricks = async () => {
   
   // Transform the data to match our Trick type
   return (data || []).map(trick => {
-    // Parse the category_id field to handle multiple formats
+    // Get category IDs - now handling proper UUID[] array type
     let categoryIds = [];
     
-    if (trick.category_id) {
-      // If category_id is a JSON string array
-      if (typeof trick.category_id === 'string' && trick.category_id.startsWith('[')) {
-        try {
-          categoryIds = JSON.parse(trick.category_id);
-        } catch (e) {
-          console.error('Error parsing category_id as JSON:', e);
-          categoryIds = [trick.category_id];
-        }
-      } 
-      // If it's already an array
-      else if (Array.isArray(trick.category_id)) {
-        categoryIds = trick.category_id;
+    // If category_id is already an array of UUIDs (after DB migration)
+    if (Array.isArray(trick.category_id)) {
+      categoryIds = trick.category_id;
+    } 
+    // Legacy support for older string format (if any entries were saved that way)
+    else if (typeof trick.category_id === 'string' && trick.category_id.startsWith('[')) {
+      try {
+        categoryIds = JSON.parse(trick.category_id);
+      } catch (e) {
+        console.error('Error parsing category_id as JSON:', e);
+        categoryIds = trick.category_id ? [trick.category_id] : [];
       }
-      // If it's a single value
-      else {
-        categoryIds = [trick.category_id];
-      }
+    } 
+    // Single UUID value
+    else if (trick.category_id) {
+      categoryIds = [trick.category_id];
     }
     
     // Map category IDs to category names
