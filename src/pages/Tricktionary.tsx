@@ -1,107 +1,18 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { TrickSearch } from '@/components/tricktionary/TrickSearch';
-import { TrickFilters } from '@/components/tricktionary/TrickFilters';
-import { TrickTabs } from '@/components/tricktionary/TrickTabs';
-import { TrickDetailDialog } from '@/components/tricktionary/TrickDetailDialog';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { 
+  TrickDetailDialog,
+  TricktionaryHeader,
+  TricktionaryFiltersSection,
+  TricktionaryLoading,
+  TrickTabs
+} from '@/components/tricktionary';
+import { useTricktionaryData } from '@/hooks/tricktionary/useTricktionaryData';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { translations } from '@/lib/translations';
 import { Trick } from '@/lib/data';
-
-// Function to fetch difficulty levels
-const fetchDifficultyLevels = async () => {
-  const { data, error } = await supabase
-    .from('difficulty_levels')
-    .select('*')
-    .order('display_order', { ascending: true });
-  
-  if (error) {
-    console.error('Error fetching difficulty levels:', error);
-    throw error;
-  }
-  
-  return data || [];
-};
-
-// Function to fetch categories from Supabase
-const fetchCategories = async () => {
-  const { data, error } = await supabase
-    .from('categories')
-    .select('*');
-  
-  if (error) {
-    console.error('Error fetching categories:', error);
-    throw error;
-  }
-  
-  return data || [];
-};
-
-// Improved function to fetch tricks with proper category handling
-const fetchTricks = async () => {
-  // First, fetch all categories
-  const categories = await fetchCategories();
-  
-  // Then fetch tricks data
-  const { data, error } = await supabase
-    .from('tricks')
-    .select(`
-      *,
-      difficulty_levels(name)
-    `);
-  
-  if (error) {
-    console.error('Error fetching tricks:', error);
-    throw error;
-  }
-  
-  // Transform the data to match our Trick type
-  return (data || []).map(trick => {
-    // Parse the category_id field to handle multiple formats
-    let categoryIds = [];
-    
-    if (trick.category_id) {
-      // If category_id is a JSON string array
-      if (typeof trick.category_id === 'string' && trick.category_id.startsWith('[')) {
-        try {
-          categoryIds = JSON.parse(trick.category_id);
-        } catch (e) {
-          console.error('Error parsing category_id as JSON:', e);
-          categoryIds = [trick.category_id];
-        }
-      } 
-      // If it's already an array
-      else if (Array.isArray(trick.category_id)) {
-        categoryIds = trick.category_id;
-      }
-      // If it's a single value
-      else {
-        categoryIds = [trick.category_id];
-      }
-    }
-    
-    // Map category IDs to category names
-    const trickCategories = categoryIds
-      .map(id => {
-        const category = categories.find(cat => cat.id === id);
-        return category ? category.name : null;
-      })
-      .filter(Boolean); // Remove any null values
-    
-    return {
-      id: trick.id,
-      name: trick.name,
-      level: trick.difficulty_levels?.name || '',
-      description: trick.description || '',
-      videoUrl: trick.video_url || undefined,
-      prerequisites: trick.prerequisites || [],
-      categories: trickCategories,
-    };
-  });
-};
 
 const TricktionaryPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -111,23 +22,8 @@ const TricktionaryPage = () => {
   const { language } = useLanguage();
   const t = translations[language].tricktionary;
 
-  // Fetch categories for the filters
-  const { data: categories, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ['categories'],
-    queryFn: fetchCategories
-  });
-
-  // Fetch difficulty levels from Supabase
-  const { data: difficultyLevels, isLoading: isLoadingDifficulties } = useQuery({
-    queryKey: ['difficultyLevels'],
-    queryFn: fetchDifficultyLevels
-  });
-
-  // Fetch tricks from Supabase
-  const { data: tricks = [], isLoading: isLoadingTricks } = useQuery({
-    queryKey: ['tricks'],
-    queryFn: fetchTricks
-  });
+  // Fetch data using our custom hook
+  const { difficultyLevels, tricks, isLoading } = useTricktionaryData();
 
   // Set initial active tab once difficulty levels are loaded
   useEffect(() => {
@@ -141,7 +37,7 @@ const TricktionaryPage = () => {
     setSearchQuery('');
   };
 
-  // Adjusted to use the dynamic difficulty levels and fetched tricks
+  // Filter tricks based on search, categories, and level
   const filteredTricks = tricks.filter(trick => {
     const matchesSearch = trick.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           (trick.description && trick.description.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -155,14 +51,8 @@ const TricktionaryPage = () => {
     return matchesSearch && matchesCategory && matchesLevel;
   });
 
-  const isLoading = isLoadingDifficulties || isLoadingTricks || isLoadingCategories;
-
   if (isLoading) {
-    return (
-      <div className="page-transition min-h-screen flex flex-col items-center justify-center">
-        <div className="animate-pulse text-white">{t.loading}</div>
-      </div>
-    );
+    return <TricktionaryLoading message={t.loading} />;
   }
 
   return (
@@ -171,34 +61,26 @@ const TricktionaryPage = () => {
       
       <main className="flex-grow pt-24">
         <div className="container mx-auto px-4 md:px-6 py-8">
-          <header className="mb-12 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{t.title}</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {t.subtitle}
-            </p>
-          </header>
+          <TricktionaryHeader 
+            title={t.title} 
+            subtitle={t.subtitle} 
+          />
           
-          <div className="mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
-            <TrickSearch 
-              searchQuery={searchQuery} 
-              setSearchQuery={setSearchQuery} 
-              placeholder={t.searchPlaceholder}
-            />
-            
-            <TrickFilters 
-              selectedCategories={selectedCategories}
-              setSelectedCategories={setSelectedCategories}
-              clearFilters={clearFilters}
-              searchQuery={searchQuery}
-              translations={{
-                filterButton: t.filterButton,
-                categoriesHeading: t.categoriesHeading,
-                clearFilters: t.clearFilters,
-                applyFilters: t.applyFilters,
-                clearAll: t.clearAll
-              }}
-            />
-          </div>
+          <TricktionaryFiltersSection 
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+            clearFilters={clearFilters}
+            translations={{
+              searchPlaceholder: t.searchPlaceholder,
+              filterButton: t.filterButton,
+              categoriesHeading: t.categoriesHeading,
+              clearFilters: t.clearFilters,
+              applyFilters: t.applyFilters,
+              clearAll: t.clearAll
+            }}
+          />
           
           {difficultyLevels && (
             <TrickTabs 
