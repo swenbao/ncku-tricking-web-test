@@ -11,19 +11,13 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTricktionaryData } from '@/hooks/tricktionary/useTricktionaryData';
-import { Trick } from '@/lib/data';
 
 const JoinFlow = () => {
   const { language } = useLanguage();
   const { tricks, isLoading } = useTricktionaryData();
 
-  // Filter tricks that are marked as prerequisites
-  const prerequisites = tricks.filter(trick => 
-    // A trick is considered a prerequisite if it has prerequisites field that is empty
-    // and belongs to a beginner level
-    trick.level === 'Absolute Novice' && 
-    (!trick.prerequisites || trick.prerequisites.length === 0)
-  );
+  // Filter tricks that are explicitly marked as prerequisites
+  const prerequisites = tricks.filter(trick => trick.isPrerequisite === true);
 
   return (
     <section className="py-20 bg-gradient-to-b from-background to-background/90">

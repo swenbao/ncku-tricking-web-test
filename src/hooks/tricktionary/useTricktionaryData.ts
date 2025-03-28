@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Trick } from '@/lib/data';
@@ -88,6 +89,7 @@ export const fetchTricks = async () => {
       videoUrl: trick.video_url || undefined,
       prerequisites: trick.prerequisites || [],
       categories: trickCategories,
+      isPrerequisite: trick.is_prerequisite || false, // Add the new field
     };
   });
 };
