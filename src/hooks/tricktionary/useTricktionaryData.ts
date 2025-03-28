@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Trick } from '@/lib/data';
@@ -32,7 +31,7 @@ export const fetchCategories = async () => {
   return data || [];
 };
 
-// Improved function to fetch tricks with proper category handling
+// Function to fetch tricks with proper category handling for uuid[] type
 export const fetchTricks = async () => {
   // First, fetch all categories
   const categories = await fetchCategories();
@@ -52,14 +51,14 @@ export const fetchTricks = async () => {
   
   // Transform the data to match our Trick type
   return (data || []).map(trick => {
-    // Get category IDs - now handling proper UUID[] array type
+    // Get category IDs - handle the new uuid[] column type
     let categoryIds = [];
     
-    // If category_id is already an array of UUIDs (after DB migration)
+    // If category_id is an array of UUIDs (new format after DB migration)
     if (Array.isArray(trick.category_id)) {
       categoryIds = trick.category_id;
     } 
-    // Legacy support for older string format (if any entries were saved that way)
+    // Legacy support for older formats (if any entries were saved that way)
     else if (typeof trick.category_id === 'string' && trick.category_id.startsWith('[')) {
       try {
         categoryIds = JSON.parse(trick.category_id);
@@ -68,7 +67,7 @@ export const fetchTricks = async () => {
         categoryIds = trick.category_id ? [trick.category_id] : [];
       }
     } 
-    // Single UUID value
+    // Single UUID value (for any records not yet migrated)
     else if (trick.category_id) {
       categoryIds = [trick.category_id];
     }
