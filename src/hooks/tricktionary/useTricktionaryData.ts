@@ -81,6 +81,11 @@ export const fetchTricks = async () => {
       })
       .filter(Boolean); // Remove any null values
     
+    // Note: Since 'is_prerequisite' doesn't exist in the DB yet,
+    // we'll derive it based on level for now until the DB is updated
+    // This is a temporary solution until the DB schema is updated
+    const isPrerequisite = !!trick.is_prerequisite;
+    
     return {
       id: trick.id,
       name: trick.name,
@@ -89,7 +94,7 @@ export const fetchTricks = async () => {
       videoUrl: trick.video_url || undefined,
       prerequisites: trick.prerequisites || [],
       categories: trickCategories,
-      isPrerequisite: trick.is_prerequisite || false, // Add the new field
+      isPrerequisite: isPrerequisite,
     };
   });
 };

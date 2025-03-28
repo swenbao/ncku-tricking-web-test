@@ -10,6 +10,7 @@ export interface Trick {
   videoUrl?: string;
   prerequisites?: string[];
   categories: string[]; // This will store category names, not IDs
+  isPrerequisite?: boolean; // Add this field to the interface
 }
 
 // Note: We're keeping this array for backwards compatibility,
