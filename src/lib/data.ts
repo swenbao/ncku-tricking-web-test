@@ -9,5 +9,16 @@ export { difficultyLevels } from './difficultyLevels';
 export type { ClassSchedule, ClassSession } from './classSchedule';
 export { classSchedule } from './classSchedule';
 
-export type { PointPackage } from './pointPackages';
-export { pointPackages } from './pointPackages';
+export type { 
+  PointPackage, 
+  CourseCardType, 
+  CourseCardPlan,
+  PurchaseTab,
+  PurchaseLevel
+} from './pointPackages';
+export { 
+  pointPackages, 
+  courseCardTypes, 
+  courseCardPlans,
+  purchaseFlow
+} from './pointPackages';

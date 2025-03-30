@@ -1,110 +1,147 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/auth';
 import { useNavigate } from 'react-router-dom';
-
-type CourseType = 'introductory' | 'advanced' | null;
-type CourseCard = {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  validity: string;
-  popular?: boolean;
-};
+import { useLanguage } from '@/contexts/LanguageContext';
+import { courseCardPlans, courseCardTypes, purchaseFlow } from '@/lib/data';
+import TabNavigation from '@/components/purchase/TabNavigation';
+import CourseCardPlanCard from '@/components/purchase/CourseCardPlanCard';
+import PaymentMethodSelector, { PaymentMethod } from '@/components/purchase/PaymentMethodSelector';
+import PurchaseSummary from '@/components/purchase/PurchaseSummary';
+import PurchaseConfirmation from '@/components/purchase/PurchaseConfirmation';
 
 const PointsPage = () => {
-  const [courseType, setCourseType] = useState<CourseType>(null);
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
-  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const { language } = useLanguage();
   const { toast } = useToast();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  // Course card data
-  const introductoryCourseCards: CourseCard[] = [
-    {
-      id: 'intro-single',
-      name: 'Single Session',
-      price: 30,
-      description: 'Access to a single introductory class',
-      validity: 'No expiration',
-    },
-    {
-      id: 'intro-semester',
-      name: 'Full Semester',
-      price: 250,
-      description: 'Access to all introductory classes for a semester',
-      validity: 'Valid for 6 months',
-      popular: true,
-    },
-  ];
+  // State for the purchase flow
+  const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
+  const [selectedTabIds, setSelectedTabIds] = useState<string[]>([]);
+  const [filteredPlans, setFilteredPlans] = useState(courseCardPlans);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [transferDigits, setTransferDigits] = useState('');
+  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
 
-  const advancedCourseCards: CourseCard[] = [
-    {
-      id: 'adv-single',
-      name: 'Single Session',
-      price: 50,
-      description: 'Access to a single advanced class',
-      validity: 'No expiration',
-    },
-    {
-      id: 'adv-semester-1',
-      name: 'Semester (1 Class/Week)',
-      price: 600,
-      description: 'Access to 1 advanced class per week',
-      validity: 'Valid for 6 months',
-    },
-    {
-      id: 'adv-semester-2',
-      name: 'Semester (2 Classes/Week)',
-      price: 650,
-      description: 'Access to 2 advanced classes per week',
-      validity: 'Valid for 6 months',
-      popular: true,
-    },
-    {
-      id: 'adv-semester-3',
-      name: 'Semester (3 Classes/Week)',
-      price: 700,
-      description: 'Access to 3 advanced classes per week',
-      validity: 'Valid for 6 months',
-    },
-  ];
+  // Get current level based on index
+  const currentLevel = purchaseFlow[currentLevelIndex];
+  
+  // Get selected plan from selected plan ID
+  const selectedPlan = selectedPlanId 
+    ? courseCardPlans.find(plan => plan.id === selectedPlanId) 
+    : null;
 
-  // Function to handle course type selection
-  const handleCourseTypeSelect = (type: CourseType) => {
-    setCourseType(type);
-    setSelectedCard(null);
+  // Effect to filter plans based on selected tabs
+  useEffect(() => {
+    let filtered = [...courseCardPlans];
+    
+    // Apply filters based on selected tabs
+    selectedTabIds.forEach((tabId, index) => {
+      if (index >= purchaseFlow.length) return;
+      
+      const level = purchaseFlow[index];
+      const tab = level.tabs.find(tab => tab.id === tabId);
+      
+      if (!tab) return;
+      
+      filtered = filtered.filter(plan => {
+        const planValue = plan[tab.filterField];
+        
+        if (tab.filterOperation === 'equals') {
+          // Handle special case for includedCards
+          if (tab.filterField === 'includedCards') {
+            return plan.includedCards.quantity === tab.filterValue.quantity;
+          }
+          return planValue === tab.filterValue;
+        }
+        
+        if (tab.filterOperation === 'greater-than') {
+          // Handle special case for includedCards
+          if (tab.filterField === 'includedCards') {
+            return plan.includedCards.quantity > tab.filterValue.quantity;
+          }
+          return planValue > tab.filterValue;
+        }
+        
+        if (tab.filterOperation === 'less-than') {
+          // Handle special case for includedCards
+          if (tab.filterField === 'includedCards') {
+            return plan.includedCards.quantity < tab.filterValue.quantity;
+          }
+          return planValue < tab.filterValue;
+        }
+        
+        return true;
+      });
+    });
+    
+    setFilteredPlans(filtered);
+    
+    // Reset selected plan if it's not in the filtered list
+    if (selectedPlanId && !filtered.some(plan => plan.id === selectedPlanId)) {
+      setSelectedPlanId(null);
+    }
+  }, [selectedTabIds]);
+
+  // Handler for tab selection
+  const handleTabSelect = (tabId: string) => {
+    // Update selected tabs up to current level
+    const newSelectedTabs = [...selectedTabIds.slice(0, currentLevelIndex), tabId];
+    setSelectedTabIds(newSelectedTabs);
+    
+    // Move to next level if available
+    if (currentLevelIndex < purchaseFlow.length - 1) {
+      setCurrentLevelIndex(currentLevelIndex + 1);
+    }
   };
 
-  // Function to handle card selection
-  const handleCardSelect = (cardId: string) => {
-    setSelectedCard(cardId);
+  // Handler for going back to previous level
+  const handleBack = () => {
+    if (currentLevelIndex > 0) {
+      setCurrentLevelIndex(currentLevelIndex - 1);
+    }
   };
 
-  // Go back to course type selection
-  const handleBackToTypes = () => {
-    setCourseType(null);
-    setSelectedCard(null);
+  // Handler for plan selection
+  const handlePlanSelect = (planId: string) => {
+    setSelectedPlanId(planId);
+    
+    // Reset quantity to 1 when selecting a new plan
+    setQuantity(1);
   };
 
-  // Simulate purchase process
+  // Handler for quantity change
+  const handleQuantityChange = (planId: string, newQuantity: number) => {
+    if (planId === selectedPlanId) {
+      setQuantity(newQuantity);
+    }
+  };
+
+  // Handler for payment method selection
+  const handlePaymentMethodSelect = (method: PaymentMethod) => {
+    setPaymentMethod(method);
+  };
+
+  // Handler for purchase
   const handlePurchase = () => {
-    if (!selectedCard) return;
+    if (!selectedPlan) return;
     
     // Check if user is authenticated
     if (!isAuthenticated) {
       toast({
-        title: "Login Required",
-        description: "Please login to purchase a course card.",
+        title: language === 'en' ? "Login Required" : "需要登入",
+        description: language === 'en' 
+          ? "Please login to purchase course cards."
+          : "請登入以購買課程卡。",
         variant: "destructive",
       });
       
@@ -113,37 +150,59 @@ const PointsPage = () => {
       return;
     }
     
-    // Get selected card details
-    const cardList = courseType === 'introductory' ? introductoryCourseCards : advancedCourseCards;
-    const card = cardList.find(c => c.id === selectedCard);
+    // Check if payment method is selected
+    if (!paymentMethod) {
+      toast({
+        title: language === 'en' ? "Payment Method Required" : "需要選擇付款方式",
+        description: language === 'en'
+          ? "Please select a payment method."
+          : "請選擇付款方式。",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    if (!card) return;
+    // For bank transfer, check if transfer digits are entered
+    if (paymentMethod === 'bank-transfer' && transferDigits.length !== 5) {
+      toast({
+        title: language === 'en' ? "Transfer Details Required" : "需要轉賬詳情",
+        description: language === 'en'
+          ? "Please enter the last 5 digits of your transfer."
+          : "請輸入您轉賬的後5位數字。",
+        variant: "destructive",
+      });
+      return;
+    }
     
     toast({
-      title: "Processing your payment...",
-      description: "This will only take a moment.",
+      title: language === 'en' ? "Processing your purchase..." : "處理您的購買...",
+      description: language === 'en' 
+        ? "This will only take a moment."
+        : "這只需要一會兒。",
     });
     
-    // Simulate a successful payment after 1.5 seconds
+    // Simulate a successful purchase after 1.5 seconds
     setTimeout(() => {
       setPurchaseSuccess(true);
     }, 1500);
   };
 
-  // Close success dialog
+  // Handler for closing success dialog
   const handleDialogClose = () => {
     setPurchaseSuccess(false);
-    setCourseType(null);
-    setSelectedCard(null);
+    
+    // Reset the purchase flow
+    setCurrentLevelIndex(0);
+    setSelectedTabIds([]);
+    setSelectedPlanId(null);
+    setQuantity(1);
+    setPaymentMethod(null);
+    setTransferDigits('');
   };
 
-  // Get the current selected card
-  const getCurrentCard = (): CourseCard | undefined => {
-    if (!selectedCard) return undefined;
-    
-    const cardList = courseType === 'introductory' ? introductoryCourseCards : advancedCourseCards;
-    return cardList.find(c => c.id === selectedCard);
-  };
+  // Determine if we're at the final purchase step
+  const isAtFinalStep = currentLevelIndex === purchaseFlow.length || 
+    (currentLevelIndex === purchaseFlow.length - 1 && filteredPlans.length === 1);
 
   return (
     <div className="page-transition min-h-screen flex flex-col">
@@ -153,132 +212,124 @@ const PointsPage = () => {
         <div className="container mx-auto px-4 md:px-6 py-8">
           <header className="mb-12 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              {courseType === null ? 
-                "Course Cards" : 
-                courseType === 'introductory' ? "Introductory Course Cards" : "Advanced Course Cards"}
+              {language === 'en' ? "Course Cards" : "課程卡"}
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {courseType === null ? 
-                "Choose the type of tricking course you're interested in" : 
-                "Select a course card option that fits your needs"}
+              {language === 'en' 
+                ? "Purchase course cards to book classes with NCKU Tricking Club"
+                : "購買課程卡以預訂NCKU Tricking社團的課程"}
             </p>
           </header>
           
-          {courseType === null ? (
-            // Initial course type selection
-            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card 
-                className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary/50"
-                onClick={() => handleCourseTypeSelect('introductory')}
-              >
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-2xl">Introductory Course Cards</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-40 bg-gradient-to-br from-red-900/50 to-red-700/50 dark:from-red-900/50 dark:to-red-800/50 rounded-lg flex items-center justify-center mb-4">
-                    <span className="text-2xl font-semibold">For Beginners</span>
-                  </div>
-                  <p className="text-muted-foreground">Perfect for those starting their tricking journey</p>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">Explore Introductory Options</Button>
-                </CardFooter>
-              </Card>
-              
-              <Card 
-                className="hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary/50"
-                onClick={() => handleCourseTypeSelect('advanced')}
-              >
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-2xl">Advanced Course Cards</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-40 bg-gradient-to-br from-red-900/50 to-red-700/50 dark:from-red-900/50 dark:to-red-800/50 rounded-lg flex items-center justify-center mb-4">
-                    <span className="text-2xl font-semibold">For Experienced Trickers</span>
-                  </div>
-                  <p className="text-muted-foreground">Take your skills to the next level</p>
-                </CardContent>
-                <CardFooter>
-                  <Button className="w-full">Explore Advanced Options</Button>
-                </CardFooter>
-              </Card>
-            </div>
-          ) : (
-            // Course cards display
-            <div className="max-w-5xl mx-auto">
+          <div className="max-w-5xl mx-auto">
+            {/* Navigation Breadcrumb */}
+            {(currentLevelIndex > 0 || selectedPlanId) && (
               <Button 
                 variant="ghost" 
-                onClick={handleBackToTypes} 
+                onClick={handleBack} 
                 className="mb-6"
+                disabled={currentLevelIndex === 0 && !selectedPlanId}
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Selection
+                {language === 'en' ? 'Back' : '返回'}
               </Button>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {(courseType === 'introductory' ? introductoryCourseCards : advancedCourseCards).map((card) => (
-                  <Card 
-                    key={card.id}
-                    className={`relative overflow-hidden transition-all hover:shadow-md ${
-                      selectedCard === card.id ? 'ring-2 ring-accent shadow-md' : ''
-                    } ${card.popular ? 'md:scale-105' : ''}`}
-                    onClick={() => handleCardSelect(card.id)}
-                  >
-                    {card.popular && (
-                      <div className="absolute top-0 right-0">
-                        <div className="bg-accent text-accent-foreground text-xs font-bold uppercase py-1 px-3 transform rotate-0 origin-bottom-right">
-                          Popular
-                        </div>
-                      </div>
-                    )}
-                    
-                    <CardHeader>
-                      <CardTitle>{card.name}</CardTitle>
-                    </CardHeader>
-                    
-                    <CardContent>
-                      <div className="text-center">
-                        <span className="text-4xl font-bold">NT${card.price}</span>
-                        <div className="text-sm text-muted-foreground mt-2">
-                          {card.description}
-                        </div>
-                        <div className="text-sm font-medium mt-2">
-                          {card.validity}
-                        </div>
-                      </div>
-                    </CardContent>
-                    
-                    <CardFooter>
-                      <Button 
-                        className="w-full"
-                        variant={selectedCard === card.id ? "default" : "outline"}
-                      >
-                        {selectedCard === card.id ? (
-                          <>
-                            <Check className="mr-2 h-4 w-4" /> Selected
-                          </>
-                        ) : (
-                          'Select'
-                        )}
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+            )}
+            
+            {/* Purchase Flow - Tab Navigation */}
+            {!selectedPlanId && currentLevelIndex < purchaseFlow.length && (
+              <div className="mb-12">
+                <h2 className="text-2xl font-bold mb-6">
+                  {language === 'en' 
+                    ? 'Step ' + (currentLevelIndex + 1) + ': Select ' + (currentLevel?.id || 'Option')
+                    : '步驟 ' + (currentLevelIndex + 1) + ': 選擇 ' + (currentLevel?.id === 'difficulty-level' ? '難度等級' : '課程類型')}
+                </h2>
+                
+                <TabNavigation 
+                  tabs={currentLevel?.tabs || []}
+                  activeTabId={selectedTabIds[currentLevelIndex] || null}
+                  onSelectTab={handleTabSelect}
+                />
               </div>
-              
-              {selectedCard && (
-                <div className="mt-8 text-center">
-                  <Button 
-                    size="lg" 
-                    className="px-8"
-                    onClick={handlePurchase}
-                  >
-                    Purchase Card
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
+            )}
+            
+            {/* Display Course Card Plans */}
+            {(isAtFinalStep || selectedPlanId) && !purchaseSuccess && (
+              <div className="mb-12">
+                {!selectedPlanId ? (
+                  <>
+                    <h2 className="text-2xl font-bold mb-6">
+                      {language === 'en' ? 'Select a Course Card Plan' : '選擇課程卡方案'}
+                    </h2>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {filteredPlans.map(plan => (
+                        <CourseCardPlanCard
+                          key={plan.id}
+                          plan={plan}
+                          courseCardTypes={courseCardTypes}
+                          isSelected={selectedPlanId === plan.id}
+                          onSelect={handlePlanSelect}
+                        />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-8">
+                      <div>
+                        <h2 className="text-2xl font-bold mb-6">
+                          {language === 'en' ? 'Your Selected Plan' : '您選擇的方案'}
+                        </h2>
+                        
+                        <CourseCardPlanCard
+                          plan={selectedPlan}
+                          courseCardTypes={courseCardTypes}
+                          isSelected={true}
+                          onSelect={() => {}}
+                          onQuantityChange={handleQuantityChange}
+                          quantity={quantity}
+                        />
+                      </div>
+                      
+                      <PaymentMethodSelector
+                        selectedMethod={paymentMethod}
+                        onSelectMethod={handlePaymentMethodSelect}
+                        transferDigits={transferDigits}
+                        onTransferDigitsChange={setTransferDigits}
+                      />
+                    </div>
+                    
+                    <div>
+                      <PurchaseSummary
+                        selectedPlan={selectedPlan}
+                        courseCardTypes={courseCardTypes}
+                        quantity={quantity}
+                        paymentMethod={paymentMethod}
+                      />
+                      
+                      <div className="mt-6">
+                        <Button 
+                          size="lg" 
+                          className="w-full"
+                          onClick={handlePurchase}
+                          disabled={!paymentMethod || (paymentMethod === 'bank-transfer' && transferDigits.length !== 5)}
+                        >
+                          {language === 'en' ? 'Complete Purchase' : '完成購買'}
+                        </Button>
+                        {!isAuthenticated && (
+                          <p className="text-xs text-muted-foreground mt-2 text-center">
+                            {language === 'en' 
+                              ? 'You will need to log in to complete your purchase'
+                              : '您需要登入才能完成購買'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </main>
       
@@ -286,49 +337,15 @@ const PointsPage = () => {
       
       {/* Success Dialog */}
       <Dialog open={purchaseSuccess} onOpenChange={handleDialogClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Purchase Successful!</DialogTitle>
-            <DialogDescription>
-              Your course card has been added to your account and is ready to use.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="flex items-center justify-center py-6">
-            <div className="bg-accent/10 rounded-full p-3">
-              <Check className="h-6 w-6 text-accent" />
-            </div>
-          </div>
-          
-          <div className="bg-muted/30 rounded-md p-4 mb-4">
-            <div className="flex justify-between mb-2">
-              <span className="text-muted-foreground">Course Card</span>
-              <span className="font-medium">
-                {getCurrentCard()?.name}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Price</span>
-              <span className="font-medium">
-                NT${getCurrentCard()?.price}
-              </span>
-            </div>
-            <div className="flex justify-between mt-2">
-              <span className="text-muted-foreground">Validity</span>
-              <span className="font-medium">
-                {getCurrentCard()?.validity}
-              </span>
-            </div>
-          </div>
-          
-          <DialogFooter className="sm:justify-start">
-            <Button type="button" onClick={handleDialogClose}>
-              Close
-            </Button>
-            <Button type="button" variant="outline" asChild>
-              <a href="/booking">Book a Class</a>
-            </Button>
-          </DialogFooter>
+        <DialogContent className="sm:max-w-md p-0">
+          {selectedPlan && paymentMethod && (
+            <PurchaseConfirmation
+              planName={language === 'en' ? selectedPlan.name : `${selectedPlan.difficultyLevel === 'Beginner' ? '初學者' : '進階'} ${selectedPlan.name.includes('Single') ? '單堂' : '學期'}`}
+              totalPrice={selectedPlan.price * quantity}
+              paymentMethod={paymentMethod}
+              onClose={handleDialogClose}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
