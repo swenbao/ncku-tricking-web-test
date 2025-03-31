@@ -11,12 +11,8 @@ export interface Trick {
   categories: string[];
   prerequisites?: string[];
   videoUrl?: string;
+  isPrerequisite?: boolean; // Add this property to fix the JoinFlow component
 }
-
-// For debugging purposes, let's log the first few trick IDs to see their format
-console.log("Debug - First few trick IDs:", 
-  tricks.slice(0, 3).map(t => ({ id: t.id, name: t.name }))
-);
 
 export const tricks: Trick[] = [
   {
@@ -33,7 +29,8 @@ export const tricks: Trick[] = [
     level: "Absolute Novice",
     description: "A side flip with no hands touching the ground, landing on one or both feet.",
     categories: ["Flip"],
-    prerequisites: []
+    prerequisites: [],
+    isPrerequisite: true // Mark as a prerequisite for advanced classes
   },
   {
     id: "b5dd72e6-d817-4821-bc67-87268d2a0be2",
@@ -57,7 +54,8 @@ export const tricks: Trick[] = [
     level: "Beginner",
     description: "A backward somersault, landing on your feet.",
     categories: ["Flip"],
-    prerequisites: []
+    prerequisites: [],
+    isPrerequisite: true // Mark as a prerequisite for advanced classes
   },
   {
     id: "22ba69bb-1797-479d-be2d-a1107b5eab49",
@@ -81,7 +79,8 @@ export const tricks: Trick[] = [
     level: "Beginner",
     description: "A horizontal aerial rotation where your body is parallel to the ground.",
     categories: ["Kick"],
-    prerequisites: []
+    prerequisites: [],
+    isPrerequisite: true // Mark as a prerequisite for advanced classes
   },
   {
     id: "0b8e795d-c6a0-4e4b-b7f0-40c4afd75d5a",
@@ -89,7 +88,8 @@ export const tricks: Trick[] = [
     level: "Absolute Novice",
     description: "A sideways handspring with legs spread apart.",
     categories: ["Ground Movement"],
-    prerequisites: []
+    prerequisites: [],
+    isPrerequisite: true // Mark as a prerequisite for advanced classes
   },
   {
     id: "c5c632bd-2b76-4c4d-a16a-172adfa4d18c",
@@ -100,3 +100,8 @@ export const tricks: Trick[] = [
     prerequisites: ["Cheat 360", "Backside 360"]
   }
 ];
+
+// For debugging purposes, let's log the first few trick IDs to see their format
+console.log("Debug - First few trick IDs:", 
+  tricks.slice(0, 3).map(t => ({ id: t.id, name: t.name }))
+);
