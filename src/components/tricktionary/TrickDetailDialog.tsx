@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
@@ -35,8 +34,9 @@ export const TrickDetailDialog: React.FC<TrickDetailDialogProps> = ({
     return user.completedTricks.find(t => t.trickId === trickId)?.status || null;
   };
 
-  const handleProgressUpdate = (status: 'Started' | 'Completed' | 'Proficient' | null) => {
+  const handleProgressUpdate = (status: 'Started' | 'Completed' | 'Proficient') => {
     if (selectedTrick && isAuthenticated) {
+      console.log("Updating trick status for:", selectedTrick.id, "to:", status);
       const currentStatus = getTrickProgress(selectedTrick.id);
       
       if (currentStatus === status) {
@@ -119,7 +119,7 @@ export const TrickDetailDialog: React.FC<TrickDetailDialogProps> = ({
                             "relative overflow-hidden transition-all duration-300",
                             isActive && "bg-accent text-accent-foreground font-medium"
                           )}
-                          onClick={() => handleProgressUpdate(isActive ? null : status)}
+                          onClick={() => handleProgressUpdate(status)}
                         >
                           {getProgressStatusLabel(status)}
                           {isActive && (

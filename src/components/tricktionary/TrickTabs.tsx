@@ -1,15 +1,15 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import TrickCard from '@/components/TrickCard';
+import { TrickCard } from './TrickCard';
 import { Trick } from '@/lib/data';
 
 interface TrickTabsProps {
-  difficultyLevels: any[];
+  difficultyLevels: { name: string; label: string; color: string }[];
   activeTab: string;
   setActiveTab: (tab: string) => void;
   filteredTricks: Trick[];
-  onTrickSelect: (trick: Trick) => void;
+  onTrickSelect: (trick: Trick | null) => void;
   translations: {
     noTricksFound: string;
     tryAdjusting: string;
@@ -22,43 +22,77 @@ export const TrickTabs: React.FC<TrickTabsProps> = ({
   setActiveTab,
   filteredTricks,
   onTrickSelect,
-  translations
+  translations,
 }) => {
-  // Filter tricks based on the active difficulty level
-  const tricksInActiveTab = activeTab === 'all' 
-    ? filteredTricks 
-    : filteredTricks.filter(trick => trick.level === activeTab);
-
   return (
-    <Tabs defaultValue={difficultyLevels[0]?.name} value={activeTab} onValueChange={setActiveTab}>
-      <TabsList className="mb-8 flex overflow-x-auto pb-2 scrollbar-hide">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <TabsList className="mb-6 flex h-auto flex-wrap space-x-2 space-y-2 bg-transparent p-0">
         {difficultyLevels.map((level) => (
-          <TabsTrigger key={level.id} value={level.name} className="min-w-max">
-            {level.name}
+          <TabsTrigger
+            key={level.name}
+            value={level.name}
+            className="data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            style={{
+              borderBottom: `2px solid ${activeTab === level.name ? level.color : 'transparent'}`,
+            }}
+          >
+            {level.label}
           </TabsTrigger>
         ))}
+        <TabsTrigger
+          value="all"
+          className="data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          style={{
+            borderBottom: `2px solid ${activeTab === 'all' ? '#94a3b8' : 'transparent'}`,
+          }}
+        >
+          All Levels
+        </TabsTrigger>
       </TabsList>
-      
-      {difficultyLevels.map((level) => (
-        <TabsContent key={level.id} value={level.name} className="space-y-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tricksInActiveTab.length > 0 ? (
-              tricksInActiveTab.map((trick) => (
-                <TrickCard
-                  key={trick.id}
-                  trick={trick}
-                  onClick={() => onTrickSelect(trick)}
-                />
-              ))
-            ) : (
-              <div className="col-span-full text-center py-12">
-                <h3 className="text-lg font-medium mb-2">{translations.noTricksFound}</h3>
-                <p className="text-muted-foreground">
-                  {translations.tryAdjusting}
-                </p>
-              </div>
-            )}
+
+      {/* All levels tab content */}
+      <TabsContent value="all" className="mt-0">
+        {filteredTricks.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredTricks.map((trick) => (
+              <TrickCard 
+                key={trick.id} 
+                trick={trick} 
+                onClick={() => onTrickSelect(trick)} 
+              />
+            ))}
           </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">{translations.noTricksFound}</p>
+            <p className="text-sm text-muted-foreground/70 mt-1">
+              {translations.tryAdjusting}
+            </p>
+          </div>
+        )}
+      </TabsContent>
+
+      {/* Individual level tabs */}
+      {difficultyLevels.map((level) => (
+        <TabsContent key={level.name} value={level.name} className="mt-0">
+          {filteredTricks.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredTricks.map((trick) => (
+                <TrickCard 
+                  key={trick.id} 
+                  trick={trick} 
+                  onClick={() => onTrickSelect(trick)} 
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">{translations.noTricksFound}</p>
+              <p className="text-sm text-muted-foreground/70 mt-1">
+                {translations.tryAdjusting}
+              </p>
+            </div>
+          )}
         </TabsContent>
       ))}
     </Tabs>

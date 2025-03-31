@@ -100,16 +100,38 @@ export const updateUserProfile = async (userId: string, userData: Partial<AppUse
 export const updateTrickStatus = async (
   userId: string, 
   trickId: string, 
-  status: 'Started' | 'Completed' | 'Proficient'
+  status: 'Started' | 'Completed' | 'Proficient' | null
 ) => {
-  const existingTrick = await supabase
+  console.log("authService: Updating trick status:", { userId, trickId, status });
+  
+  // Validation
+  if (!userId || !trickId) {
+    throw new Error('Missing required parameters');
+  }
+  
+  // If status is null, we want to delete the record
+  if (status === null) {
+    const { error } = await supabase
+      .from('user_completed_tricks')
+      .delete()
+      .eq('user_id', userId)
+      .eq('trick_id', trickId);
+      
+    if (error) throw error;
+    return;
+  }
+  
+  // Check if this trick status already exists
+  const { data: existingTrick, error: queryError } = await supabase
     .from('user_completed_tricks')
     .select('*')
     .eq('user_id', userId)
     .eq('trick_id', trickId)
     .maybeSingle();
   
-  if (existingTrick.data) {
+  if (queryError) throw queryError;
+  
+  if (existingTrick) {
     // Update existing trick status
     const { error } = await supabase
       .from('user_completed_tricks')

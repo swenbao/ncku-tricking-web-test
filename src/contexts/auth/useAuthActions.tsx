@@ -1,4 +1,3 @@
-
 import { toast } from "@/components/ui/use-toast";
 import { AppUser } from './types';
 import { 
@@ -65,10 +64,8 @@ export function useAuthActions(
     if (!user) return;
     
     try {
-      // Update user profile in Supabase
       await updateUserProfile(user.id, userData);
       
-      // Update local state
       setUser(prev => prev ? { ...prev, ...userData } : null);
       
       toast({
@@ -85,27 +82,38 @@ export function useAuthActions(
     }
   };
 
-  const updateTrickStatus = async (trickId: string, status: 'Started' | 'Completed' | 'Proficient') => {
+  const updateTrickStatus = async (trickId: string, status: 'Started' | 'Completed' | 'Proficient' | null) => {
     if (!user) return;
 
     try {
+      console.log("Updating trick status in service:", trickId, status);
+      
+      if (!trickId || typeof trickId !== 'string' || trickId.trim() === '') {
+        throw new Error('Invalid trick ID');
+      }
+      
       await updateTrickStatusService(user.id, trickId, status);
       
-      // Update local state
       const updatedTricks = [...user.completedTricks];
       const existingIndex = updatedTricks.findIndex(t => t.trickId === trickId);
       
-      if (existingIndex >= 0) {
-        updatedTricks[existingIndex] = { ...updatedTricks[existingIndex], status };
+      if (status === null) {
+        if (existingIndex >= 0) {
+          updatedTricks.splice(existingIndex, 1);
+        }
       } else {
-        updatedTricks.push({ trickId, status });
+        if (existingIndex >= 0) {
+          updatedTricks[existingIndex] = { ...updatedTricks[existingIndex], status };
+        } else {
+          updatedTricks.push({ trickId, status });
+        }
       }
       
       setUser(prev => prev ? { ...prev, completedTricks: updatedTricks } : null);
       
       toast({
         title: "Progress updated",
-        description: `Trick status updated to ${status}`,
+        description: status ? `Trick status updated to ${status}` : "Trick status removed",
       });
     } catch (error) {
       console.error('Update trick status error:', error);

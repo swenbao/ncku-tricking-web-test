@@ -13,8 +13,7 @@ export const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
   const { user } = useAuth();
   
   // Find the user's progress on this trick
-  const trickProgress = user?.completedTricks.find(t => t.trickId === trick.id);
-  const progressStatus = trickProgress?.status || null;
+  const trickProgress = user?.completedTricks.find(t => t.trickId === trick.id)?.status || null;
   
   // Determine card styling based on progress
   let cardClassNames = "border rounded-lg p-5 transition-all duration-300 transform hover:-translate-y-1 cursor-pointer";
@@ -22,7 +21,7 @@ export const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
   let descriptionClassNames = "text-sm text-muted-foreground mb-3";
   
   if (user) {
-    if (progressStatus === 'Completed' || progressStatus === 'Proficient') {
+    if (trickProgress === 'Completed' || trickProgress === 'Proficient') {
       // Learned tricks: Medium brightness with higher contrast
       cardClassNames = cn(
         cardClassNames, 
@@ -71,7 +70,7 @@ export const TrickCard: React.FC<TrickCardProps> = ({ trick, onClick }) => {
             key={index}
             className={cn(
               "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary/10",
-              progressStatus === 'Completed' || progressStatus === 'Proficient' 
+              trickProgress === 'Completed' || trickProgress === 'Proficient' 
                 ? "text-secondary-foreground" 
                 : "text-secondary-foreground/60"
             )}
